@@ -3,9 +3,10 @@
  */
 import path from 'path'
 import * as acorn from 'acorn'
-import { Plugin as VitePlugin } from 'vite'
+import { ConfigEnv, Plugin as VitePlugin } from 'vite'
 import { extensions } from './utils'
 
+let configEnv: ConfigEnv
 export interface Esm2cjsOptions {
   excludes?: string[]
 }
@@ -16,12 +17,27 @@ export default function esm2cjs(options?: Esm2cjsOptions): VitePlugin {
       'electron',
       'electron-store',
     ],
-    ...options,
+    ...options
   }
 
   return {
     name: 'vitejs-plugin-electron',
+    config(conf, env) {
+      configEnv = env
+      return {
+        optimizeDeps: {
+          exclude: [
+            'electron',
+            ...(conf.optimizeDeps?.exclude ?? [])
+          ],
+          ...conf.optimizeDeps
+        },
+        ...conf
+      }
+    },
     transform(code, id) {
+      if (configEnv.command !== 'serve') return // enable only development
+
       const parsed = path.parse(id)
       if (!extensions.includes(parsed.ext)) return
 

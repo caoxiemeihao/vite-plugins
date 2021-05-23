@@ -6,11 +6,13 @@
 
 ```ts
 import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
 import electron from 'vitejs-plugin-electron'
 
-export default defineConfig(({ command }) => ({
+export default defineConfig((env) => ({
   plugins: [
-    command === 'serve' && electron(),
-  ].filter(Boolean),
+    vue(),
+    electron(),
+  ],
 }))
 ```
