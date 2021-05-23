@@ -10,9 +10,12 @@ export interface Esm2cjsOptions {
   excludes?: string[]
 }
 
-export function esm2cjs(options: Esm2cjsOptions): VitePlugin {
+export default function esm2cjs(options: Esm2cjsOptions): VitePlugin {
   const opts: Esm2cjsOptions = {
-    excludes: [],
+    excludes: [
+      'electron',
+      'electron-store',
+    ],
     ...options,
   }
 

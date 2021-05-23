@@ -1,6 +1,6 @@
 {
   "name": "vitejs-plugin-electron",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "An vite plugin for electron integrate",
   "main": "dist/index.js",
   "author": "草鞋没号 <wangjiawang580@hellobike.com>",
@@ -13,5 +13,6 @@
     "acorn": "^8.2.4",
     "typescript": "^4.2.4",
     "vite": "^2.3.3"
-  }
+  },
+  "homepage": "https://github.com/caoxiemeihao/vitejs-plugins/electron"
 }
