@@ -12,12 +12,9 @@
   "peerDependencies": {
     "acorn": "^8.x.x"
   },
-  "files": [
-    "dist",
-    "src",
-    "package.json",
-    "README.md"
-  ],
+  "dependencies": {
+    "acorn": "^8.2.4"
+  },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^19.0.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
@@ -29,8 +26,16 @@
     "typescript": "^4.2.4",
     "vite": "^2.3.3"
   },
-  "homepage": "https://github.com/caoxiemeihao/vitejs-plugins/electron",
-  "dependencies": {
-    "acorn": "^8.2.4"
-  }
+  "files": [
+    "dist",
+    "src",
+    "package.json",
+    "README.md"
+  ],
+  "keywords": [
+    "vite",
+    "plugin",
+    "electron"
+  ],
+  "homepage": "https://github.com/caoxiemeihao/vitejs-plugins/electron"
 }
