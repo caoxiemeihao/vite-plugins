@@ -3,12 +3,13 @@
  */
 import path from 'path'
 import * as acorn from 'acorn'
-import { ConfigEnv, Plugin as VitePlugin } from 'vite'
-import { extensions } from './utils'
+import { ConfigEnv, Plugin as VitePlugin, UserConfig } from 'vite'
+import { extensions, builtins } from './utils'
 
 let configEnv: ConfigEnv
 export interface Esm2cjsOptions {
   excludes?: string[]
+  config?: (conf: UserConfig) => UserConfig | null | void | Promise<UserConfig | null | void>
 }
 
 export default function esm2cjs(options?: Esm2cjsOptions): VitePlugin {
@@ -24,16 +25,37 @@ export default function esm2cjs(options?: Esm2cjsOptions): VitePlugin {
     name: 'vitejs-plugin-electron',
     config(conf, env) {
       configEnv = env
-      return {
+      const { optimizeDeps, build, ...confOmmit } = conf
+      const { exclude, ...optimizeDepsOmmit } = optimizeDeps ?? {}
+      const { rollupOptions, ...buildOmmit } = build ?? {}
+      const { external, output, ...rollupOptionsOmmit } = rollupOptions ?? {}
+      const _config: UserConfig = {
         optimizeDeps: {
           exclude: [
             'electron',
-            ...(conf.optimizeDeps?.exclude ?? [])
+            ...(exclude ?? []),
           ],
-          ...conf.optimizeDeps
+          ...optimizeDepsOmmit
         },
-        ...conf
+        build: {
+          rollupOptions: {
+            external: Array.isArray(external) || typeof external === 'undefined' ? [
+              'electron',
+              ...builtins(),
+              ...(external ?? []),
+            ] : external,
+            output: Array.isArray(output) ? output : {
+              ...output,
+              format: 'cjs',
+            },
+            ...rollupOptionsOmmit
+          },
+          ...buildOmmit
+        },
+        ...confOmmit
       }
+
+      return opts.config ? opts.config(_config) : _config
     },
     transform(code, id) {
       if (configEnv.command !== 'serve') return // enable only development
