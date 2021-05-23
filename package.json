@@ -1,18 +1,36 @@
 {
   "name": "vitejs-plugin-electron",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "An vite plugin for electron integrate",
   "main": "dist/index.js",
   "author": "草鞋没号 <wangjiawang580@hellobike.com>",
   "license": "MIT",
   "scripts": {
-    "build": "tsc src/*.ts --outDir dist --moduleResolution node --resolveJsonModule --esModuleInterop --declaration"
+    "tsc": "tsc src/*.ts --outDir dist --moduleResolution node --esModuleInterop --declaration",
+    "build": "node -r ts-node/register script/build.ts"
   },
-  "dependencies": {
+  "peerDependencies": {
+    "acorn": "^8.x.x"
+  },
+  "files": [
+    "dist",
+    "src",
+    "package.json",
+    "README.md"
+  ],
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^19.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.0",
+    "@rollup/plugin-typescript": "^8.2.1",
     "@types/node": "^15.6.0",
-    "acorn": "^8.2.4",
+    "rollup": "^2.48.0",
+    "ts-node": "^9.1.1",
+    "tslib": "^2.2.0",
     "typescript": "^4.2.4",
     "vite": "^2.3.3"
   },
-  "homepage": "https://github.com/caoxiemeihao/vitejs-plugins/electron"
+  "homepage": "https://github.com/caoxiemeihao/vitejs-plugins/electron",
+  "dependencies": {
+    "acorn": "^8.2.4"
+  }
 }
