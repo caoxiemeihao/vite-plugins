@@ -13,14 +13,13 @@
   "peerDependencies": {
     "acorn": "^8.x.x"
   },
-  "dependencies": {
-    "acorn": "^8.2.4"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@rollup/plugin-commonjs": "^19.0.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@rollup/plugin-typescript": "^8.2.1",
     "@types/node": "^15.6.0",
+    "acorn": "^8.2.4",
     "rollup": "^2.48.0",
     "ts-node": "^9.1.1",
     "tslib": "^2.2.0",
@@ -35,7 +34,8 @@
   "keywords": [
     "vite",
     "plugin",
-    "electron"
+    "electron",
+    "esm2cjs"
   ],
   "homepage": "https://github.com/caoxiemeihao/vitejs-plugins/tree/main/electron"
 }
