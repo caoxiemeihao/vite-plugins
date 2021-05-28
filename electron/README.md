@@ -14,24 +14,40 @@ export default defineConfig((env) => ({
     vue(),
     electron(),
   ],
+  // other config...
 }))
 ```
 
-## 原理
+> renderer/foo.ts
+  ```ts
+  // You code
+  import { ipcRenderer } from 'electron'
+  import Store from 'electron-store'
 
-#### 插件只做了两件事
+  // Will be generate in development mode
+  const { ipcRenderer } = require("electron")
+  const Store = require("electron-store")
+  ```
 
-1. 在开发期将 `electron` 相关的模块编译成了 `commonjs` 格式
+## Principe | 原理
+
+#### The plugin is do only two things | 插件只做了两件事
+
+1. In the development phase, the modules related to `Electron` are compiled into `CommonJs` syntax<br>
+  在开发期将 `Electron` 相关的模块编译成了 `CommonJs` 格式
 
 ```ts
+// You code
 import { ipcRenderer } from 'electron'
 import Store from 'electron-store'
-// Will generate
+
+// Will be generate in development mode
 const { ipcRenderer } = require("electron")
 const Store = require("electron-store")
 ```
 
-2. 增加了 `vite.config.ts` 默认配置
+2. Add some config options into `vite.config.ts`<br>
+  增加了 `vite.config.ts` 默认配置
 
 ```ts
 {
