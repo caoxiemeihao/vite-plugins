@@ -12,7 +12,7 @@ export interface Esm2cjsOptions {
   config?: (conf: UserConfig) => UserConfig | null | void | Promise<UserConfig | null | void>
 }
 
-export default function esm2cjs(options?: Esm2cjsOptions): VitePlugin {
+export default function electronEsm2cjs(options?: Esm2cjsOptions): VitePlugin {
   const opts: Esm2cjsOptions = {
     excludes: [
       'electron',

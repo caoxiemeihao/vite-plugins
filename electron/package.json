@@ -1,12 +1,12 @@
 {
   "name": "vitejs-plugin-electron",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "An vite plugin for electron integrate",
   "main": "dist/index.js",
   "author": "草鞋没号 <wangjiawang580@hellobike.com>",
   "license": "MIT",
   "scripts": {
-    "tsc": "../node_modules/.bin/tsc src/*.ts --outDir dist --moduleResolution node --esModuleInterop --declaration",
+    "-- tsc": "../node_modules/.bin/tsc src/*.ts --outDir dist --moduleResolution node --esModuleInterop --declaration",
     "types": "../node_modules/.bin/tsc src/*.ts --outDir dist --moduleResolution node --esModuleInterop --declaration --declaration --emitDeclarationOnly",
     "build": "node -r ts-node/register script/build.ts"
   },
