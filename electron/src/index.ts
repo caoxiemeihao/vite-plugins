@@ -2,7 +2,7 @@
  * An vite plugin for electron integration.
  */
 import path from 'path'
-import * as acorn from 'acorn'
+import acorn from 'acorn'
 import { ConfigEnv, Plugin as VitePlugin, UserConfig } from 'vite'
 import { extensions, builtins } from './utils'
 
