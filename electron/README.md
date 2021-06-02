@@ -1,6 +1,6 @@
 # An vite plugin for electron integration.
 
-## usage
+## Usage
 
 - vite.config.ts
 
