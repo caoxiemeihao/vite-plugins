@@ -1,11 +1,4 @@
-
-export interface CommonJsOptions {
-  code: string
-  sourcemap?: boolean
-  extensions?: string[] | ((exts: typeof DEFAULT_EXTENSIONS) => string[])
-}
-
-// -----------------------------------
+import { CommonJsOptions } from './types'
 
 export const DEFAULT_EXTENSIONS = [
   '.mjs',
