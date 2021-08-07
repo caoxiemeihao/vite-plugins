@@ -10,7 +10,7 @@ export const DEFAULT_EXTENSIONS = [
 ]
 
 export function isCommonjsFile(code: string) {
-  return /require|module|exports/.test(code)
+  return /\b(?:require|module|exports)\b/.test(code)
 }
 
 export function mergeOptions(options: CommonJsOptions): CommonJsOptions {
