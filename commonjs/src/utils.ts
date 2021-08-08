@@ -22,14 +22,14 @@ export function isCommonjs(code: string) {
  * { vue: true, type: 'style', index: '0', 'lang.less': true }
  * { vue: true, type: 'style', index: '0', scoped: 'true', 'lang.css': true }
  */
-export function parsePathQuery(querystring: string): Record<string, string | boolean> {
+export function parsePathQuery(querystring: string) {
   const [url, query] = querystring.split('?')
   try {
-    const dict = [...new URLSearchParams(query).entries()].reduce((acc, [k, v]) => (
+    const dict: Record<string, string | boolean> = [...new URLSearchParams(query).entries()].reduce((acc, [k, v]) => (
       { ...acc, [k]: v === '' ? true : v }
     ), { url, query })
-    delete (dict as Record<string, unknown>).index
-    return dict
+    const { index, ...omit } = dict
+    return omit
   } catch (error) {
     return {
       _error: error,
