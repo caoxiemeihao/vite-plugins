@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "An vite plugin for CommonJs syntax",
   "main": "dist/index.js",
-  "repository": "https://github.com/caoxiemeihao/vitejs-plugins/tree/main/commonjs",
+  "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/commonjs",
   "author": "草鞋没号 <wangjiawang580@hellobike.com>",
   "license": "MIT",
   "scripts": {
