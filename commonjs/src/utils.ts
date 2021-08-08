@@ -22,7 +22,7 @@ export function isCommonjs(code: string) {
  * { vue: true, type: 'style', index: '0', 'lang.less': true }
  * { vue: true, type: 'style', index: '0', scoped: 'true', 'lang.css': true }
  */
-export function parsePathQuery(querystring: string) {
+export function parsePathQuery(querystring: string): Record<string, string | boolean> {
   const [url, query] = querystring.split('?')
   try {
     const dict: Record<string, string | boolean> = [...new URLSearchParams(query).entries()].reduce((acc, [k, v]) => (
