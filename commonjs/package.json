@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-commonjs",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "An vite plugin for CommonJs syntax",
   "main": "dist/index.js",
   "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/commonjs",
@@ -18,5 +18,10 @@
   "dependencies": {
     "cjs-esm": "^0.1.0",
     "vue-template-compiler": "^2.6.14"
-  }
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "tsconfig.json"
+  ]
 }
