@@ -1,7 +1,13 @@
 {
   "compilerOptions": {
+    "target": "ES2018",
     "module": "ES2020",
     "esModuleInterop": true,
-    "moduleResolution": "Node"
-  }
+    "moduleResolution": "Node",
+    "allowJs": true,
+    "baseUrl": ".",
+    "outDir": "dist",
+    "declaration": true
+  },
+  "include": ["src/**/*.ts"]
 }
