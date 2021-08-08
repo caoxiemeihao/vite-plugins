@@ -5,9 +5,11 @@
     "esModuleInterop": true,
     "moduleResolution": "Node",
     "allowJs": true,
+    "jsx": "preserve",
     "baseUrl": ".",
     "outDir": "dist",
-    "declaration": true
+    "declaration": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": ["src/**/*.ts"]
 }
