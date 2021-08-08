@@ -4,7 +4,7 @@
   "description": "An vite plugin for CommonJs syntax",
   "main": "dist/index.js",
   "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/commonjs",
-  "author": "草鞋没号 <wangjiawang580@hellobike.com>",
+  "author": "草鞋没号 <308487730@qq.com>",
   "license": "MIT",
   "scripts": {
     "build": "tsc"
