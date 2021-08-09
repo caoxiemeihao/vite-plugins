@@ -7,10 +7,23 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.4.13.tgz#7dfd9c14661edc65cccd43a29eb454174642370d"
   integrity sha512-bLL69sKtd25w7p1nvg9pigE4gtKVpGTPojBFLMkGHXuUgap2sLqQt2qUnqmVCDfzGUL0DRNZP+1prIZJbMeAXg==
 
-cjs-esm@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/cjs-esm/-/cjs-esm-0.1.0.tgz#fa9e49853452749669e8d5843d6ce9ac8039e4f7"
-  integrity sha512-6J9Y7ukQN1VB+Mip7pBVZuPHwqq0I0u4ar4e4n9V0CHB9QknRp354tMyCuZX7HElO0ROwEGn0E3ZyBbQzfZSHQ==
+acorn-walk@^8.x:
+  version "8.1.1"
+  resolved "https://registry.yarnpkg.com/acorn-walk/-/acorn-walk-8.1.1.tgz#3ddab7f84e4a7e2313f6c414c5b7dac85f4e3ebc"
+  integrity sha512-FbJdceMlPHEAWJOILDk1fXD8lnTlEIWFkqtfk+MvmL5q/qlHfN7GEHcsFZWt/Tea9jRNPWUZG4G976nqAAmU9w==
+
+acorn@^8.x:
+  version "8.4.1"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.4.1.tgz#56c36251fc7cabc7096adc18f05afe814321a28c"
+  integrity sha512-asabaBSkEKosYKMITunzX177CXxQ4Q8BSSzMTKD+FefUhipQC70gfW5SiUDhYQ3vk8G+81HqQk7Fv9OXwwn9KA==
+
+cjs-esm@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/cjs-esm/-/cjs-esm-0.1.2.tgz#32c855c31a06056497c5065ccbaae02233dc1424"
+  integrity sha512-iq5fUX+ex8aUC2q/gE+2iMkZ6M1IFoAKZsU7+mHFacuLFmw0GJRhB0+31Ytw/BvSPZiPqKCPidmtTG3NTT2MMQ==
+  dependencies:
+    acorn "^8.x"
+    acorn-walk "^8.x"
 
 colorette@^1.2.2:
   version "1.2.2"
