@@ -4,6 +4,7 @@
     "module": "ES2020",
     "esModuleInterop": true,
     "moduleResolution": "Node",
+    "resolveJsonModule": true,
     "allowJs": true,
     "jsx": "preserve",
     "baseUrl": ".",
