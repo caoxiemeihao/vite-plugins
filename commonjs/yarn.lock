@@ -17,10 +17,10 @@ acorn@^8.x:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.4.1.tgz#56c36251fc7cabc7096adc18f05afe814321a28c"
   integrity sha512-asabaBSkEKosYKMITunzX177CXxQ4Q8BSSzMTKD+FefUhipQC70gfW5SiUDhYQ3vk8G+81HqQk7Fv9OXwwn9KA==
 
-cjs-esm@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/cjs-esm/-/cjs-esm-0.1.2.tgz#32c855c31a06056497c5065ccbaae02233dc1424"
-  integrity sha512-iq5fUX+ex8aUC2q/gE+2iMkZ6M1IFoAKZsU7+mHFacuLFmw0GJRhB0+31Ytw/BvSPZiPqKCPidmtTG3NTT2MMQ==
+cjs-esm@^0.1.3:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/cjs-esm/-/cjs-esm-0.1.3.tgz#bbcce8117ed8f27c8d89a4d81ebf202e7f216183"
+  integrity sha512-5d8CBCNohIGVS0nogNsKJBwwTaLxhU97BC8OoWfARyVepOLRAt2QljeNQQn2BnNot/BPKdBj5bJdHryp7b8EeQ==
   dependencies:
     acorn "^8.x"
     acorn-walk "^8.x"
@@ -97,9 +97,9 @@ resolve@^1.20.0:
     path-parse "^1.0.6"
 
 rollup@^2.38.5:
-  version "2.56.0"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.56.0.tgz#daa832955d2b58f1ed52a3c4c85b7d1adaf076d0"
-  integrity sha512-weEafgbjbHCnrtJPNyCrhYnjP62AkF04P0BcV/1mofy1+gytWln4VVB1OK462cq2EAyWzRDpTMheSP/o+quoiA==
+  version "2.56.1"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.56.1.tgz#f29dbc04a5d532dfa904f76b62395f359506211e"
+  integrity sha512-KkrsNjeiTfGJMUFBi/PNfj3fnt70akqdoNXOjlzwo98uA1qrlkmgt6SGaK5OwhyDYCVnJb6jb2Xa2wbI47P4Nw==
   optionalDependencies:
     fsevents "~2.3.2"
 
