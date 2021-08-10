@@ -4,20 +4,19 @@
 import path from 'path'
 import acorn from 'acorn'
 import { Plugin as VitePlugin, UserConfig } from 'vite'
-import { extensions, builtins } from './utils'
+import { EXTENSIONS, EXCLUDES, builtins } from './utils'
 
-export interface Esm2cjsOptions {
+export interface ElectronPluginOptions {
   excludes?: string[]
   config?: (conf: UserConfig) => UserConfig | null | void | Promise<UserConfig | null | void>
 }
 
-export default function electronEsm2cjs(options?: Esm2cjsOptions): VitePlugin {
-  const opts: Esm2cjsOptions = {
-    excludes: [
-      'electron',
-      'electron-store',
-    ],
-    ...options
+export default function (options: ElectronPluginOptions = {}): VitePlugin {
+  const opts: ElectronPluginOptions = {
+    excludes: options.excludes
+      ? EXCLUDES.concat(options.excludes)
+      : EXCLUDES,
+    ...options,
   }
 
   return {
@@ -58,7 +57,7 @@ export default function electronEsm2cjs(options?: Esm2cjsOptions): VitePlugin {
     },
     transform(code, id) {
       const parsed = path.parse(id)
-      if (!extensions.includes(parsed.ext)) return
+      if (!EXTENSIONS.includes(parsed.ext)) return
 
       const node: any = acorn.parse(code, {
         ecmaVersion: 'latest',

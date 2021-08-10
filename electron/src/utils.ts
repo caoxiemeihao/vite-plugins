@@ -1,6 +1,8 @@
 import { builtinModules } from 'module'
 
-export const extensions = ['.js', '.jsx', '.ts', '.tsx', '.vue']
+export const EXTENSIONS = ['.js', '.jsx', '.ts', '.tsx', '.vue']
+
+export const EXCLUDES = ['electron']
 
 export function cleanUrl(url: string) {
   return url.replace(/(\?|#).*$/, '')
