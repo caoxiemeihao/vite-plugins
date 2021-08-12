@@ -12,7 +12,7 @@ import electron from 'vitejs-plugin-electron'
 export default defineConfig((env) => ({
   plugins: [
     vue(),
-    electron(),
+    electron({ excludes: ['electron-store'] }),
   ],
   // other config...
 }))
@@ -26,7 +26,7 @@ export default defineConfig((env) => ({
 
   // Will be generate in development mode
   const { ipcRenderer } = require("electron")
-  const Store = require("electron-store")
+  const Store = require("electron-store").default
   ```
 
 ## Principe | 原理

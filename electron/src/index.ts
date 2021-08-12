@@ -17,10 +17,10 @@ export interface ElectronPluginOptions {
 
 export default function (options: ElectronPluginOptions = {}): VitePlugin {
   const opts: ElectronPluginOptions = {
+    ...options,
     excludes: options.excludes
       ? EXCLUDES.concat(options.excludes)
       : EXCLUDES,
-    ...options,
   }
 
   return {
@@ -63,7 +63,7 @@ export default function (options: ElectronPluginOptions = {}): VitePlugin {
       const parsed = parse(id)
       if (!EXTENSIONS.includes(parsed.ext)) return
 
-      process.env.viteId = id
+      process.env.vitejsPluginElectronTransformId = id
 
       return import2require(code, { excludes: opts.excludes }).code
     },
