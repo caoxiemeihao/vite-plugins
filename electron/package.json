@@ -1,6 +1,6 @@
 {
   "name": "vitejs-plugin-electron",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "An vite plugin for electron integrate",
   "main": "dist/index.js",
   "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/electron",
