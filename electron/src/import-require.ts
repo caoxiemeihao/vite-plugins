@@ -81,7 +81,7 @@ export function import2require(code: string, opts: Import2requireOptions): Impor
       if (imported.default) {
         requires.push(`const ${imported.default} = require("${Identifier}").default;`)
       }
-      if (imported.names.length) {
+      if (imported.names?.length) {
         const impts = imported.names.map(
           name => Array.isArray(name) ? `${name[0]}: ${name[1]}` : name,
         )
