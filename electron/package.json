@@ -3,40 +3,32 @@
   "version": "0.1.3",
   "description": "An vite plugin for electron integrate",
   "main": "dist/index.js",
-  "author": "草鞋没号 <wangjiawang580@hellobike.com>",
+  "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/electron",
+  "author": "草鞋没号 <308487730@qq.com>",
   "license": "MIT",
   "scripts": {
-    "-- tsc": "tsc src/*.ts --outDir dist --moduleResolution node --esModuleInterop --declaration",
-    "types": "tsc src/*.ts --outDir dist --moduleResolution node --esModuleInterop --declaration --declaration --emitDeclarationOnly",
-    "build": "node -r ts-node/register script/build.ts"
+    "build": "rm -rf dist && tsc",
+    "prepublish": "npm run build"
   },
-  "peerDependencies": {
-    "acorn": "^8.x.x"
+  "dependencies": {
+    "acorn": "^8.x.x",
+    "acorn-walk": "^8.x"
   },
-  "dependencies": {},
   "devDependencies": {
-    "@rollup/plugin-alias": "^3.1.2",
-    "@rollup/plugin-commonjs": "^19.0.0",
-    "@rollup/plugin-node-resolve": "^13.0.0",
-    "@rollup/plugin-typescript": "^8.2.1",
-    "@types/node": "^15.6.0",
-    "acorn": "^8.2.4",
-    "rollup": "^2.48.0",
-    "ts-node": "^9.1.1",
-    "tslib": "^2.2.0",
-    "typescript": "^4.2.4",
-    "vite": "^2.3.3"
+    "@types/node": "^16.x",
+    "tslib": "^2.x",
+    "typescript": "^4.x",
+    "vite": "^2.x"
   },
   "files": [
     "dist",
     "package.json",
+    "tsconfig.json",
     "README.md"
   ],
   "keywords": [
     "vite",
     "plugin",
-    "electron",
-    "esm2cjs"
-  ],
-  "homepage": "https://github.com/caoxiemeihao/vitejs-plugins/tree/main/electron"
+    "electron"
+  ]
 }
