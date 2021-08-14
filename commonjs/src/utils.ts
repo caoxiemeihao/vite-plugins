@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { AliasOptions } from 'vite'
-import vtc from 'vue-template-compiler'
+import * as vtc from 'vue-template-compiler'
 
 export const DEFAULT_EXTENSIONS = [
   '.mjs',
@@ -37,26 +37,63 @@ export function parsePathQuery(querystring: string): Record<string, string | boo
   }
 }
 
+export interface FileExistOptions {
+  exist?: boolean
+  /** 外部传入时，内部节查找时间 */
+  isDirectory?: boolean
+  /** filepath 为相对路径时需要 cwd */
+  cwd?: string
+  extensions?: string[]
+}
+export interface FileExistStat {
+  ext: string
+  /**
+   * tail === 'index' + ext : 目录
+   * tail === ext           : 缺少尾缀
+   * tail === ''            : filename 存在
+   */
+  tail: string
+  filename: string
+}
 /**
  * 依次根据文件尾缀检测文件是否存在
- * @param filepath 不带文件尾缀的路径
- * @returns 存在文件尾缀
+ * @param filepath 绝对路径，或相对路径；相对路径时需要 cwd
+ * @param options FileExistOptions
+ * @returns FileExistStat | void
  */
-export function detectFileExist(filepath: string): string | void {
-  const slashEnd = filepath.endsWith('/')
-  let fileExt = DEFAULT_EXTENSIONS.find(ext =>
-    fs.existsSync((slashEnd ? path.join(filepath, 'index') : filepath) + ext)
-  )
-  if (!slashEnd && !fileExt) {
-    // try concat '/index' tail.
-    const indexFile = DEFAULT_EXTENSIONS.find(ext =>
-      fs.existsSync(path.join(filepath, 'index') + ext)
-    )
-    if (indexFile) {
-      fileExt = `/index${indexFile}`
+export function detectFileExist(filepath: string, options: FileExistOptions = {}): FileExistStat | void {
+  const extensions = options.extensions ?? DEFAULT_EXTENSIONS
+  if (typeof options.cwd === 'string') { filepath = path.join(options.cwd, filepath) }
+
+  // detect is a directory
+  const exist = typeof options.exist === 'boolean' ? options.exist : fs.existsSync(filepath)
+  const isDirectory = exist
+    ? (typeof options.isDirectory === 'boolean' ? options.isDirectory : fs.statSync(filepath).isDirectory())
+    : void 0
+
+  // ddetect is a file
+  let ext: string
+  let tail: string
+  if (exist) {
+    if (isDirectory) {
+      ext = extensions.find(element => fs.existsSync(path.join(filepath, 'index') + element))
+      tail = 'index' + ext
+    } else {
+      ext = extensions.find(element => filepath.endsWith(element))
+      tail = ''
     }
+  } else {
+    ext = extensions.find(element => fs.existsSync(filepath + element))
+    tail = ext
   }
-  return fileExt
+
+  return ext
+    ? ({
+      ext,
+      tail,
+      filename: path.join(filepath, tail),
+    })
+    : void 0
 }
 
 /**
@@ -78,6 +115,6 @@ export function resolveFilename(alias: AliasOptions, filepath: string) {
     }
   }
 
-  const extension = detectFileExist(aliasPath ?? filepath)
-  return extension ? path.join(filepath, extension) : filepath
+  const tmp = detectFileExist(aliasPath ?? filepath)
+  return tmp ? path.join(filepath, tmp.tail) : filepath
 }

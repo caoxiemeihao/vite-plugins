@@ -38,8 +38,8 @@ export function vitePluginCommonjs(options: VitePluginCommonjsOptions = {}): Vit
             const filepath = arg0.CallExpression.require
             if (Array.isArray(refConifg.current.resolve.alias)) {
               /** @todo Array typed alias options */
-              const extension = detectFileExist(filepath)
-              arg0.CallExpression.require = extension ? path.join(filepath, extension) : filepath
+              const tmp = detectFileExist(filepath, { cwd: path.dirname(id) })
+              arg0.CallExpression.require = tmp ? path.join(filepath, tmp.tail) : filepath
             } else {
               arg0.CallExpression.require = resolveFilename(refConifg.current.resolve.alias ?? {}, filepath)
             }
