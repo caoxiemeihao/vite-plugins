@@ -1,7 +1,6 @@
 import fs from 'fs'
 import path from 'path'
 import { AliasOptions } from 'vite'
-import * as vtc from 'vue-template-compiler'
 
 export const DEFAULT_EXTENSIONS = [
   '.mjs',
@@ -94,13 +93,6 @@ export function detectFileExist(filepath: string, options: FileExistOptions = {}
       filename: path.join(filepath, tail),
     })
     : void 0
-}
-
-/**
- * convert vue file
- */
-export function convertVueFile(code: string) {
-  return vtc.parseComponent(code)
 }
 
 export function resolveFilename(alias: AliasOptions, filepath: string) {

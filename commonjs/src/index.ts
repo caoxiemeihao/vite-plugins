@@ -1,17 +1,18 @@
 import path from 'path'
 import { Plugin as VitePlugin, UserConfig } from 'vite'
-import cjsesm from 'cjs-esm'
+import * as vtc from 'vue-template-compiler'
+import { transform } from './cjs-esm'
 import {
   DEFAULT_EXTENSIONS,
   isCommonjs,
   parsePathQuery,
   detectFileExist,
   resolveFilename,
-  convertVueFile,
 } from './utils'
 
 export interface VitePluginCommonjsOptions {
   extensions?: string[]
+  catch?: (error: Error, ext: { filename: string;[k: string]: any; }) => void
 }
 
 export function vitePluginCommonjs(options: VitePluginCommonjsOptions = {}): VitePlugin {
@@ -31,25 +32,37 @@ export function vitePluginCommonjs(options: VitePluginCommonjsOptions = {}): Vit
       if (parsePathQuery(id).query) return
       if (!isCommonjs(code)) return
 
-      const code2 = id.endsWith('.vue') ? convertVueFile(code).script.content : code
-      const transformed = cjsesm.transform(code2, {
-        transformImport: {
-          transformPre(arg0) {
-            const filepath = arg0.CallExpression.require
-            if (Array.isArray(refConifg.current.resolve.alias)) {
-              /** @todo Array typed alias options */
-              const tmp = detectFileExist(filepath, { cwd: path.dirname(id) })
-              arg0.CallExpression.require = tmp ? path.join(filepath, tmp.tail) : filepath
-            } else {
-              arg0.CallExpression.require = resolveFilename(refConifg.current.resolve.alias ?? {}, filepath)
-            }
-          }
-        },
-      })
+      try {
+        const isVue = id.endsWith('.vue')
+        const parsed = isVue ? vtc.parseComponent(code) : null
+        const code2 = isVue ? parsed.script.content : code
 
-      return transformed.code
+        const transformed = transform(code2, {
+          transformImport: {
+            transformPre(arg0) {
+              const filepath = arg0.CallExpression.require
+              if (Array.isArray(refConifg.current.resolve.alias)) {
+                /** @todo Array typed alias options */
+                const tmp = detectFileExist(filepath, { cwd: path.dirname(id) })
+                arg0.CallExpression.require = tmp ? path.join(filepath, tmp.tail) : filepath
+              } else {
+                arg0.CallExpression.require = resolveFilename(refConifg.current.resolve.alias ?? {}, filepath)
+              }
+            }
+          },
+        })
+
+        if (isVue) {
+          return code.substring(0, parsed.script.start) + transformed.code + code.substring(parsed.script.end)
+        }
+        return transformed.code
+      } catch (error) {
+        if (options.catch) {
+          options.catch(error, { filename: id })
+        } else {
+          throw error
+        }
+      }
     },
   }
 }
-
-export default vitePluginCommonjs
