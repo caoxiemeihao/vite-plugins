@@ -21,22 +21,24 @@ export interface Transformed {
   context: Context
 }
 
+/**
+ * ! ! ! Necessary acorn@8.x ! ! !
+ * @param code 
+ * @param options 
+ * @returns 
+ */
 export function transform(code: string, options: TransformeOptions = {}): Transformed {
-  try {
-    const context = createContext({ code })
+  const context = createContext({ code })
 
-    createAnalyze(context).analyze()
-    createTransform(context, {
-      transformImport: options.transformImport,
-      transformExport: options.transformExport,
-    }).transform()
+  createAnalyze(context).analyze()
+  createTransform(context, {
+    transformImport: options.transformImport,
+    transformExport: options.transformExport,
+  }).transform()
 
-    return {
-      code: context.transformedCode,
-      sourcemap: context.sourcemap,
-      context,
-    }
-  } catch (error) {
-    throw error
+  return {
+    code: context.transformedCode,
+    sourcemap: context.sourcemap,
+    context,
   }
 }
