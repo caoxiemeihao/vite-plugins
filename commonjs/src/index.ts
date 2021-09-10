@@ -40,11 +40,14 @@ export function vitePluginCommonjs(options: VitePluginCommonjsOptions = {}): Vit
         const transformed = transform(code2, {
           transformImport: {
             transformPre(arg0) {
+              /**
+               * Complete suffix
+               */
               const filepath = arg0.CallExpression.require
               if (Array.isArray(refConifg.current.resolve.alias)) {
-                /** @todo Array typed alias options */
+                // @todo Array typed alias options
                 const tmp = detectFileExist(filepath, { cwd: path.dirname(id) })
-                arg0.CallExpression.require = tmp ? path.join(filepath, tmp.tail) : filepath
+                arg0.CallExpression.require = tmp ? detectFileExist.join(filepath, tmp) : filepath
               } else {
                 arg0.CallExpression.require = resolveFilename(refConifg.current.resolve.alias ?? {}, filepath)
               }

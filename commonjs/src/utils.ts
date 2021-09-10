@@ -94,6 +94,16 @@ export function detectFileExist(filepath: string, options: FileExistOptions = {}
     })
     : void 0
 }
+detectFileExist.join = function (filepath: string, stat: FileExistStat) {
+  if (stat.tail.includes('index')) {
+    return path.join(filepath, stat.tail)
+  }
+  if (stat.tail === stat.ext) {
+    return filepath + stat.tail
+  }
+  // stat.tail === ''
+  return filepath
+}
 
 export function resolveFilename(alias: AliasOptions, filepath: string) {
   /** @todo Array typed alias options */
@@ -108,5 +118,5 @@ export function resolveFilename(alias: AliasOptions, filepath: string) {
   }
 
   const tmp = detectFileExist(aliasPath ?? filepath)
-  return tmp ? path.join(filepath, tmp.tail) : filepath
+  return tmp ? detectFileExist.join(filepath, tmp) : filepath
 }
