@@ -90,7 +90,7 @@ export function detectFileExist(filepath: string, options: FileExistOptions = {}
     ? ({
       ext,
       tail,
-      filename: path.join(filepath, tail),
+      filename: detectFileExist.join(filepath, { ext, tail, filename: '' }),
     })
     : void 0
 }
