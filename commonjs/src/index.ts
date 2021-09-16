@@ -38,21 +38,21 @@ export function vitePluginCommonjs(options: VitePluginCommonjsOptions = {}): Vit
         const code2 = isVue ? parsed.script.content : code
 
         const transformed = transform(code2, {
-          transformImport: {
-            transformPre(arg0) {
-              /**
-               * Complete suffix
-               */
-              const filepath = arg0.CallExpression.require
-              if (Array.isArray(refConifg.current.resolve.alias)) {
-                // @todo Array typed alias options
-                const tmp = detectFileExist(filepath, { cwd: path.dirname(id) })
-                arg0.CallExpression.require = tmp ? detectFileExist.join(filepath, tmp) : filepath
-              } else {
-                arg0.CallExpression.require = resolveFilename(refConifg.current.resolve.alias ?? {}, filepath)
-              }
-            }
-          },
+          // transformImport: {
+          //   transformPre(arg0) {
+          //     /**
+          //      * Complete suffix
+          //      */
+          //     const filepath = arg0.CallExpression.require
+          //     if (Array.isArray(refConifg.current.resolve.alias)) {
+          //       // @todo Array typed alias options
+          //       const tmp = detectFileExist(filepath, { cwd: path.dirname(id) })
+          //       arg0.CallExpression.require = tmp ? detectFileExist.join(filepath, tmp) : filepath
+          //     } else {
+          //       arg0.CallExpression.require = resolveFilename(refConifg.current.resolve.alias ?? {}, filepath)
+          //     }
+          //   }
+          // },
         })
 
         if (isVue) {
