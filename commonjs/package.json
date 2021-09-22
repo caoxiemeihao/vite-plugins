@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-commonjs",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Pure javascript vite plugin for support CommonJs",
   "main": "dist/index.js",
   "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/commonjs",
