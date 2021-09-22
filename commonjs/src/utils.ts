@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { AliasOptions } from 'vite'
+import { AliasOptions, Alias } from 'vite'
 
 export const DEFAULT_EXTENSIONS = [
   '.mjs',
@@ -106,14 +106,20 @@ detectFileExist.join = function (filepath: string, stat: FileExistStat) {
 }
 
 export function resolveFilename(alias: AliasOptions, filepath: string) {
-  /** @todo Array typed alias options */
-  if (Array.isArray(alias)) { return filepath }
-
   let aliasPath: string
-  for (const [a, p] of Object.entries(alias)) {
-    if (filepath.startsWith(`${a}/`)) {
-      aliasPath = filepath.replace(a, p)
-      break
+  if (Array.isArray(alias)) {
+    for (const alia of (alias as Alias[])) {
+      if (alia.find instanceof RegExp ? alia.find.test(filepath) : filepath.startsWith(`${alia.find}/`)) {
+        aliasPath = filepath.replace(alia.find, alia.replacement)
+        break
+      }
+    }
+  } else {
+    for (const [a, p] of Object.entries(alias)) {
+      if (filepath.startsWith(`${a}/`)) {
+        aliasPath = filepath.replace(a, p)
+        break
+      }
     }
   }
 
