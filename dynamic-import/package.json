@@ -1,0 +1,30 @@
+{
+  "name": "vite-plugin-dynamic-import",
+  "version": "0.1.0",
+  "description": "Supported use alias in dynamic import",
+  "main": "dist/index.js",
+  "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/dynamic-import",
+  "author": "草鞋没号 <308487730@qq.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "prepublish": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^16.7.13",
+    "tslib": "^2.3.1",
+    "typescript": "^4.4.2",
+    "vite": "^2.5.4"
+  },
+  "dependencies": {
+    "acorn": "^8.5.0",
+    "acorn-walk": "^8.2.0",
+    "glob": "^7.1.7"
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "tsconfig.json",
+    "README.md"
+  ]
+}
