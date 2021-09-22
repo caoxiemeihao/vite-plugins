@@ -1,6 +1,17 @@
 # vite-plugin-dynamic-import
-An vite plugin for dynamic import syntax
+An vite plugin for dynamic import
 
+
+## Usage
+```javascript
+import { dynamicImport } from 'vite-plugin-dynamic-import'
+
+export default {
+  plugins: [
+    dynamicImport()
+  ]
+}
+```
 
 ## How and why?
 
@@ -50,7 +61,7 @@ An vite plugin for dynamic import syntax
 ## The plugin try fix the warning
 - supported `alias`
 
-  * you code
+  * original code
   ```javascript
   import(`@/views${x.component || x.path}`)
   ```

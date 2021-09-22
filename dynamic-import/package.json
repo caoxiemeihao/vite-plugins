@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-dynamic-import",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Supported use alias in dynamic import",
   "main": "dist/index.js",
   "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/dynamic-import",
