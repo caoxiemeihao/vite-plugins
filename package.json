@@ -1,0 +1,9 @@
+{
+  "name": "vite-plugins",
+  "private": true,
+  "author": "草鞋没号 <308487730@qq.com>",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*"
+  ]
+}
