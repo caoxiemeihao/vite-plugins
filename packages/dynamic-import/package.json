@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "description": "Supported use alias in dynamic import",
   "main": "dist/index.js",
-  "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/dynamic-import",
+  "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/dynamic-import",
   "author": "草鞋没号 <308487730@qq.com>",
   "license": "MIT",
   "scripts": {
