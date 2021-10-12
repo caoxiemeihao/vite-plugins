@@ -37,7 +37,7 @@ export function vitePluginCommonjs(options: VitePluginCommonjsOptions = {}): Vit
         let code2 = code
 
         if (isVue) {
-          if (!parsed.script.content) return
+          if (!parsed.script?.content) return
           code2 = parsed.script.content
         }
 
