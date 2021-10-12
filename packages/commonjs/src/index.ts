@@ -22,20 +22,24 @@ export function vitePluginCommonjs(options: VitePluginCommonjsOptions = {}): Vit
 
   return {
     name: 'vite-plugin-commonjs',
-    enforce: 'pre',
     config(config) {
       refConifg.current = config
     },
     transform(code, id) {
       if (/node_modules/.test(id)) return
       if (!extensions.some(ext => id.endsWith(ext))) return
-      if (parsePathQuery(id).query) return
+      // if (parsePathQuery(id).query) return
       if (!isCommonjs(code)) return
 
       try {
         const isVue = id.endsWith('.vue')
         const parsed = isVue ? vtc.parseComponent(code) : null
-        const code2 = isVue ? parsed.script.content : code
+        let code2 = code
+
+        if (isVue) {
+          if (!parsed.script.content) return
+          code2 = parsed.script.content
+        }
 
         const transformed = transform(code2, {
           // transformImport: {
