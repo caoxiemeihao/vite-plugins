@@ -1,6 +1,5 @@
 import path from 'path'
 import { Plugin as VitePlugin, UserConfig } from 'vite'
-import * as vtc from 'vue-template-compiler'
 import { transform } from './cjs-esm'
 import {
   DEFAULT_EXTENSIONS,
@@ -32,16 +31,7 @@ export function vitePluginCommonjs(options: VitePluginCommonjsOptions = {}): Vit
       if (!isCommonjs(code)) return
 
       try {
-        const isVue = id.endsWith('.vue')
-        const parsed = isVue ? vtc.parseComponent(code) : null
-        let code2 = code
-
-        if (isVue) {
-          if (!parsed.script?.content) return
-          code2 = parsed.script.content
-        }
-
-        const transformed = transform(code2, {
+        const transformed = transform(code, {
           // transformImport: {
           //   transformPre(arg0) {
           //     /**
@@ -59,9 +49,6 @@ export function vitePluginCommonjs(options: VitePluginCommonjsOptions = {}): Vit
           // },
         })
 
-        if (isVue) {
-          return code.substring(0, parsed.script.start) + transformed.code + code.substring(parsed.script.end)
-        }
         return transformed.code
       } catch (error) {
         if (options.catch) {
