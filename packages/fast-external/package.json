@@ -1,7 +1,7 @@
 {
   "name": "vite-plugin-fast-external",
   "version": "1.0.2",
-  "description": "An tiny and fast external for vite plugin.",
+  "description": "An tiny and fast external plugin for vite.",
   "main": "dist/index.js",
   "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external",
   "author": "草鞋没号 <308487730@qq.com>",
