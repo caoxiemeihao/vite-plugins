@@ -21,5 +21,10 @@
     "package.json",
     "tsconfig.json",
     "README.md"
+  ],
+  "keywords": [
+    "vite",
+    "external",
+    "vite-plugin-external"
   ]
 }
