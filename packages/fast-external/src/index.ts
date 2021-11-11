@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { Alias, Plugin as VitePlugin } from 'vite'
+import { Plugin as VitePlugin } from 'vite'
 
 export function external(
   externals: Record<string, string>,
@@ -16,55 +16,56 @@ export function external(
   const modCache: Record<string, string> = {}
   const root = process.cwd()
   const node_modules = path.join(root, 'node_modules')
-  const viteExternal = '.vite-plugin-fast-external'
+  const viteExternalId = '.vite-plugin-fast-external'
 
   return {
     name: 'vite-plugin-fast-external',
     config(config) {
       // ensure viteExternal exist
-      const externalDir = path.join(node_modules, viteExternal)
+      const externalDir = path.join(node_modules, viteExternalId)
       fs.existsSync(externalDir) || fs.mkdirSync(externalDir)
 
       // generate external module file.
       for (const [mod, iifeName] of Object.entries(externals)) {
-        const modFilename = path.join(node_modules, viteExternal, `${mod}.js`)
+        const modFilename = path.join(node_modules, viteExternalId, `${mod}.js`)
         if (!fs.existsSync(modFilename)) {
+          // for '@scope/name' package
+          ensureDir(path.parse(modFilename).dir)
+
           const modContent = options?.format === 'cjs'
-            ? `const ${mod} = window['${iifeName}']; module.exports = ${mod};`
-            : `const ${mod} = window['${iifeName}']; export { ${mod} as default }`
+            ? `const ${iifeName} = window['${iifeName}']; module.exports = ${iifeName};`
+            : `const ${iifeName} = window['${iifeName}']; export { ${iifeName} as default }`
+
           fs.writeFileSync(modFilename, modContent)
         }
       }
-
-      // merge external module to alias
-      const withExternalsAlias: Alias[] = Object.keys(externals).map(key => ({
-        find: key,
-        // splice node_modules prefix for third party package.jon correct resolved
-        // eg: element-ui
-        replacement: `node_modules/${viteExternal}/${key}.js`,
-      }))
-      const alias = config.resolve?.alias ?? {}
-      if (Object.prototype.toString.call(alias) === '[object Object]') {
-        for (const [find, replacement] of Object.entries(alias)) {
-          withExternalsAlias.push({ find, replacement })
-        }
-      } else if (Array.isArray(alias)) {
-        withExternalsAlias.push(...alias)
-      }
-
-      config.resolve = {
-        ...(config.resolve ?? {}),
-        alias: withExternalsAlias,
-      }
     },
     load(id) {
-      if (id.includes(viteExternal)) {
-        const modFilename = path.join(root, id)
+      const url = cleanUrl(id)
+      const parsed = path.parse(url)
+      const external = Object.entries(externals).find(([name]) => url.includes('node_modules') && parsed.name === name)
+      if (external) {
+        const modFilename = path.join(node_modules, viteExternalId, parsed.base)
 
         return modCache[modFilename] || (modCache[modFilename] = fs.readFileSync(modFilename, 'utf8'))
       }
     },
   }
+}
+
+function ensureDir(dir: string) {
+  try {
+    fs.statSync(dir).isDirectory()
+  } catch (error) {
+    fs.mkdirSync(dir, { recursive: true })
+  }
+  return dir
+}
+
+function cleanUrl(url: string) {
+  const queryRE = /\?.*$/s
+  const hashRE = /#.*$/s
+  return url.replace(hashRE, '').replace(queryRE, '')
 }
 
 export default external
