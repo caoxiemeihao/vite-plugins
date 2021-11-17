@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-lang-jsx",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Automatically add `lang=\"jsx\"` attribute for when using vite-plugin-vue2",
   "main": "index.js",
   "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/lang-jsx",

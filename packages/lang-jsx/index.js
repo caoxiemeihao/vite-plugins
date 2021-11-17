@@ -3,7 +3,7 @@ const { parseComponent } = require('vue-template-compiler');
 /**
  * @type {import('./index').LangJsx}
  */
-function langJsx(options) {
+function langJsx(options = {}) {
   return {
     name: 'vite-plugin-lang-jsx',
     enforce: 'pre',
@@ -11,9 +11,9 @@ function langJsx(options) {
       if (!id.endsWith('.vue')) return;
 
       const { script } = parseComponent(code)
-      const JSX = script?.content && /<[A-Za-z]/.test(script.content);
+      const JSX = script && script.content && /<[A-Za-z]/.test(script.content);
       if (JSX) {
-        return code.replace('<script>', `<script lang="${options?.lang || 'jsx'}">`);
+        return code.replace('<script>', `<script lang="${options.lang || 'jsx'}">`);
       }
     },
   };
