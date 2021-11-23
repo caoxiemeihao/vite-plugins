@@ -11,8 +11,8 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "acorn": "^8.x.x",
-    "acorn-walk": "^8.x"
+    "acorn": "^8.6.0",
+    "acorn-walk": "^8.2.0"
   },
   "devDependencies": {
     "@types/node": "^16.x",
