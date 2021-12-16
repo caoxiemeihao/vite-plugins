@@ -27,33 +27,33 @@ export function electron(options: Options = {}): VitePlugin[] {
     apply: 'serve',
     transform(code, id) {
       if (isLoadElectron(id)) {
-        const electronPath = require('electron')
         const electronModule = `
 /**
  * All exports module see https://www.electronjs.org -> API -> Renderer Process Modules
  */
 const {
   clipboard,
+  nativeImage,
+  shell,
   contextBridge,
   crashReporter,
-  desktopCapturer,
   ipcRenderer,
-  nativeImage,
   webFrame,
+  desktopCapturer,
 } = require('electron');
 
-const electronPath = '${electronPath}';
-
 export {
-  electronPath as default,
   clipboard,
+  nativeImage,
+  shell,
   contextBridge,
   crashReporter,
-  desktopCapturer,
   ipcRenderer,
-  nativeImage,
   webFrame,
+  desktopCapturer,
 }
+
+export default { clipboard, nativeImage, shell, contextBridge, crashReporter, ipcRenderer, webFrame, desktopCapturer };
 `
 
         return {
