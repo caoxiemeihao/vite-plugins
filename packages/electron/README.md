@@ -5,7 +5,7 @@
 [![NPM version](https://img.shields.io/npm/v/vitejs-plugin-electron.svg?style=flat)](https://npmjs.org/package/vitejs-plugin-electron)
 [![NPM Downloads](https://img.shields.io/npm/dm/vitejs-plugin-electron.svg?style=flat)](https://npmjs.org/package/vitejs-plugin-electron)
 
-## Example - [vite-webpack-electron](https://github.com/caoxiemeihao/vite-webpack-electron)
+## Example 👉 [vite-webpack-electron](https://github.com/caoxiemeihao/vite-webpack-electron)
 
 ## Usage
 
@@ -24,7 +24,15 @@
         // The 'external' option is required.
         // 'electron.externals' includes 'electron' and NodeJs builtin modules.
         external: [...electron.externals],
+        output: {
+          // The 'format' option is required.
+          // Electron only load CommonJs module.
+          format: 'cjs',
+        },
       },
+      // The 'assetsDir' option is required.
+      // Ensure correct module resolve after build.
+      assetsDir: '',
     },
     optimizeDeps: {
       // The 'exclude' option is optional.
@@ -61,25 +69,25 @@
   */
   const {
     clipboard,
+    nativeImage,
+    shell,
     contextBridge,
     crashReporter,
-    desktopCapturer,
     ipcRenderer,
-    nativeImage,
     webFrame,
+    desktopCapturer,
   } = require('electron');
 
-  const electronPath = '/project-absolute-path/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron';
-
   export {
-    electronPath as default,
     clipboard,
+    nativeImage,
+    shell,
     contextBridge,
     crashReporter,
-    desktopCapturer,
     ipcRenderer,
-    nativeImage,
     webFrame,
+    desktopCapturer,
   }
 
+  export default { clipboard, nativeImage, shell, contextBridge, crashReporter, ipcRenderer, webFrame, desktopCapturer };
   ```
