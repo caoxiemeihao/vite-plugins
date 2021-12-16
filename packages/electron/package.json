@@ -1,7 +1,7 @@
 {
   "name": "vitejs-plugin-electron",
-  "version": "1.0.0",
-  "description": "An vite plugin for electron integrate",
+  "version": "1.0.1",
+  "description": "An vite plugin for Electron Renderer-process use NodeJs API",
   "main": "dist/index.js",
   "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/electron",
   "author": "草鞋没号 <308487730@qq.com>",

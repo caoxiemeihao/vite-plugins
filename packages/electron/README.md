@@ -1,70 +1,78 @@
-# An vite plugin for electron integration.
+# An vite plugin for Electron Renderer-process use NodeJs API.
 
 ## Usage
 
-- vite.config.ts
+#### vite.config.ts
 
-```ts
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import electron from 'vitejs-plugin-electron'
-
-export default defineConfig((env) => ({
-  plugins: [
-    vue(),
-    electron({ excludes: ['electron-store'] }),
-  ],
-  // other config...
-}))
-```
-
-> renderer/foo.ts
   ```ts
-  // You code
-  import { ipcRenderer } from 'electron'
-  import Store from 'electron-store'
+  import { defineConfig } from 'vite'
+  import electron from 'vitejs-plugin-electron'
 
-  // Will be generate in development mode
-  const { ipcRenderer } = require("electron")
-  const Store = require("electron-store").default
+  export default defineConfig({
+    plugins: [
+      electron(),
+    ],
+    build: {
+      rollupOptions: {
+        // The external option is necessary.
+        // 'electron.externals' includes 'electron' as NodeJs builtin modules.
+        external: [...electron.externals], // 
+      },
+    },
+    optimizeDeps: {
+      // The exclude option is optional.
+      exclude: ['electron'],
+    },
+  })
   ```
 
-## Principe | 原理
+#### renderer/foo.ts
 
-#### The plugin is do only two things | 插件只做了两件事
+  ```ts
+  import { ipcRenderer } from 'electron'
 
-1. In the development phase, the modules related to `Electron` are compiled into `CommonJs` syntax<br>
-  在开发期将 `Electron` 相关的模块编译成了 `CommonJs` 格式
+  ipcRenderer.on('event-name', () => {
+    // somethine code...
+  })
+  ```
 
-```ts
-// You code
-import { ipcRenderer } from 'electron'
-import Store from 'electron-store'
+## How to work
 
-// Will be generate in development mode
-const { ipcRenderer } = require("electron")
-const Store = require("electron-store")
-```
+#### The plugin transform 'electron' and NodeJs builtin modules to ESModule format.
 
-2. Add some config options into `vite.config.ts`<br>
-  增加了 `vite.config.ts` 默认配置
+- If you have below code.
 
-```ts
-{
-  optimizeDeps: {
-    exclude: [
-      'electron'
-    ]
-  },
-  build: {
-    rollupOptions: {
-      external: [
-        'electron'
-      ],
-      output: {
-        format: 'cjs'
-      }
-    }
+  ```ts
+  import { ipcRenderer } from 'electron'
+  ```
+
+- Above code get below code when browser request 'electron'.
+
+  ```ts
+  /**
+  * All exports module see https://www.electronjs.org -> API -> Renderer Process Modules
+  */
+  const {
+    clipboard,
+    contextBridge,
+    crashReporter,
+    desktopCapturer,
+    ipcRenderer,
+    nativeImage,
+    webFrame,
+  } = require('electron');
+
+  const electronPath = '/project-absolute-path/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron';
+
+  export {
+    electronPath as default,
+    clipboard,
+    contextBridge,
+    crashReporter,
+    desktopCapturer,
+    ipcRenderer,
+    nativeImage,
+    webFrame,
   }
-}
-```
+
+  ```
