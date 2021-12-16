@@ -1,4 +1,9 @@
+[![npm package](https://nodei.co/npm/vitejs-plugin-electron.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/vitejs-plugin-electron)
+
 # An vite plugin for Electron Renderer-process use NodeJs API.
+
+[![NPM version](https://img.shields.io/npm/v/vitejs-plugin-electron.svg?style=flat)](https://npmjs.org/package/vitejs-plugin-electron)
+[![NPM Downloads](https://img.shields.io/npm/dm/vitejs-plugin-electron.svg?style=flat)](https://npmjs.org/package/vitejs-plugin-electron)
 
 ## Usage
 
@@ -14,13 +19,13 @@
     ],
     build: {
       rollupOptions: {
-        // The external option is necessary.
-        // 'electron.externals' includes 'electron' as NodeJs builtin modules.
-        external: [...electron.externals], // 
+        // The 'external' option is required.
+        // 'electron.externals' includes 'electron' and NodeJs builtin modules.
+        external: [...electron.externals],
       },
     },
     optimizeDeps: {
-      // The exclude option is optional.
+      // The 'exclude' option is optional.
       exclude: ['electron'],
     },
   })
