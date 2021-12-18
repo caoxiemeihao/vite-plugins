@@ -1,33 +1,34 @@
 import { builtinModules } from 'module'
 import { Plugin as VitePlugin } from 'vite'
 
-const externals = ['electron', ...builtinModules]
-// const builtins = builtinModules.filter(m => !/^_|^(internal|v8|node-inspect)\/|\//.test(m))
 export interface Options {
-  // /**
-  //  * The option will be work on 'viteConfig.build.rollupOptions.external', 'viteConfig.optimizeDeps.exclude' option.
-  //  * @default ['electron', ...require('module').builtinModules]
-  //  */
-  // externals?: string[]
+  /**
+   * @default electron.externals
+   */
+  externals?: typeof electron.externals
 }
 
-export function electron(options: Options = {}): VitePlugin[] {
+function electron(options: Options = {}): VitePlugin {
+  const externals = options.externals || electron.externals
   const cleanUrl = (url: string) => url.replace(/\?.*$/s, '').replace(/#.*$/s, '')
   const isLoadElectron = (id: string) => {
-    const cid = cleanUrl(id)
     // pre-build: 'node_modules/.vite/electron.js'
     // pnpm     : 'node_modules/.pnpm/electron@16.0.2/node_modules/electron/index.js'
     // yarn     : 'node_modules/electron/index.js'
     // npm      : 'node_modules/electron/index.js'
-    return cid.endsWith('electron/index.js') || cid.endsWith('.vite/electron.js')
+    return id.endsWith('electron/index.js') || id.endsWith('.vite/electron.js')
   }
-
-  const electronResolve: VitePlugin = {
-    name: 'vitejs-plugin-electron:electron-resolve',
-    apply: 'serve',
-    transform(code, id) {
-      if (isLoadElectron(id)) {
-        const electronModule = `
+  const getBuiltinModuleId = (id: string) => {
+    // /@id/__vite-browser-external:path
+    // /@id/__vite-browser-external:fs
+    if (!id.includes('__vite-browser-external')) {
+      return null
+    }
+    const moduleId = id.split(':')[1]
+    return externals.includes(moduleId) ? moduleId : null
+  }
+  const transformElectron = () => {
+    const electronModule = `
 /**
  * All exports module see https://www.electronjs.org -> API -> Renderer Process Modules
  */
@@ -56,31 +57,21 @@ export {
 export default { clipboard, nativeImage, shell, contextBridge, crashReporter, ipcRenderer, webFrame, desktopCapturer };
 `
 
-        return {
-          code: electronModule,
-          map: null,
-        }
-      }
-
-      return null
+    return {
+      code: electronModule,
+      map: null,
     }
   }
 
-  const builtinModulesResolve: VitePlugin = {
-    apply: 'serve',
-    name: 'vitejs-plugin-electron:builtinModules-resolve',
-    transform(code, id) {
-      if (id.includes('__vite-browser-external')) {
-        const moduleId = id.split(':')[1];
-        if (builtinModules.includes(moduleId)) {
-          const nodeModule = require(moduleId)
-          const attrs = Object.keys(nodeModule)
-          const requireTpl = `const __nodeModule = require('${moduleId}');`
-          const declaresTpl = attrs.map(attr => `const ${attr} = __nodeModule.${attr}`).join(';\n') + ';'
-          const exportTpl = `export {\n  ${attrs.join(',\n  ')},\n}`
-          const exportDefault = `export default { ${attrs.join(', ')} };`
+  const transformBuiltins = (moduleId: string) => {
+    const builtinModule = require(moduleId)
+    const attrs = Object.keys(builtinModule)
+    const requireTpl = `const __builtinModule = require('${moduleId}');`
+    const declaresTpl = attrs.map(attr => `const ${attr} = __builtinModule.${attr}`).join(';\n') + ';'
+    const exportTpl = `export {\n  ${attrs.join(',\n  ')},\n}`
+    const exportDefault = `export default { ${attrs.join(', ')} };`
 
-          const nodeModuleCode = `
+    const moduleCode = `
 ${requireTpl}
 
 ${declaresTpl}
@@ -91,23 +82,44 @@ ${exportDefault}
 
 `
 
-          return {
-            code: nodeModuleCode,
-            map: null,
-          }
-        }
-      }
-
-      return null
-    },
+    return {
+      code: moduleCode,
+      map: null,
+    }
   }
 
-  return [electronResolve, builtinModulesResolve]
+  return {
+    name: 'vitejs-plugin-electron',
+    configureServer(server) {
+      const setScriptHeader = (res: import('http').ServerResponse) => {
+        res.setHeader('Access-Control-Allow-Origin', '*')
+        res.setHeader('Cache-Control', 'max-age=3600')
+        res.setHeader('Content-Type', 'application/javascript')
+      }
+
+      server.middlewares.use((req, res, next) => {
+        if (req.url) {
+          const id = cleanUrl(req.url)
+          const builtinModuleId = getBuiltinModuleId(id)
+          if (isLoadElectron(id)) {
+            setScriptHeader(res)
+            res.end(transformElectron().code)
+            return
+          } else if (builtinModuleId) {
+            setScriptHeader(res)
+            res.end(transformBuiltins(builtinModuleId).code)
+            return
+          }
+        }
+        next()
+      })
+    },
+  }
 }
 
 /**
  * @description ['electron', ...require('module').builtinModules]
  */
-electron.externals = externals
+electron.externals = ['electron', ...builtinModules]
 
 export default electron
