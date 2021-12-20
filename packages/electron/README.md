@@ -5,7 +5,7 @@
 [![NPM version](https://img.shields.io/npm/v/vitejs-plugin-electron.svg?style=flat)](https://npmjs.org/package/vitejs-plugin-electron)
 [![NPM Downloads](https://img.shields.io/npm/dm/vitejs-plugin-electron.svg?style=flat)](https://npmjs.org/package/vitejs-plugin-electron)
 
-## Example 👉 [vite-webpack-electron](https://github.com/caoxiemeihao/vite-webpack-electron)
+## Example 👉 [electron-vite-boilerplate](https://github.com/caoxiemeihao/electron-vite-boilerplate)
 
 ## Usage
 
