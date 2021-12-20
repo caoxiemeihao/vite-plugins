@@ -26,7 +26,7 @@ export function electron(options: Options = {}): VitePlugin[] {
   }
 
   const electronResolve: VitePlugin = {
-    name: 'vitejs-plugin-electron:electron-resolve',
+    name: 'vite-plugin-electron:electron-resolve',
     apply: 'serve',
     transform(code, id) {
       if (isLoadElectron(id)) {
@@ -71,7 +71,7 @@ export default { clipboard, nativeImage, shell, contextBridge, crashReporter, ip
 
   const builtinModulesResolve: VitePlugin = {
     apply: 'serve',
-    name: 'vitejs-plugin-electron:builtinModules-resolve',
+    name: 'vite-plugin-electron:builtinModules-resolve',
     transform(code, id) {
       if (id.includes('__vite-browser-external')) {
         const moduleId = id.split(':')[1];

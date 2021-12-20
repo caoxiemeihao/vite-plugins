@@ -89,7 +89,7 @@ ${exportDefault}
   }
 
   return {
-    name: 'vitejs-plugin-electron',
+    name: 'vite-plugin-electron',
     configureServer(server) {
       const setScriptHeader = (res: import('http').ServerResponse) => {
         res.setHeader('Access-Control-Allow-Origin', '*')
