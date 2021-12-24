@@ -28,33 +28,32 @@ function electron(options: Options = {}): VitePlugin {
     return externals.includes(moduleId) ? moduleId : null
   }
   const transformElectron = () => {
+    const electronExports = [
+      'clipboard',
+      'nativeImage',
+      'shell',
+      'contextBridge',
+      'crashReporter',
+      'ipcRenderer',
+      'webFrame',
+      'desktopCapturer',
+      'deprecate',
+    ].join(',\n  ');
     const electronModule = `
 /**
  * All exports module see https://www.electronjs.org -> API -> Renderer Process Modules
  */
 const {
-  clipboard,
-  nativeImage,
-  shell,
-  contextBridge,
-  crashReporter,
-  ipcRenderer,
-  webFrame,
-  desktopCapturer,
+  ${electronExports}
 } = require('electron');
 
 export {
-  clipboard,
-  nativeImage,
-  shell,
-  contextBridge,
-  crashReporter,
-  ipcRenderer,
-  webFrame,
-  desktopCapturer,
+  ${electronExports}
 }
 
-export default { clipboard, nativeImage, shell, contextBridge, crashReporter, ipcRenderer, webFrame, desktopCapturer };
+export default {
+  ${electronExports}
+};
 `
 
     return {

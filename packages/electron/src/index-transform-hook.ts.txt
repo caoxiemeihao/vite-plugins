@@ -43,6 +43,7 @@ const {
   ipcRenderer,
   webFrame,
   desktopCapturer,
+  deprecate,
 } = require('electron');
 
 export {
@@ -54,9 +55,10 @@ export {
   ipcRenderer,
   webFrame,
   desktopCapturer,
+  deprecate,
 }
 
-export default { clipboard, nativeImage, shell, contextBridge, crashReporter, ipcRenderer, webFrame, desktopCapturer };
+export default { clipboard, nativeImage, shell, contextBridge, crashReporter, ipcRenderer, webFrame, desktopCapturer, deprecate };
 `
 
         return {
