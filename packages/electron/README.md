@@ -65,8 +65,8 @@
 
   ```ts
   /**
-  * All exports module see https://www.electronjs.org -> API -> Renderer Process Modules
-  */
+   * All exports module see https://www.electronjs.org -> API -> Renderer Process Modules
+   */
   const {
     clipboard,
     nativeImage,
@@ -76,6 +76,7 @@
     ipcRenderer,
     webFrame,
     desktopCapturer,
+    deprecate
   } = require('electron');
 
   export {
@@ -87,9 +88,20 @@
     ipcRenderer,
     webFrame,
     desktopCapturer,
+    deprecate
   }
 
-  export default { clipboard, nativeImage, shell, contextBridge, crashReporter, ipcRenderer, webFrame, desktopCapturer };
+  export default {
+    clipboard,
+    nativeImage,
+    shell,
+    contextBridge,
+    crashReporter,
+    ipcRenderer,
+    webFrame,
+    desktopCapturer,
+    deprecate
+  };
   ```
 
 **Using NodeJs API in Renderer-process.**
