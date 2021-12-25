@@ -171,6 +171,12 @@
         },
       }),
     ],
+    optimizeDeps: {
+      // Optional.
+      exclude: [
+        'electron-store',
+      ],
+    },
     // other configuration...
   })
   ```
