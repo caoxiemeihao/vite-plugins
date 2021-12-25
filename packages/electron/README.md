@@ -154,5 +154,24 @@
 
   export default { resolve, normalize, isAbsolute, join, relative, toNamespacedPath, dirname, basename, extname, format, parse, sep, delimiter, win32, posix, _makeLong };
 
-
   ```
+
+## Custom external resolve code
+
+  ```ts
+  export default defineConfig({
+    plugins: [
+      electron({
+        external: {
+          'electron-store': `
+            const Store = require('electron-store');
+            export { Store as default }
+          `,
+          // other external module...
+        },
+      }),
+    ],
+    // other configuration...
+  })
+  ```
+
