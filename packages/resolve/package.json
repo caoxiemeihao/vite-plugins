@@ -1,0 +1,22 @@
+{
+  "name": "vite-plugin-resolve",
+  "version": "1.0.0",
+  "description": "Custom resolve code for vite",
+  "main": "src/index.js",
+  "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/resolve",
+  "author": "草鞋没号 <308487730@qq.com>",
+  "license": "MIT",
+  "scripts": {},
+  "devDependencies": {},
+  "files": [
+    "src",
+    "package.json",
+    "README.md"
+  ],
+  "keywords": [
+    "vite",
+    "resolve",
+    "external",
+    "vite-plugin-resolve"
+  ]
+}
