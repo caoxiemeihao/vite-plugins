@@ -8,14 +8,15 @@ export interface Options {
   externals?: typeof electron.externals
   /**
    * custom external resolve code.
-   * @example external: {
-   *   'electron-store': `
-   *     const Store = require('electron-store');
-   *     export { Store as default }
-   *   `
+   * @example
+   * resolve: {
+   *   // use string
+   *   'electron-store': `const Store = require('electron-store'); export default Store;`,
+   *   // use function to return string
+   *   sqlite3: () => `const Database = require('sqlite3').Database; export { Database }`,
    * }
    */
-  external?: Record<string, string>
+  resolve?: Record<string, string>
 }
 
 function electron(options: Options = {}): VitePlugin {
@@ -103,7 +104,7 @@ ${exportDefault}
   return {
     name: 'vite-plugin-electron',
     configureServer(server) {
-      const externalKeys = Object.keys(options.external || {})
+      const resolveKeys = Object.keys(options.resolve || {})
       const setScriptHeader = (res: import('http').ServerResponse, cacheControl = true) => {
         res.setHeader('Access-Control-Allow-Origin', '*')
         res.setHeader('Content-Type', 'application/javascript')
@@ -127,10 +128,10 @@ ${exportDefault}
             return
           }
 
-          const externalKey = externalKeys.find(module => isExternalModule(module, id))
-          if (externalKey) {
+          const resolveKey = resolveKeys.find(module => isExternalModule(module, id))
+          if (resolveKey) {
             setScriptHeader(res, false)
-            res.end(options.external[externalKey])
+            res.end(options.resolve[resolveKey])
             return
           }
 
