@@ -104,10 +104,10 @@ ${exportDefault}
     name: 'vite-plugin-electron',
     configureServer(server) {
       const externalKeys = Object.keys(options.external || {})
-      const setScriptHeader = (res: import('http').ServerResponse) => {
+      const setScriptHeader = (res: import('http').ServerResponse, cacheControl = true) => {
         res.setHeader('Access-Control-Allow-Origin', '*')
-        res.setHeader('Cache-Control', 'max-age=3600')
         res.setHeader('Content-Type', 'application/javascript')
+        cacheControl && res.setHeader('Cache-Control', 'max-age=3600')
       }
 
       server.middlewares.use((req, res, next) => {
@@ -129,7 +129,7 @@ ${exportDefault}
 
           const externalKey = externalKeys.find(module => isExternalModule(module, id))
           if (externalKey) {
-            setScriptHeader(res)
+            setScriptHeader(res, false)
             res.end(options.external[externalKey])
             return
           }
