@@ -158,16 +158,17 @@ export default { resolve, normalize, isAbsolute, join, relative, toNamespacedPat
 
 ## Custom external resolve code
 
+> Same as [vite-plugin-resolve](https://www.npmjs.com/package/vite-plugin-resolve)
+
   ```ts
   export default defineConfig({
     plugins: [
       electron({
-        external: {
-          'electron-store': `
-            const Store = require('electron-store');
-            export { Store as default }
-          `,
-          // other external module...
+        resolve: {
+          // use string
+          'electron-store': `const Store = require('electron-store'); export default Store;`,
+          // use function to return string
+          sqlite3: () => `const Database = require('sqlite3').Database; export { Database }`,
         },
       }),
     ],
@@ -175,6 +176,7 @@ export default { resolve, normalize, isAbsolute, join, relative, toNamespacedPat
       // Optional.
       exclude: [
         'electron-store',
+        'sqlite3',
       ],
     },
     // other configuration...
