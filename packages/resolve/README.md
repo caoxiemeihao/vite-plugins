@@ -19,10 +19,10 @@ import viteResolve from 'vite-plugin-resolve'
 export default defineConfig({
   plugins: [
     viteResolve({
-      // use string
+      // use string in web
       vue: `const vue = window.Vue; export default vue;`,
-      // use function to return string
-      vuex: () => `const vuex = window.Vuex; export default Vuex;`,
+      // use function to return string in electron
+      electron: () => `const electron = require('electron'); export default electron;`,
     })
   ]
 })
