@@ -16,7 +16,7 @@ export interface Options {
    *   sqlite3: () => `const Database = require('sqlite3').Database; export { Database }`,
    * }
    */
-  resolve?: Record<string, string>
+  resolve?: Record<string, string | (() => string)>
 }
 
 function electron(options: Options = {}): VitePlugin {
@@ -131,7 +131,8 @@ ${exportDefault}
           const resolveKey = resolveKeys.find(module => isExternalModule(module, id))
           if (resolveKey) {
             setScriptHeader(res, false)
-            res.end(options.resolve[resolveKey])
+            const resolver = options.resolve[resolveKey]
+            res.end(typeof resolver === 'function' ? resolver() : resolver)
             return
           }
 
