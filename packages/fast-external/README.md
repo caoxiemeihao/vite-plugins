@@ -10,7 +10,7 @@
 ### Installation
 
 ```bash
-npm install vite-plugin-fast-external --save-dev
+npm i -D vite-plugin-fast-external
 ```
 
 ## Usage
@@ -21,17 +21,20 @@ import fastExternal from 'vite-plugin-fast-external';
 export default defineConfig({
   plugins: [
     fastExternal({
+      // use string
       vue: 'Vue',
+      // custom external code by function
+      react: () => `const React = window.ReactLibName; export default React;`,
     })
   ]
-});
+})
 ```
 
-## Definition
+## Options define
 
 ```typescript
 export type fastExternal = (
-  externals: Record<string, string>,
+  externals: Record<string, string | (() => string)>,
   options?: {
     /**
      * @default 'esm'
@@ -45,28 +48,18 @@ export type fastExternal = (
 
 ## How to work
 
-- Generate ESModule code into `node_modules/.vite-plugin-fast-external/xxxx.js` - eg:
-
-  ```js
-  // source code
-  import Vue from 'vue'
-  // transformed
-  const vue = window['Vue']; export { vue as default }
-  ```
-
-- `node_modules/.vite-plugin-fast-external/xxxx.js` will be return when vite load hooks - eg:
+1. External-module will be generated code into `node_modules/.vite-plugin-fast-external/xxxx.js`
+2. Append an external-module alias
 
   ```js
   {
-    name: 'vite-plugin-fast-external',
-    load(id) {
-      if (id.includes('node_modules/.vite-plugin-fast-external')) {
-        return fs.readFileSync(externalFilename, 'utf8')
-      }
+    resolve: {
+      alias: [
+        {
+          find: 'vue',
+          replacement: 'User/work-directory/node_modules/.vite-plugin-fast-external/vue.js',
+        },
+      ],
     },
-  },
+  }
   ```
-
-## TODO
-
-- [ ] Support multiple member import, such as `import { ref, watch } from '@vue/composition-api'`
