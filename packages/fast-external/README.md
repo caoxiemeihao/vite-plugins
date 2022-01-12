@@ -24,7 +24,7 @@ export default defineConfig({
       // use string
       vue: 'Vue',
       // custom external code by function
-      react: () => `const React = window.ReactLibName; export default React;`,
+      '@scope/name': () => `const Lib = window.LibraryName; export default Lib;`,
     })
   ]
 })
