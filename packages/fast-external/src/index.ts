@@ -1,55 +1,53 @@
 import fs from 'fs'
 import path from 'path'
-import { Plugin as VitePlugin } from 'vite'
+import { Plugin as VitePlugin, UserConfig, Alias } from 'vite'
+
+export type Externals = Record<string, string | (() => string)>
+export interface ExternalOptions {
+  format: 'esm' | 'cjs'
+}
 
 export function external(
-  externals: Record<string, string>,
-  options?: {
-    /**
-     * @default 'esm'
-     * esm will generate code - const vue = window['Vue']; export { vue as default };
-     * cjs will generate code - const vue = window['Vue']; module.exports = vue;
-     */
-    format: 'esm' | 'cjs'
-  },
+  /**
+   * @example
+   * export default defineConfig({
+   *   plugins: [
+   *     fastExternal({
+   *       // use string
+   *       vue: 'Vue',
+   *       // custom external code by function
+   *       react: () => `const React = window.ReactLibName; export default React;`,
+   *     })
+   *   ]
+   * })
+   */
+  externals: Externals,
+  /**
+   * @default 'esm'
+   * @example
+   * esm will generate code -> const vue = window['Vue']; export { vue as default };
+   * cjs will generate code -> const vue = window['Vue']; module.exports = vue;
+   */
+  options?: ExternalOptions,
 ): VitePlugin {
-  const modCache: Record<string, string> = {}
-  const root = process.cwd()
-  const node_modules = path.join(root, 'node_modules')
+  let root = process.cwd()
   const viteExternalId = '.vite-plugin-fast-external'
 
   return {
     name: 'vite-plugin-fast-external',
     config(config) {
-      // ensure viteExternal exist
-      const externalDir = path.join(node_modules, viteExternalId)
-      fs.existsSync(externalDir) || fs.mkdirSync(externalDir)
-
-      // generate external module file.
-      for (const [mod, iifeName] of Object.entries(externals)) {
-        const modFilename = path.join(node_modules, viteExternalId, `${mod}.js`)
-        if (!fs.existsSync(modFilename)) {
-          // for '@scope/name' package
-          ensureDir(path.parse(modFilename).dir)
-
-          const modContent = options?.format === 'cjs'
-            ? `const ${iifeName} = window['${iifeName}']; module.exports = ${iifeName};`
-            : `const ${iifeName} = window['${iifeName}']; export { ${iifeName} as default }`
-
-          fs.writeFileSync(modFilename, modContent)
-        }
+      // init root path
+      if (config.root && path.isAbsolute(config.root)) {
+        // TODO: config.root is relative path
+        root = config.root
       }
-    },
-    load(id) {
-      const url = cleanUrl(id)
-      const parsed = path.parse(url)
-      const external = Object.entries(externals).find(([name]) => url.includes('node_modules') && parsed.name === name)
-      if (external) {
-        const modFilename = path.join(node_modules, viteExternalId, parsed.base)
 
-        return modCache[modFilename] || (modCache[modFilename] = fs.readFileSync(modFilename, 'utf8'))
-      }
-    },
+      // Step 1
+      generateExternalFile(root, externals, viteExternalId, options?.format || 'esm')
+
+      // Step 2
+      rewriteAlias(root, config, externals, viteExternalId)
+    }
   }
 }
 
@@ -62,10 +60,71 @@ function ensureDir(dir: string) {
   return dir
 }
 
-function cleanUrl(url: string) {
-  const queryRE = /\?.*$/s
-  const hashRE = /#.*$/s
-  return url.replace(hashRE, '').replace(queryRE, '')
+function node_modules(root: string, count = 0) {
+  const p = path.join(root, 'node_modules')
+  if (fs.existsSync(p)) {
+    return p
+  }
+  if (count >= 19) {
+    throw new Error('Can not found node_modules directory.')
+  }
+  return node_modules(path.join(root, '..'), count + 1)
+}
+
+function generateExternalFile(
+  root: string,
+  externals: Externals,
+  viteExternalId: string,
+  format: ExternalOptions['format']
+) {
+  // ensure {viteExternal} directory existed
+  const externalDir = path.join(node_modules(root), viteExternalId)
+  fs.existsSync(externalDir) || fs.mkdirSync(externalDir)
+
+  // generate external module file.
+  for (const [module, strOrFn] of Object.entries(externals)) {
+    const modFilename = path.join(node_modules(root), viteExternalId, `${module}.js`)
+    if (!fs.existsSync(modFilename)) {
+      // for '@scope/name' package
+      ensureDir(path.parse(modFilename).dir)
+
+      let moduleContent: string
+
+      if (typeof strOrFn === 'string') {
+        const iifeName = strOrFn
+        moduleContent = format === 'cjs'
+          ? `const ${iifeName} = window['${iifeName}']; module.exports = ${iifeName};`
+          : `const ${iifeName} = window['${iifeName}']; export { ${iifeName} as default }`
+      } else {
+        moduleContent = strOrFn()
+      }
+
+      fs.writeFileSync(modFilename, moduleContent)
+    }
+  }
+}
+
+function rewriteAlias(
+  root: string,
+  config: UserConfig,
+  external: Externals,
+  viteExternalId: string
+) {
+  if (!config.resolve) {
+    config.resolve = {}
+  }
+
+  let alias = config.resolve.alias || {}
+  if (!Array.isArray(alias)) {
+    alias = Object.entries(alias).map(([k, v]) => ({ find: k, replacement: v }))
+  }
+
+  Object.keys(external).forEach(k => {
+    // redirect external module to `node_modules/.vite-plugin-fast-external` directory
+    (alias as Alias[]).push({ find: k, replacement: path.join(node_modules(root), viteExternalId, k) })
+  })
+
+  config.resolve.alias = alias
 }
 
 export default external
