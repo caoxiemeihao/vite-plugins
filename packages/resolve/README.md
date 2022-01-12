@@ -20,11 +20,31 @@ import viteResolve from 'vite-plugin-resolve'
 export default defineConfig({
   plugins: [
     viteResolve({
-      // use string in web
+      // use code string
       vue: `const vue = window.Vue; export default vue;`,
+      // use nested module and function to return code string
+      '@scope/name': () => `const Lib = window.LibraryName; export default Lib;`,
       // use function to return string in electron
       'electron-store': () => `const Store = require('electron-store'); export default Store;`,
     })
   ]
 })
 ```
+
+## How to work
+
+1. Resolve-module will be generated code into `node_modules/.vite-plugin-resolve/xxxx.js`
+2. Append an resolve-module into alias
+
+  ```js
+  {
+    resolve: {
+      alias: [
+        {
+          find: 'vue',
+          replacement: 'User/work-directory/node_modules/.vite-plugin-resolve/vue.js',
+        },
+      ],
+    },
+  }
+  ```

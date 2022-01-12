@@ -14,8 +14,10 @@ const path = require('path');
  *     viteResolve({
  *       // use code string
  *       vue: `const vue = window.Vue; export default vue;`,
- *       // use function to return code string
+ *       // use nested module and function to return code string
  *       '@scope/name': () => `const Lib = window.LibraryName; export default Lib;`,
+ *       // use function to return string in electron
+ *       'electron-store': () => `const Store = require('electron-store'); export default Store;`,
  *     })
  *   ]
  * })
