@@ -36,7 +36,7 @@ module.exports = function (dict = {}) {
       }
 
       // step-1
-      generateReolveFile(
+      generateResolveFile(
         root,
         resolvePluginDirectory,
         dict
@@ -53,7 +53,7 @@ module.exports = function (dict = {}) {
   }
 }
 
-function generateReolveFile(
+function generateResolveFile(
   root,
   directory,
   resolveDict
@@ -115,11 +115,9 @@ function node_modules(root, count = 0) {
   return node_modules(path.join(root, '..'), count + 1);
 }
 
-function ensureDir(dir) {
-  try {
-    fs.statSync(dir).isDirectory();
-  } catch (error) {
-    fs.mkdirSync(dir, { recursive: true });
+export function ensureDir(dir) {
+  if (!(fs.existsSync(dir) && fs.statSync(dir).isDirectory())) {
+    fs.mkdirSync(dir, { recursive: true })
   }
-  return dir;
+  return dir
 }
