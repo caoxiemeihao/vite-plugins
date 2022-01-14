@@ -1,27 +1,18 @@
 {
   "name": "vite-plugin-fast-external",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "An tiny and fast external plugin for vite.",
-  "main": "dist/index.js",
+  "main": "index.js",
   "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external",
   "author": "草鞋没号 <308487730@qq.com>",
   "license": "MIT",
-  "scripts": {
-    "build": "rm -rf dist && tsc"
-  },
+  "scripts": {},
   "devDependencies": {
     "@types/node": "^16.11.6",
     "tslib": "^2.3.1",
     "typescript": "^4.4.4",
     "vite": "^2.6.13"
   },
-  "files": [
-    "dist",
-    "src",
-    "package.json",
-    "tsconfig.json",
-    "README.md"
-  ],
   "keywords": [
     "vite",
     "external",
