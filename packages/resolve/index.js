@@ -93,7 +93,7 @@ function node_modules(root, count = 0) {
 
 function ensureDir(dir) {
   if (!(fs.existsSync(dir) && fs.statSync(dir).isDirectory())) {
-    fs.mkdirSync(dir, { recursive: true })
+    fs.mkdirSync(dir, { recursive: true });
   }
-  return dir
+  return dir;
 }
