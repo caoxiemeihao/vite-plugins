@@ -22,10 +22,10 @@ export default defineConfig({
     viteResolve({
       // use code string
       vue: `const vue = window.Vue; export default vue;`,
-      // use nested module and function to return code string
+      // use nested module name, return code string through function
       '@scope/name': () => `const Lib = window.LibraryName; export default Lib;`,
-      // use function to return string in electron
-      'electron-store': () => `const Store = require('electron-store'); export default Store;`,
+      // use in electron
+      'electron': `const Electron = require('electron'); export default Electron;`,
     })
   ]
 })
@@ -33,7 +33,7 @@ export default defineConfig({
 
 ## How to work
 
-1. Resolve-module will be generated code into `node_modules/.vite-plugin-resolve/xxxx.js`
+1. Resolve-module will be generated code into `node_modules/.vite-plugin-resolve/vue.js`
 2. Append an resolve-module into alias
 
   ```js
