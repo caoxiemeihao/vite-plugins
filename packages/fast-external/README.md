@@ -21,7 +21,6 @@ import fastExternal from 'vite-plugin-fast-external';
 export default defineConfig({
   plugins: [
     fastExternal({
-      // use string
       // will generate code `const vue = window['Vue']; export { vue as default }`
       vue: 'Vue',
       // custom external code by function
@@ -39,17 +38,17 @@ export type fastExternal = (
   options?: {
     /**
      * @default 'esm'
-     * esm will generate code - const vue = window['Vue']; export { vue as default }
-     * cjs will generate code - const vue = window['Vue']; module.exports = vue;
+     * esm will generate code -> const vue = window['Vue']; export { vue as default }
+     * cjs will generate code -> const vue = window['Vue']; module.exports = vue;
      */
     format: 'esm' | 'cjs'
-  },
+  }
 ) => VitePlugin
 ```
 
 ## How to work
 
-1. External-module will be generated code into `node_modules/.vite-plugin-fast-external/xxxx.js`
+1. External-module will be generated code into `node_modules/.vite-plugin-fast-external/vue.js`
 2. Append an external-module alias
 
   ```js

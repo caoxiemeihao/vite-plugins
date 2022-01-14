@@ -1,38 +1,8 @@
 const fs = require('fs')
 const path = require('path')
 
-/**
- * @typedef {Record<string, string | (() => string)>} Externals
- * @typedef {{format: 'esm' | 'cjs'}} Options
- */
-
-/**
- * 
- * @param {Externals} externals 
- * @param {Options} options 
- * @returns {import('vite').Plugin}
- */
 module.exports = function external(
-  /**
-   * @example
-   * export default defineConfig({
-   *   plugins: [
-   *     fastExternal({
-   *       // use string
-   *       vue: 'Vue',
-   *       // custom external code by function
-   *       '@scope/name': () => `const Lib = window.LibraryName; export default Lib;`,
-   *     })
-   *   ]
-   * })
-   */
   externals,
-  /**
-   * @example
-   * esm will generate code -> const vue = window['Vue']; export { vue as default };
-   * cjs will generate code -> const vue = window['Vue']; module.exports = vue;
-   * @default 'esm'
-   */
   options = {},
 ) {
   let root = process.cwd()
@@ -77,7 +47,7 @@ function generateExternalFile(
   directory,
   format
 ) {
-  // ensure {viteExternal} directory existed
+  // ensure .vite-plugin-fast-external directory existed
   const externalDir = path.join(node_modules(root), directory)
   fs.existsSync(externalDir) || fs.mkdirSync(externalDir)
 
