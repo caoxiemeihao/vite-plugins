@@ -1,28 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-/**
- * @typedef {{(dict: Record<string, string | () => string>) => import('vite').Plugin}} ViteResolve 
- */
-
-/**
- * Custom resolve code for vite
- * @type {ViteResolve}
- * @example
- * export default defineConfig({
- *   plugins: [
- *     viteResolve({
- *       // use code string
- *       vue: `const vue = window.Vue; export default vue;`,
- *       // use nested module and function to return code string
- *       '@scope/name': () => `const Lib = window.LibraryName; export default Lib;`,
- *       // use function to return string in electron
- *       'electron-store': () => `const Store = require('electron-store'); export default Store;`,
- *     })
- *   ]
- * })
- */
-module.exports = function (dict = {}) {
+module.exports = function resolve(dict = {}) {
   let root = process.cwd();
   const resolvePluginDirectory = '.vite-plugin-resolve';
 
@@ -35,14 +14,11 @@ module.exports = function (dict = {}) {
         root = config.root;
       }
 
-      // step-1
       generateResolveFile(
         root,
         resolvePluginDirectory,
         dict
       );
-
-      // step-2
       rewriteAlias(
         config,
         root,
@@ -115,7 +91,7 @@ function node_modules(root, count = 0) {
   return node_modules(path.join(root, '..'), count + 1);
 }
 
-export function ensureDir(dir) {
+function ensureDir(dir) {
   if (!(fs.existsSync(dir) && fs.statSync(dir).isDirectory())) {
     fs.mkdirSync(dir, { recursive: true })
   }
