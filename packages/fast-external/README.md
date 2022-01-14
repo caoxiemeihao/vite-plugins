@@ -22,6 +22,7 @@ export default defineConfig({
   plugins: [
     fastExternal({
       // use string
+      // will generate code `const vue = window['Vue']; export { vue as default }`
       vue: 'Vue',
       // custom external code by function
       '@scope/name': () => `const Lib = window.LibraryName; export default Lib;`,
@@ -38,7 +39,7 @@ export type fastExternal = (
   options?: {
     /**
      * @default 'esm'
-     * esm will generate code - const vue = window['Vue']; export { vue as default };
+     * esm will generate code - const vue = window['Vue']; export { vue as default }
      * cjs will generate code - const vue = window['Vue']; module.exports = vue;
      */
     format: 'esm' | 'cjs'
