@@ -39,18 +39,16 @@ function generateResolveFile(
   // ensure .vite-plugin-resolve directory existed
   fs.existsSync(dir) || fs.mkdirSync(dir);
 
-  // generate external module file
+  // generate custom-resolve module file
   for (const [module, strOrFn] of Object.entries(resolveDict)) {
     const moduleId = path.join(dir, module + '.js');
+    const moduleContent = typeof strOrFn === 'function' ? strOrFn() : strOrFn;
 
-    if (!fs.existsSync(moduleId)) {
-      // for '@scope/name' module
-      ensureDir(path.parse(moduleId).dir);
+    // for '@scope/name' module
+    ensureDir(path.parse(moduleId).dir);
 
-      const moduleContent = typeof strOrFn === 'function' ? strOrFn() : strOrFn;
-
-      fs.writeFileSync(moduleId, moduleContent);
-    }
+    // write custom-resolve
+    fs.writeFileSync(moduleId, moduleContent);
   }
 }
 
