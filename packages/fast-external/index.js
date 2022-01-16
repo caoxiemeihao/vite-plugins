@@ -31,9 +31,12 @@ function ensureDir(dir) {
 }
 
 function node_modules(root, count = 0) {
+  if (node_modules.p) {
+    return node_modules.p
+  }
   const p = path.join(root, 'node_modules')
   if (fs.existsSync(p)) {
-    return p
+    return node_modules.p = p
   }
   if (count >= 19) {
     throw new Error('Can not found node_modules directory.')
