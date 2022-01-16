@@ -53,24 +53,20 @@ function generateExternalFile(
 
   // generate external module file.
   for (const [module, strOrFn] of Object.entries(externals)) {
-    const modFilename = path.join(node_modules(root), directory, `${module}.js`)
-    if (!fs.existsSync(modFilename)) {
-      // for '@scope/name' package
-      ensureDir(path.parse(modFilename).dir)
-
-      let moduleContent
-
-      if (typeof strOrFn === 'string') {
-        const iifeName = strOrFn
-        moduleContent = format === 'cjs'
-          ? `const ${iifeName} = window['${iifeName}']; module.exports = ${iifeName};`
-          : `const ${iifeName} = window['${iifeName}']; export { ${iifeName} as default }`
-      } else {
-        moduleContent = strOrFn()
-      }
-
-      fs.writeFileSync(modFilename, moduleContent)
+    const moduleId = path.join(node_modules(root), directory, `${module}.js`)
+    let moduleContent
+    if (typeof strOrFn === 'string') {
+      const iifeName = strOrFn
+      moduleContent = format === 'cjs'
+        ? `const ${iifeName} = window['${iifeName}']; module.exports = ${iifeName};`
+        : `const ${iifeName} = window['${iifeName}']; export { ${iifeName} as default }`
+    } else {
+      moduleContent = strOrFn()
     }
+
+    // for '@scope/name' package
+    ensureDir(path.parse(moduleId).dir)
+    fs.writeFileSync(moduleId, moduleContent)
   }
 }
 
