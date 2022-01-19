@@ -15,8 +15,9 @@ https://github.com/caoxiemeihao/electron-vue-vite/blob/3ba6c58145320d86d6adfe3b5
 
 #### 经典报错: __dirname is not defined
 
-**一切要从 ESModule 开始** 👉 NodeJs 在 ESModule 下 [No __filename or __dirname](https://nodejs.org/dist/latest-v16.x/docs/api/esm.html#no-__filename-or-__dirname)
-&emsp;&emsp;vite 强依赖 ESModule 且开发环境下只能用 ESModule
+**一切要从 ESModule 开始** 👉 NodeJs 在 ESModule 下 [No __filename or __dirname](https://nodejs.org/dist/latest-v16.x/docs/api/esm.html#no-__filename-or-__dirname)  
+
+&emsp;&emsp;vite 在开发时期强依赖 ESModule 打包时期默认也是 ESModule
 
 **众所周知** 👉 electron 共有三种环境/三种状态即: NodeJs、Electron-Main、Electron-Renderer
 
@@ -127,7 +128,8 @@ Renderer-process 开启 NodeJs 集成后 `require` 函数就有了，那么如�
 
 三、 最后 `resolveElectron` 中还有个 `vite-plugin-electron-config`
 
-- 我们需要 **打断下 vite 的缓存命中** -- 不要编译我们辛辛苦苦做好的 Electron、NodeJs 内置模块的 `ESModule` 版本
+- vite 会预构建所有依赖的模块，并且放到 `node_modeules/.vite` 缓存目录中，且优先命中  
+我们需要 **打断下 vite 的缓存命中** -- 不要编译我们辛辛苦苦做好的 Electron、NodeJs 内置模块的 `ESModule` 版本
 
 ```js
 config.optimizeDeps.exclude = [
