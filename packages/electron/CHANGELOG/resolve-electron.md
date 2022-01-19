@@ -11,9 +11,7 @@ https://github.com/caoxiemeihao/electron-vue-vite/blob/3ba6c58145320d86d6adfe3b5
 
 ---
 
-### __dirname is not defined
-
-#### 经典报错: __dirname is not defined
+### 经典报错: __dirname is not defined
 
 **一切要从 ESModule 开始** 👉 NodeJs 在 ESModule 下 [No __filename or __dirname](https://nodejs.org/dist/latest-v16.x/docs/api/esm.html#no-__filename-or-__dirname)  
 
@@ -67,6 +65,8 @@ Renderer-process 开启 NodeJs 集成后 `require` 函数就有了，那么如�
 
 - 思考二：
 我让你用 `import electron from 'electron'` 允许请求到 vite 服务器；我给你返回 `require('electron')` 不就行了么~！**哎 - 就是玩儿~！**  
+
+---
 
 ### import -- Electron、NodeJS API 设计
 
