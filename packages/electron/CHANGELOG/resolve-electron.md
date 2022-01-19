@@ -1,4 +1,3 @@
-
 ### 一些前奏解释
 
 一、 首先这个项目的本意不希望用户在 Renderer-process 中使用 Electron、NodeJs API
@@ -15,6 +14,9 @@ https://github.com/caoxiemeihao/electron-vue-vite/blob/3ba6c58145320d86d6adfe3b5
 ### __dirname is not defined
 
 #### 经典报错: __dirname is not defined
+
+**一切要从 ESModule 开始** 👉 NodeJs 在 ESModule 下 [No __filename or __dirname](https://nodejs.org/dist/latest-v16.x/docs/api/esm.html#no-__filename-or-__dirname)
+&emsp;&emsp;vite 强依赖 ESModule 且开发环境下只能用 ESModule
 
 **众所周知** 👉 electron 共有三种环境/三种状态即: NodeJs、Electron-Main、Electron-Renderer
 
@@ -72,7 +74,10 @@ Renderer-process 开启 NodeJs 集成后 `require` 函数就有了，那么如�
 > 项目目录/node_modules/.自定义文件夹/electron.js
 
   ```js
-  const electron = require("electron"); // 📢 📢 📢 📢 这个代码是在 Renderer-process 
+  /**
+   * 🚧 下面的代码会被 vite 抛到 Renderer-process 中运行
+   */
+  const electron = require("electron");
   const {
     clipboard,
     nativeImage,
@@ -114,7 +119,7 @@ Renderer-process 开启 NodeJs 集成后 `require` 函数就有了，那么如�
   // 生成缓存文件代码
   ```
 
-  **📢 📢 📢 📢 实际中 “alias 配置，缓存文件生成” 这两件事儿交给 [vite-plugin-resolve](https://www.npmjs.com/package/vite-plugin-resolve) 去做！**
+  **🚧 实际中 “alias 配置，缓存文件生成” 这两件事儿交给 [vite-plugin-resolve](https://www.npmjs.com/package/vite-plugin-resolve) 去做！**
 
 二、 同理可证 NodeJs 模块也可以像 Electron 那样设计
 
