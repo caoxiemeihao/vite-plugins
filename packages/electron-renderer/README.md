@@ -1,6 +1,6 @@
 [![npm package](https://nodei.co/npm/vite-plugin-electron-renderer.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/vite-plugin-electron-renderer)
 
-# Use Electron and NodeJs API in Renderer-process | [简体中文](./README.zh-CN.md)
+# Use Electron and NodeJs API in Renderer-process | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/electron-renderer/README.zh-CN.md)
 
 [![NPM version](https://img.shields.io/npm/v/vite-plugin-electron-renderer.svg?style=flat)](https://npmjs.org/package/vite-plugin-electron-renderer)
 [![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-electron-renderer.svg?style=flat)](https://npmjs.org/package/vite-plugin-electron-renderer)
@@ -35,9 +35,15 @@ ipcRenderer.on('event-name', () => {
 
 ### How to work
 
-1. The plugin transform 'electron' and NodeJs builtin modules to ESModule format in 'vite serve' phase.
+1. Fist, If you do not configure the following options, the plugin will modify their default values
 
-2. Add 'electron' and NodeJs builtin modules to Rollup 'output.external' option in the 'vite build' phase.
+  * `base = './'`
+  * `build.assetsDir = ''`
+  * `build.rollupOptions.output.format = 'cjs'`
+
+2. The plugin transform 'electron' and NodeJs builtin modules to ESModule format in 'vite serve' phase.
+
+3. Add 'electron' and NodeJs builtin modules to Rollup 'output.external' option in the 'vite build' phase.
 
 **Using electron in Renderer-process**  
 `import { ipcRenderer } from 'electron`  
@@ -58,8 +64,8 @@ export default defineConfig({
   plugins: [
     electron({
       resolve: {
-        // In 'vite serve' phase 'electron-store' will generate file to `node_modules/.vite-plugin-electron-renderer/electron-store.js`, and redirect to this path through 'resolve.alias' config.
-        // In 'vite build' phase 'electron-store' will added to Rollup `output.external` option.
+        // In 'vite serve' phase 'electron-store' will generate file to `node_modules/.vite-plugin-electron-renderer/electron-store.js`
+        // Then point 'electron-store' to this path through 'resolve.alias'
         'electron-store': `const Store=require('electron-store'); export default Store;`;
         sqlite3: () => {
           // dynamic calculate module exported members

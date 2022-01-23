@@ -1,6 +1,6 @@
 [![npm package](https://nodei.co/npm/vite-plugin-electron-renderer.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/vite-plugin-electron-renderer)
 
-# 支持在渲染进程中使用 Electron and NodeJs API | [English](./README.md)
+# 支持在渲染进程中使用 Electron and NodeJs API | [English](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/electron-renderer#readme)
 
 [![NPM version](https://img.shields.io/npm/v/vite-plugin-electron-renderer.svg?style=flat)](https://npmjs.org/package/vite-plugin-electron-renderer)
 [![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-electron-renderer.svg?style=flat)](https://npmjs.org/package/vite-plugin-electron-renderer)
@@ -34,9 +34,15 @@ ipcRenderer.on('event-name', () => {
 
 ### 工作原理
 
-1. 开发阶段(`vite serve`) 将 Electron 和 NodeJs 内置模块转换成 ESModule 格式
+1. 首先，在你没主动配置过下列配置时，插件会修改它们的默认值
 
-2. 打包阶段(`vite build`) 将 'electron' 和 NodeJs 内置模块插入到 Rollup 的 'output.external' 中
+  * `base = './'`
+  * `build.assetsDir = ''`
+  * `build.rollupOptions.output.format = 'cjs'`
+
+2. 开发阶段(`vite serve`) 将 Electron 和 NodeJs 内置模块转换成 ESModule 格式
+
+3. 打包阶段(`vite build`) 将 'electron' 和 NodeJs 内置模块插入到 Rollup 的 'output.external' 中
 
 **Using electron in Renderer-process**  
 `import { ipcRenderer } from 'electron`  
@@ -57,8 +63,8 @@ export default defineConfig({
   plugins: [
     electron({
       resolve: {
-        // 在 'vite serve' 阶段 'electron-store' 会生成到 `node_modules/.vite-plugin-electron-renderer/electron-store.js` 中, 并且配置 `resolve.alias` 指向这个路径.
-        // 在 'vite build' 阶段 'electron-store' 会添加到 Rollup `output.external` 配置中.
+        // 在 'vite serve' 阶段 'electron-store' 会生成到 `node_modules/.vite-plugin-electron-renderer/electron-store.js` 中
+        // 然后配置 `resolve.alias` 指向这个路径
         'electron-store': `const Store=require('electron-store'); export default Store;`;
         sqlite3: () => {
           // 动态计算出模块中导出的成员
