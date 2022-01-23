@@ -4,6 +4,7 @@
   "description": "Use Electron and NodeJs API in Renderer-process",
   "main": "src/index.js",
   "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/electron-renderer",
+  "readme": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/electron-renderer#readme",
   "author": "草鞋没号 <308487730@qq.com>",
   "license": "MIT",
   "devDependencies": {
