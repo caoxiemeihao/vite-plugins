@@ -1,14 +1,13 @@
 [![npm package](https://nodei.co/npm/vite-plugin-electron-renderer.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/vite-plugin-electron-renderer)
 
-# Use Electron and NodeJs API in Renderer-process | [简体中文](./README.zh-CN.md)
+# 支持在渲染进程中使用 Electron and NodeJs API | [English](./README.md)
 
 [![NPM version](https://img.shields.io/npm/v/vite-plugin-electron-renderer.svg?style=flat)](https://npmjs.org/package/vite-plugin-electron-renderer)
 [![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-electron-renderer.svg?style=flat)](https://npmjs.org/package/vite-plugin-electron-renderer)
 
-### Example 👉 [electron-vite-boilerplate](https://github.com/caoxiemeihao/electron-vite-boilerplate)
+## 示例 👉 [electron-vite-boilerplate](https://github.com/caoxiemeihao/electron-vite-boilerplate)
 
-
-### Usage
+### 使用
 
 **vite.config.ts**
 
@@ -33,20 +32,20 @@ ipcRenderer.on('event-name', () => {
 })
 ```
 
-### How to work
+### 工作原理
 
-1. The plugin transform 'electron' and NodeJs builtin modules to ESModule format in 'vite serve' phase.
+1. 开发阶段(`vite serve`) 将 Electron 和 NodeJs 内置模块转换成 ESModule 格式
 
-2. Add 'electron' and NodeJs builtin modules to Rollup 'output.external' option in the 'vite build' phase.
+2. 打包阶段(`vite build`) 将 'electron' 和 NodeJs 内置模块插入到 Rollup 的 'output.external' 中
 
 **Using electron in Renderer-process**  
 `import { ipcRenderer } from 'electron`  
-Actually redirect to "[node_modules/vite-plugin-electron-renderer/modules/electron-renderer.js](modules/electron-renderer.js)" through 'resolve.alias' config.
+实际上通过 `resolve.alias` 重定向到 "[node_modules/vite-plugin-electron-renderer/modules/electron-renderer.js](modules/electron-renderer.js)"
 
 ### Options.resolve
 
-In some cases, you just want 'vite' to load a module like 'node.js'.  
-You can custom-resolve the module **eg:**  
+很多时候, 你只想在 Vite 中用 NodeJs 的方式加载模块  
+通过 'resolve' 配置实现 **例如:**  
 
 **vite.config.ts**
 
@@ -58,11 +57,11 @@ export default defineConfig({
   plugins: [
     electron({
       resolve: {
-        // In 'vite serve' phase 'electron-store' will generate file to `node_modules/.vite-plugin-electron-renderer/electron-store.js`, and redirect to this path through 'resolve.alias' config.
-        // In 'vite build' phase 'electron-store' will added to Rollup `output.external` option.
+        // 在 'vite serve' 阶段 'electron-store' 会生成到 `node_modules/.vite-plugin-electron-renderer/electron-store.js` 中, 并且配置 `resolve.alias` 指向这个路径.
+        // 在 'vite build' 阶段 'electron-store' 会添加到 Rollup `output.external` 配置中.
         'electron-store': `const Store=require('electron-store'); export default Store;`;
         sqlite3: () => {
-          // dynamic calculate module exported members
+          // 动态计算出模块中导出的成员
           const sqlite3 = require('sqlite3');
           const members = Object.keys(sqlite3);
           const code = `
@@ -77,3 +76,4 @@ export default defineConfig({
   ],
 })
 ```
+
