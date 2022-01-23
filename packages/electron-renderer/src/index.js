@@ -125,15 +125,22 @@ function modifyRollupExternal(config) {
 
   let external = config.build.rollupOptions.external;
   if (Array.isArray(external)) {
-    external = ['electron', ...external];
+    external = ['electron', ...builtinModules, ...external];
   } else if (external instanceof RegExp) {
-    external = ['electron', external];
+    external = ['electron', ...builtinModules, external];
   } else if (typeof external === 'string') {
-    external = ['electron', external];
+    external = ['electron', ...builtinModules, external];
   } else if (typeof external === 'function') {
     const fn = external;
-    external = (source, importer, isResolved) => source === 'electron' || fn.call(fn, source, importer, isResolved);
+    external = (source, importer, isResolved) => {
+      if (source === 'electron' || builtinModules.includes(source)) {
+        return true;
+      }
+      return fn.call(fn, source, importer, isResolved);
+    }
   }
+
+  config.build.rollupOptions.external = external;
 }
 
 /** @type {import('./types').ModifyOptionsForElectron} */
