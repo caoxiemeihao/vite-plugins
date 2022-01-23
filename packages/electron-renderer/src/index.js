@@ -8,8 +8,8 @@ module.exports = function (options = {}) {
   const { resolve } = options;
   let root = process.cwd();
   const name = 'vite-plugin-electron-renderer';
-  const rendererFile = path.join(__dirname, '../modules/electron-renderer.js');
   const browserExternalId = '__vite-browser-external'
+  const ElectronRendererModule = path.join(__dirname, '../modules/electron-renderer.js');
 
   return {
     name,
@@ -21,11 +21,13 @@ module.exports = function (options = {}) {
 
       modifyOptionsForElectron(config);
 
+      // in 'vite serve' phase ensure the 'electron' and NodeJs built-in modules are loaded correctly by modifying the alias
       if (env.command === 'serve') {
         modifyOptimizeDeps(config, ['electron']);
-        // redirect electron to `vite-plugin-electron-renderer/modules/electron-renderer.js`
-        modifyAlias(config, [{ electron: rendererFile }]);
-      } else {
+        modifyAlias(config, [{ electron: ElectronRendererModule }]);
+      }
+      // in 'vite build' phase insert 'electron' and NodeJs built-in modules into Rollup `output.external`
+      else if (env.command === 'build') {
         modifyRollupExternal(config);
       }
 
@@ -33,19 +35,17 @@ module.exports = function (options = {}) {
         const cacheDir = path.join(node_modules(root), `.${name}`);
         const resolveKeys = Object.keys(resolve);
 
+        modifyOptimizeDeps(config, resolveKeys);
+
         // generate resolve-module file to `node_modules/.vite-plugin-electron-renderer`
         generateESModule(cacheDir, resolve);
-        modifyOptimizeDeps(config, resolveKeys);
-        modifyAlias(
-          config,
-          // redirect resolve-module to `node_modules/.vite-plugin-electron-renderer`
-          resolveKeys.map(moduleId => ({ [moduleId]: path.join(cacheDir, moduleId) })),
-        );
+        // redirect resolve-module to `node_modules/.vite-plugin-electron-renderer`
+        modifyAlias(config, resolveKeys.map(moduleId => ({ [moduleId]: path.join(cacheDir, moduleId) })));
       }
     },
     configureServer(server) {
+      // intercept node built-in modules require, convert to ESModule respond
       server.middlewares.use((req, res, next) => {
-        // resolve node builtin modules
         if ((req.url || '').includes(browserExternalId)) {
           const builtinId = req.url.split(`${browserExternalId}:`, 2)[1];
           if (builtinModules.includes(builtinId)) {
