@@ -29,3 +29,7 @@ export interface ModifyOptimizeDeps {
 export interface ModifyRollupExternal {
   (config: UserConfig): void;
 }
+
+export interface ModifyOptionsForElectron {
+  (config: UserConfig): void;
+}

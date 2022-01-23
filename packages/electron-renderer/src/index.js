@@ -19,6 +19,8 @@ module.exports = function (options = {}) {
         root = config.root;
       }
 
+      modifyOptionsForElectron(config);
+
       if (env.command === 'serve') {
         modifyOptimizeDeps(config, ['electron']);
         // redirect electron to `vite-plugin-electron-renderer/modules/electron-renderer.js`
@@ -131,5 +133,32 @@ function modifyRollupExternal(config) {
   } else if (typeof external === 'function') {
     const fn = external;
     external = (source, importer, isResolved) => source === 'electron' || fn.call(fn, source, importer, isResolved);
+  }
+}
+
+/** @type {import('./types').ModifyOptionsForElectron} */
+function modifyOptionsForElectron(config) {
+  // electron use `loadFile` load Renderer-process file
+  if (!config.base) config.base = './';
+
+  if (!config.build) config.build = {};
+
+  // ensure `require('file-paht')` corre
+  if (!config.build.assetsDir) config.build.assetsDir = '';
+
+  if (!config.build.rollupOptions) config.build.rollupOptions = {};
+  if (!config.build.rollupOptions.output) config.build.rollupOptions.output = {};
+  if (Array.isArray(config.build.rollupOptions.output)) {
+    config.build.rollupOptions.output.forEach(output => {
+      if (!output.format) {
+        // the packaged "electron app" should use "cjs"
+        output.format = 'cjs';
+      }
+    });
+  } else {
+    if (!config.build.rollupOptions.output.format) {
+      // the packaged "electron app" should use "cjs"
+      config.build.rollupOptions.output.format = 'cjs';
+    }
   }
 }
