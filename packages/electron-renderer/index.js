@@ -91,7 +91,7 @@ function modifyAlias(
 ) {
   if (!config.resolve) config.resolve = {};
 
-  let alias = config.resolve.alias || {};
+  let alias = config.resolve.alias || [];
   if (!Array.isArray(alias)) {
     // keep the the original alias
     alias = Object.entries(alias).map(([k, v]) => ({ find: k, replacement: v }));
