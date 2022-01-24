@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const { builtinModules } = require('module');
-const { ensureDir, node_modules } = require('./utils');
 
 /** @type {import('./types').VitePluginElectronRenderer} */
 module.exports = function (options = {}) {
@@ -20,10 +19,10 @@ module.exports = function (options = {}) {
       }
 
       modifyOptionsForElectron(config);
+      modifyOptimizeDepsExclude(config, ['electron', ...(resolve ? Object.keys(resolve) : [])]);
 
-      // in 'vite serve' phase ensure the 'electron' and NodeJs built-in modules are loaded correctly by modifying the alias
+      // in 'vite serve' phase ensure the 'electron' and NodeJs built-in modules are loaded correctly by `resolve.alias`
       if (env.command === 'serve') {
-        modifyOptimizeDeps(config, ['electron']);
         modifyAlias(config, [{ electron: ElectronRendererModule }]);
       }
       // in 'vite build' phase insert 'electron' and NodeJs built-in modules into Rollup `output.external`
@@ -31,16 +30,12 @@ module.exports = function (options = {}) {
         modifyRollupExternal(config);
       }
 
+      // generate resolve-module file to `node_modules/.vite-plugin-electron-renderer`
+      // point resolve-module to this path by `resolve.alias`
       if (resolve) {
         const cacheDir = path.join(node_modules(root), `.${name}`);
-        const resolveKeys = Object.keys(resolve);
-
-        modifyOptimizeDeps(config, resolveKeys);
-
-        // generate resolve-module file to `node_modules/.vite-plugin-electron-renderer`
         generateESModule(cacheDir, resolve);
-        // redirect resolve-module to `node_modules/.vite-plugin-electron-renderer`
-        modifyAlias(config, resolveKeys.map(moduleId => ({ [moduleId]: path.join(cacheDir, moduleId) })));
+        modifyAlias(config, Object.keys(resolve).map(moduleId => ({ [moduleId]: path.join(cacheDir, moduleId) })));
       }
     },
     configureServer(server) {
@@ -109,8 +104,8 @@ function modifyAlias(
   config.resolve.alias = alias;
 }
 
-/** @type {import('./types').ModifyOptimizeDeps} */
-function modifyOptimizeDeps(config, exclude) {
+/** @type {import('./types').ModifyOptimizeDepsExclude} */
+function modifyOptimizeDepsExclude(config, exclude) {
   if (!config.optimizeDeps) config.optimizeDeps = {};
   if (!config.optimizeDeps.exclude) config.optimizeDeps.exclude = [];
 
@@ -168,4 +163,31 @@ function modifyOptionsForElectron(config) {
       config.build.rollupOptions.output.format = 'cjs';
     }
   }
+}
+
+// --------- utils ---------
+
+function cleanUrl(url) {
+  return url.replace(/\?.*$/s, '').replace(/#.*$/s, '');
+}
+
+function ensureDir(dir) {
+  if (!(fs.existsSync(dir) && fs.statSync(dir).isDirectory())) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  return dir;
+}
+
+function node_modules(root, count = 0) {
+  if (node_modules.p) {
+    return node_modules.p;
+  }
+  const p = path.join(root, 'node_modules');
+  if (fs.existsSync(p)) {
+    return node_modules.p = p;
+  }
+  if (count >= 19) {
+    throw new Error('Can not found node_modules directory.');
+  }
+  return node_modules(path.join(root, '..'), count + 1);
 }

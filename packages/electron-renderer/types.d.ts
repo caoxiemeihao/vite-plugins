@@ -22,7 +22,7 @@ export interface ModifyAlias {
   ): void;
 }
 
-export interface ModifyOptimizeDeps {
+export interface ModifyOptimizeDepsExclude {
   (config: UserConfig, exclude: string[]): void;
 }
 
