@@ -17,7 +17,7 @@
  * })
  */
 declare function resolve(
-  dict: Record<string, string | (() => string)>
+  resolves: Record<string, string | (() => string)>
 ): import('vite').Plugin
 
 export default resolve

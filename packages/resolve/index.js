@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-module.exports = function resolve(dict = {}) {
+module.exports = function resolve(resolves = {}) {
   let root = process.cwd();
-  const resolvePluginDirectory = '.vite-plugin-resolve';
+  let cacheDir = '.vite-plugin-resolve';
 
   return {
     name: 'vite-plugin-resolve',
@@ -14,39 +14,33 @@ module.exports = function resolve(dict = {}) {
         root = config.root;
       }
 
+      // absolute path
+      cacheDir = path.join(node_modules(root), cacheDir);
+
       generateResolveFile(
-        root,
-        resolvePluginDirectory,
-        dict
+        resolves,
+        cacheDir,
       );
       rewriteAlias(
         config,
-        root,
-        resolvePluginDirectory,
-        dict
+        resolves,
+        cacheDir,
       );
     },
   }
 }
 
 function generateResolveFile(
-  root,
-  directory,
-  resolveDict
+  resolves,
+  cacheDir,
 ) {
-  const dir = path.join(node_modules(root), directory);
-
-  // ensure .vite-plugin-resolve directory existed
-  fs.existsSync(dir) || fs.mkdirSync(dir);
-
   // generate custom-resolve module file
-  for (const [module, strOrFn] of Object.entries(resolveDict)) {
-    const moduleId = path.join(dir, module + '.js');
+  for (const [module, strOrFn] of Object.entries(resolves)) {
+    const moduleId = path.join(cacheDir, module + '.js');
     const moduleContent = typeof strOrFn === 'function' ? strOrFn() : strOrFn;
 
     // for '@scope/name' module
     ensureDir(path.parse(moduleId).dir);
-
     // write custom-resolve
     fs.writeFileSync(moduleId, moduleContent);
   }
@@ -54,9 +48,8 @@ function generateResolveFile(
 
 function rewriteAlias(
   config,
-  root,
-  directory,
-  resolveDict
+  resolves,
+  cacheDir,
 ) {
   if (!config.resolve) {
     config.resolve = {};
@@ -64,12 +57,13 @@ function rewriteAlias(
 
   let alias = config.resolve.alias || {};
   if (!Array.isArray(alias)) {
+    // keep the the original alias
     alias = Object.entries(alias).map(([k, v]) => ({ find: k, replacement: v }));
   }
 
-  Object.keys(resolveDict).forEach(k => {
-    // redirect resolve module to `node_modules/.vite-plugin-resolve` directory
-    alias.push({ find: k, replacement: path.join(node_modules(root), directory, k) });
+  Object.keys(resolves).forEach(k => {
+    // redirect resolve-module to `node_modules/.vite-plugin-resolve`
+    alias.push({ find: k, replacement: path.join(cacheDir, k) });
   });
 
   config.resolve.alias = alias;
