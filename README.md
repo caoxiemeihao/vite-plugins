@@ -26,6 +26,15 @@
 [![NPM version](https://img.shields.io/npm/v/vitejs-plugin-electron.svg)](https://npmjs.org/package/vitejs-plugin-electron)
 [![NPM Downloads](https://img.shields.io/npm/dm/vitejs-plugin-electron.svg)](https://npmjs.org/package/vitejs-plugin-electron)
 
+> 🚧 Use Electron and NodeJs API in Renderer-porocess, `vite-plugin-electron-renderer` is better
+
+---
+
+###### [vite-plugin-electron-renderer](packages/electron-renderer): Use Electron and NodeJs API in Renderer-process
+
+[![NPM version](https://img.shields.io/npm/v/vite-plugin-electron-renderer.svg)](https://npmjs.org/package/vite-plugin-electron-renderer)
+[![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-electron-renderer.svg)](https://npmjs.org/package/vite-plugin-electron-renderer)
+
 - [x] use `import electron from 'electron'`, `import fs from 'fs'` in Renderer-process
 - [x] custom resolve code
 
@@ -52,6 +61,6 @@
 
 - [x] external module in vite
 - [x] custom resolve code in vite
-- [x] use in electron
+- [x] support use in electron
 
 ---
