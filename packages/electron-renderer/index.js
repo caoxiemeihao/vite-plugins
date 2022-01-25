@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { builtinModules } = require('module');
 
-/** @type {import('./types').VitePluginElectronRenderer} */
+/** @type {import('.').VitePluginElectronRenderer} */
 module.exports = function (options = {}) {
   const { resolve } = options;
   let root = process.cwd();
@@ -35,7 +35,10 @@ module.exports = function (options = {}) {
       if (resolve) {
         const cacheDir = path.join(node_modules(root), `.${name}`);
         generateESModule(cacheDir, resolve);
-        modifyAlias(config, Object.keys(resolve).map(moduleId => ({ [moduleId]: path.join(cacheDir, moduleId) })));
+        modifyAlias(
+          config,
+          Object.keys(resolve).map(moduleId => ({ [moduleId]: path.join(cacheDir, moduleId) })),
+        );
       }
     },
     configureServer(server) {
@@ -67,28 +70,22 @@ export { _M as default, ${members.join(', ')} }
   };
 }
 
-/** @type {import('./types').GenerateESModule} */
-function generateESModule(
-  cacheDir,
-  resolveDict,
-) {
+/** @type {import('.').GenerateESModule} */
+function generateESModule(cacheDir, resolve) {
   // generate custom-resolve module file
-  for (const [module, strOrFn] of Object.entries(resolveDict)) {
+  for (const [module, strOrFn] of Object.entries(resolve)) {
     const moduleId = path.join(cacheDir, module + '.js');
     const moduleContent = typeof strOrFn === 'function' ? strOrFn() : strOrFn;
 
-    // for '@scope/name' module
+    // supported nest module ('@scope/name')
     ensureDir(path.parse(moduleId).dir);
     // write custom-resolve
     fs.writeFileSync(moduleId, moduleContent);
   }
 }
 
-/** @type {import('./types').ModifyAlias} */
-function modifyAlias(
-  config,
-  aliaList,
-) {
+/** @type {import('.').ModifyAlias} */
+function modifyAlias(config, aliaList) {
   if (!config.resolve) config.resolve = {};
 
   let alias = config.resolve.alias || [];
@@ -104,7 +101,7 @@ function modifyAlias(
   config.resolve.alias = alias;
 }
 
-/** @type {import('./types').ModifyOptimizeDepsExclude} */
+/** @type {import('.').ModifyOptimizeDepsExclude} */
 function modifyOptimizeDepsExclude(config, exclude) {
   if (!config.optimizeDeps) config.optimizeDeps = {};
   if (!config.optimizeDeps.exclude) config.optimizeDeps.exclude = [];
@@ -112,7 +109,7 @@ function modifyOptimizeDepsExclude(config, exclude) {
   config.optimizeDeps.exclude.push(...exclude);
 }
 
-/** @type {import('./types').ModifyRollupExternal} */
+/** @type {import('.').ModifyRollupExternal} */
 function modifyRollupExternal(config) {
   if (!config.build) config.build = {};
   if (!config.build.rollupOptions) config.build.rollupOptions = {};
@@ -138,7 +135,7 @@ function modifyRollupExternal(config) {
   config.build.rollupOptions.external = external;
 }
 
-/** @type {import('./types').ModifyOptionsForElectron} */
+/** @type {import('.').ModifyOptionsForElectron} */
 function modifyOptionsForElectron(config) {
   // electron use `loadFile` load Renderer-process file
   if (!config.base) config.base = './';
@@ -166,10 +163,6 @@ function modifyOptionsForElectron(config) {
 }
 
 // --------- utils ---------
-
-function cleanUrl(url) {
-  return url.replace(/\?.*$/s, '').replace(/#.*$/s, '');
-}
 
 function ensureDir(dir) {
   if (!(fs.existsSync(dir) && fs.statSync(dir).isDirectory())) {
