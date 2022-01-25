@@ -8,7 +8,7 @@ module.exports = function (options = {}) {
   let root = process.cwd();
   const name = 'vite-plugin-electron-renderer';
   const browserExternalId = '__vite-browser-external'
-  const ElectronRendererModule = path.join(__dirname, '../modules/electron-renderer.js');
+  const ElectronRendererModule = path.join(__dirname, 'modules/electron-renderer.js');
 
   return {
     name,
