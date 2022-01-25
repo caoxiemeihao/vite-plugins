@@ -39,7 +39,7 @@ function generateResolveFile(
     const moduleId = path.join(cacheDir, module + '.js');
     const moduleContent = typeof strOrFn === 'function' ? strOrFn() : strOrFn;
 
-    // for '@scope/name' module
+    // supported nest module ('@scope/name')
     ensureDir(path.parse(moduleId).dir);
     // write custom-resolve
     fs.writeFileSync(moduleId, moduleContent);
