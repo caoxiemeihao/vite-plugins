@@ -1,11 +1,24 @@
 import { Plugin, UserConfig } from 'vite';
 
+declare const electronRenderer: VitePluginElectronRenderer;
+export default electronRenderer;
+
 export interface Resolve {
   [filename: string]: string | (() => string);
 }
 
 export interface VitePluginElectronRenderer {
-  (options?: { resolve: Resolve; }): Plugin;
+  (options?: {
+    /**
+     * @example
+     * {
+     *   resolve: {
+     *     'electron-store': 'const Store=require("electron-store"); export { Store as default }',
+     *   }
+     * }
+     */
+    resolve?: Resolve;
+  }): Plugin;
 }
 
 export interface GenerateESModule {
@@ -30,7 +43,3 @@ export interface ModifyRollupExternal {
 export interface ModifyOptionsForElectron {
   (config: UserConfig): void;
 }
-
-// --------- export declare ---------
-declare const electronRenderer: VitePluginElectronRenderer;
-export default electronRenderer;
