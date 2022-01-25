@@ -73,7 +73,7 @@ function generateExternalFile(
       moduleContent = strOrFn();
     }
 
-    // for '@scope/name' package
+    // supported nest module ('@scope/name')
     ensureDir(path.parse(moduleId).dir);
     fs.writeFileSync(moduleId, moduleContent);
   }
