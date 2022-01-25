@@ -34,24 +34,28 @@ ipcRenderer.on('event-name', () => {
 
 ### 工作原理
 
-1. 首先，在你没主动配置过下列配置时，插件会修改它们的默认值
+1. 首先，插件会修改一些配置
+
+- 在你没主动配置过下列配置时，插件会修改它们的默认值
 
   * `base = './'`
   * `build.assetsDir = ''`
   * `build.rollupOptions.output.format = 'cjs'`
 
+- 将 'electron'，NodeJs 内置模块和 `options.resolve` 插入到 "optimizeDeps.exclude" 中
+
 2. 开发阶段(`vite serve`) 将 Electron 和 NodeJs 内置模块转换成 ESModule 格式
 
-3. 打包阶段(`vite build`) 将 'electron' 和 NodeJs 内置模块插入到 Rollup 的 'output.external' 中
+3. 打包阶段(`vite build`) 将 "electron" 和 NodeJs 内置模块插入到 Rollup 的 "output.external" 中
 
-**Using electron in Renderer-process**  
-`import { ipcRenderer } from 'electron`  
-实际上通过 `resolve.alias` 重定向到 "[node_modules/vite-plugin-electron-renderer/modules/electron-renderer.js](modules/electron-renderer.js)"
+**在想染进程中使用 electron** `import { ipcRenderer } from 'electron`  
+
+实际上通过 "resolve.alias" 重定向到 "[node_modules/vite-plugin-electron-renderer/modules/electron-renderer.js](modules/electron-renderer.js)"
 
 ### Options.resolve
 
 很多时候, 你只想在 Vite 中用 NodeJs 的方式加载模块  
-通过 'resolve' 配置实现 **例如:**  
+通过 "resolve" 配置实现 **例如:**  
 
 **vite.config.ts**
 
