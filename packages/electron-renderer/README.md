@@ -33,37 +33,7 @@ ipcRenderer.on('event-name', () => {
 })
 ```
 
-### How to work
-
-1. Fist, the plugin will configuration something.
-
-- If you do not configure the following options, the plugin will modify their default values
-
-  * `base = './'`
-  * `build.assetsDir = ''`
-  * `build.rollupOptions.output.format = 'cjs'`
-
-- Add "electron", NodeJs built-in modules and "options.resolve" to "optimizeDeps.exclude"
-
-  ```js
-  {
-    optimizeDeps: {
-      exclude: [
-        'electron',
-        ...'built-in modules',
-        ...Object.keys(options.resolve),
-      ],
-    },
-  }
-  ```
-
-2. The plugin transform "electron" and NodeJs built-in modules to ESModule format in "vite serve" phase.
-
-3. Add "electron" and NodeJs built-in modules to Rollup "output.external" option in the "vite build" phase.
-
-**Using electron in Renderer-process** `import { ipcRenderer } from 'electron`  
-
-Actually redirect to "[node_modules/vite-plugin-electron-renderer/modules/electron-renderer.js](modules/electron-renderer.js)" through "resolve.alias".
+---
 
 ### Options.resolve
 
@@ -99,3 +69,37 @@ export default defineConfig({
   ],
 })
 ```
+
+---
+
+### How to work
+
+1. Fist, the plugin will configuration something.
+
+- If you do not configure the following options, the plugin will modify their default values
+
+  * `base = './'`
+  * `build.assetsDir = ''`
+  * `build.rollupOptions.output.format = 'cjs'`
+
+- Add "electron", NodeJs built-in modules and "options.resolve" to "optimizeDeps.exclude"
+
+  ```js
+  {
+    optimizeDeps: {
+      exclude: [
+        'electron',
+        ...'built-in modules',
+        ...Object.keys(options.resolve),
+      ],
+    },
+  }
+  ```
+
+2. The plugin transform "electron" and NodeJs built-in modules to ESModule format in "vite serve" phase.
+
+3. Add "electron" and NodeJs built-in modules to Rollup "output.external" option in the "vite build" phase.
+
+**Using electron in Renderer-process** `import { ipcRenderer } from 'electron`  
+
+Actually redirect to "[node_modules/vite-plugin-electron-renderer/modules/electron-renderer.js](modules/electron-renderer.js)" through "resolve.alias".
