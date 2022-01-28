@@ -4,7 +4,7 @@ declare const electronRenderer: VitePluginElectronRenderer;
 export default electronRenderer;
 
 export interface Resolve {
-  [filename: string]: string | (() => string);
+  [moduleId: string]: string | (() => string | Promise<string>);
 }
 
 export interface VitePluginElectronRenderer {
@@ -22,7 +22,7 @@ export interface VitePluginElectronRenderer {
 }
 
 export interface GenerateESModule {
-  (cacheDir: string, resolve: Resolve): void;
+  (cacheDir: string, resolve: Resolve): Promise<void>;
 }
 
 export interface ModifyAlias {

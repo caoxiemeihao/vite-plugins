@@ -14,7 +14,7 @@ module.exports = function (options = {}) {
 
   return {
     name,
-    config(config, env) {
+    async config(config, env) {
       if (config.root && path.isAbsolute(config.root)) {
         // TODO: config.root is relative path
         root = config.root;
@@ -36,11 +36,11 @@ module.exports = function (options = {}) {
       // point resolve-module to this path by `resolve.alias`
       if (resolve) {
         const cacheDir = path.join(node_modules(root), `.${name}`);
-        generateESModule(cacheDir, resolve);
         modifyAlias(
           config,
           Object.keys(resolve).map(moduleId => ({ [moduleId]: path.join(cacheDir, moduleId) })),
         );
+        await generateESModule(cacheDir, resolve);
       }
     },
     configureServer(server) {
@@ -75,7 +75,7 @@ export { _M as default, ${members.join(', ')} }
 /**
  * @type {import('.').GenerateESModule}
  */
-function generateESModule(cacheDir, resolve) {
+async function generateESModule(cacheDir, resolve) {
   // generate custom-resolve module file
   for (const [module, strOrFn] of Object.entries(resolve)) {
     const moduleId = path.join(cacheDir, module + '.js');
@@ -84,7 +84,10 @@ function generateESModule(cacheDir, resolve) {
     // supported nest module ('@scope/name')
     ensureDir(path.parse(moduleId).dir);
     // write custom-resolve
-    fs.writeFileSync(moduleId, moduleContent);
+    fs.writeFileSync(
+      moduleId,
+      moduleContent instanceof Promise ? await moduleContent : moduleContent,
+    );
   }
 }
 
