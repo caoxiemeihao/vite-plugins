@@ -2,7 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const { builtinModules } = require('module');
 
-/** @type {import('.').VitePluginElectronRenderer} */
+/**
+ * @type {import('.').VitePluginElectronRenderer}
+ */
 module.exports = function (options = {}) {
   const { resolve } = options;
   let root = process.cwd();
@@ -70,7 +72,9 @@ export { _M as default, ${members.join(', ')} }
   };
 }
 
-/** @type {import('.').GenerateESModule} */
+/**
+ * @type {import('.').GenerateESModule}
+ */
 function generateESModule(cacheDir, resolve) {
   // generate custom-resolve module file
   for (const [module, strOrFn] of Object.entries(resolve)) {
@@ -84,7 +88,9 @@ function generateESModule(cacheDir, resolve) {
   }
 }
 
-/** @type {import('.').ModifyAlias} */
+/**
+ * @type {import('.').ModifyAlias}
+ */
 function modifyAlias(config, aliaList) {
   if (!config.resolve) config.resolve = {};
 
@@ -101,7 +107,9 @@ function modifyAlias(config, aliaList) {
   config.resolve.alias = alias;
 }
 
-/** @type {import('.').ModifyOptimizeDepsExclude} */
+/**
+ * @type {import('.').ModifyOptimizeDepsExclude}
+ */
 function modifyOptimizeDepsExclude(config, exclude) {
   if (!config.optimizeDeps) config.optimizeDeps = {};
   if (!config.optimizeDeps.exclude) config.optimizeDeps.exclude = [];
@@ -109,7 +117,9 @@ function modifyOptimizeDepsExclude(config, exclude) {
   config.optimizeDeps.exclude.push(...exclude);
 }
 
-/** @type {import('.').ModifyRollupExternal} */
+/**
+ * @type {import('.').ModifyRollupExternal}
+ */
 function modifyRollupExternal(config) {
   if (!config.build) config.build = {};
   if (!config.build.rollupOptions) config.build.rollupOptions = {};
@@ -135,7 +145,9 @@ function modifyRollupExternal(config) {
   config.build.rollupOptions.external = external;
 }
 
-/** @type {import('.').ModifyOptionsForElectron} */
+/**
+ * @type {import('.').ModifyOptionsForElectron}
+ */
 function modifyOptionsForElectron(config) {
   // electron use `loadFile` load Renderer-process file
   if (!config.base) config.base = './';
