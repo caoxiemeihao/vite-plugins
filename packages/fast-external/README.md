@@ -7,6 +7,8 @@
 
 > Without lexical transform, support custom external code
 
+**English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/fast-external/README.zh-CN.md)**
+
 - Like Webpack externals, support browser, Node.js and Electron -- without environment
 
 - It's actually implemented by modify `resolve.alias`
