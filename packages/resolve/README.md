@@ -5,7 +5,9 @@
 [![NPM version](https://img.shields.io/npm/v/vite-plugin-resolve.svg?style=flat)](https://npmjs.org/package/vite-plugin-resolve)
 [![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-resolve.svg?style=flat)](https://npmjs.org/package/vite-plugin-resolve)
 
-### Install
+Custom resolve module content
+
+## Install
 
 ```bash
 npm i -D vite-plugin-resolve
@@ -20,12 +22,14 @@ import viteResolve from 'vite-plugin-resolve'
 export default defineConfig({
   plugins: [
     viteResolve({
-      // use code string
+      // resolve external module
       vue: `const vue = window.Vue; export default vue;`,
-      // use nested module name, return code string through function
-      '@scope/name': () => `const Lib = window.LibraryName; export default Lib;`,
-      // use in electron
-      'electron': `const Electron = require('electron'); export default Electron;`,
+
+      // nested moduleId and return Promis<string>
+      '@scope/name': async () => await require('fs').promises.readFile('path', 'utf-8'),
+
+      // electron
+      electron: `const { ipcRenderer } = require('electron'); export { ipcRenderer };`,
     })
   ]
 })
