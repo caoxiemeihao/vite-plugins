@@ -2,10 +2,10 @@
 
 [![npm package](https://nodei.co/npm/vite-plugin-fast-external.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/vite-plugin-fast-external)
 
-> Tiny and fast vite external plugin, without lexical transform.
-
 [![NPM version](https://img.shields.io/npm/v/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
 [![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
+
+Without lexical transform, support custom external code
 
 ### Installation
 
@@ -21,10 +21,14 @@ import fastExternal from 'vite-plugin-fast-external';
 export default defineConfig({
   plugins: [
     fastExternal({
-      // will generate code `const vue = window['Vue']; export { vue as default }`
+      // Simple example
       vue: 'Vue',
-      // custom external code by function
-      '@scope/name': () => `const Lib = window.LibraryName; export default Lib;`,
+
+      // Custom external code by function
+      '@scope/name': () => `const Lib = window.ScopeName.Member; export default Lib;`,
+
+      // Read a template file and return Promise<string>
+      externalId: async () => await require('fs').promises.readFile('path', 'utf-8'),
     })
   ]
 })
@@ -34,7 +38,7 @@ export default defineConfig({
 
 ```typescript
 export type fastExternal = (
-  externals: Record<string, string | (() => string)>,
+  externals: Record<string, string | (() => string | Promise<string>)>,
   options?: {
     /**
      * @default 'esm'
@@ -42,6 +46,11 @@ export type fastExternal = (
      * cjs will generate code -> const vue = window['Vue']; module.exports = vue;
      */
     format: 'esm' | 'cjs'
+    /**
+     * @default true
+     * Whether to insert the external module into "optimizeDeps.exclude"
+     */
+    optimize: boolean
   }
 ) => VitePlugin
 ```
