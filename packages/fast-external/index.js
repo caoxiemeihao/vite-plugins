@@ -14,7 +14,7 @@ module.exports = function external(
 
   return {
     name: 'vite-plugin-fast-external',
-    config(config) {
+    async config(config) {
       // init root path
       if (config.root && path.isAbsolute(config.root)) {
         // TODO: config.root is relative path
@@ -28,7 +28,7 @@ module.exports = function external(
 
       modifyAlias(
         config,
-        Object.keys(external).map(moduleId => ({ [moduleId]: path.join(cacheDir, moduleId) })),
+        Object.keys(external).map(moduleId => ({ [moduleId]: path.join(externalDir, moduleId) })),
       );
 
       await generateExternalFile(
