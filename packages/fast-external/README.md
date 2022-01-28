@@ -5,9 +5,27 @@
 [![NPM version](https://img.shields.io/npm/v/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
 [![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
 
-Without lexical transform, support custom external code
+> Without lexical transform, support custom external code
 
-### Installation
+- Like Webpack externals, support browser, Node.js and Electron -- without environment
+
+- It's actually implemented by modify `resolve.alias`
+
+- By default `window` is used as the environment object, you can also customize the code snippets by return string from function -- Very flexible 🎉  
+
+**eg:**
+
+```js
+fastExternal({
+  // By default will generated code -> const Vue = window['Vue']; export { Vue as default }
+  vue: 'Vue',
+
+  // Custom external code snippets used in Node.js
+  nodeJsModule: () => `module.exports = require('moduleId');`,
+})
+```
+
+## Install
 
 ```bash
 npm i -D vite-plugin-fast-external
@@ -34,11 +52,11 @@ export default defineConfig({
 })
 ```
 
-## Options define
+## Type define
 
-```typescript
+```ts
 export type fastExternal = (
-  externals: Record<string, string | (() => string | Promise<string>)>,
+  external: Record<string, string | (() => string | Promise<string>)>,
   options?: {
     /**
      * @default 'esm'
