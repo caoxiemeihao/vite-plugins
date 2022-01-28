@@ -23,7 +23,7 @@ export default defineConfig({
 })
 ```
 
-**vrenderer/foo.ts**
+**renderer/foo.ts**
 
 ```ts
 import { ipcRenderer } from 'electron'
@@ -79,7 +79,7 @@ export default defineConfig({
 - If you do not configure the following options, the plugin will modify their default values
 
   * `base = './'`
-  * `build.assetsDir = ''`
+  * `build.assetsDir = ''` -> *TODO: Automatic splicing "build.assetsDir"*
   * `build.rollupOptions.output.format = 'cjs'`
 
 - Add "electron", NodeJs built-in modules and "options.resolve" to "optimizeDeps.exclude"
