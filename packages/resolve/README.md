@@ -7,6 +7,12 @@
 
 Custom resolve module content
 
+**English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/resolve/README.zh-CN.md)**
+
+- It can be compatible with Browser, Node.js and Electron, without environment
+- You can think of it as an enhanced Vite external plugin
+- You can think of it as manual version [Pre-Bundling](https://vitejs.dev/guide/dep-pre-bundling.html)
+
 ## Install
 
 ```bash
@@ -23,7 +29,7 @@ export default defineConfig({
   plugins: [
     viteResolve({
       // resolve external module
-      vue: `const vue = window.Vue; export default vue;`,
+      vue: `const vue = window.Vue; export { vue as default }`,
 
       // nested moduleId and return Promis<string>
       '@scope/name': async () => await require('fs').promises.readFile('path', 'utf-8'),
@@ -35,20 +41,58 @@ export default defineConfig({
 })
 ```
 
+## Type define
+
+```ts
+export type viteResolve = (
+  resolves: [moduleId: string]: string | (() => string | Promise<string>),
+  options?: {
+    /**
+     * @default true
+     * Whether to insert the external module into "optimizeDeps.exclude"
+     */
+    optimize: boolean
+  }
+) => import('vite').VitePlugin
+```
+
 ## How to work
 
-1. Resolve-module will be generated code into `node_modules/.vite-plugin-resolve/vue.js`
-2. Append an resolve-module into alias
+**Let's use Vue as an example**
 
-  ```js
-  {
-    resolve: {
-      alias: [
-        {
-          find: 'vue',
-          replacement: 'User/work-directory/node_modules/.vite-plugin-resolve/vue.js',
-        },
-      ],
-    },
-  }
-  ```
+```js
+viteResolve({
+  vue: `const vue = window.Vue; export { vue as default }`,
+})
+```
+
+1. Create `node_modules/.vite-plugin-resolve/vue.js` and contains the following code
+
+```js
+const vue = window.Vue; export { vue as default }
+```
+
+2. Create a `vue` alias item and add it to `resolve.alias`
+
+```js
+{
+  resolve: {
+    alias: [
+      {
+        find: 'vue',
+        replacement: 'User/work-directory/node_modules/.vite-plugin-resolve/vue.js',
+      },
+    ],
+  },
+}
+```
+
+3. Add `vue` to the `optimizeDeps.exclude` **by default**. You can disable it through `options.optimize`
+
+```js
+export default {
+  optimizeDeps: {
+    exclude: ['vue'],
+  },
+}
+```
