@@ -28,7 +28,7 @@ import viteResolve from 'vite-plugin-resolve'
 export default defineConfig({
   plugins: [
     viteResolve({
-      // resolve external module
+      // resolve external module, this like Vite external plugin
       vue: `const vue = window.Vue; export { vue as default }`,
 
       // nested moduleId and return Promis<string>
@@ -49,7 +49,7 @@ export type viteResolve = (
   options?: {
     /**
      * @default true
-     * Whether to insert the external module into "optimizeDeps.exclude"
+     * Whether to insert the resolve module into "optimizeDeps.exclude"
      */
     optimize: boolean
   }
