@@ -5,7 +5,16 @@ export interface Resolves {
 }
 
 export interface VitePluginResolve {
-  (resolves: Resolves): Plugin;
+  (
+    resolves: Resolves,
+    options?: {
+      /**
+       * @default true
+       * Whether to insert the external module into "optimizeDeps.exclude"
+       */
+      optimize: boolean;
+    },
+  ): Plugin;
 }
 
 /**
@@ -16,7 +25,7 @@ export interface VitePluginResolve {
  * export default defineConfig({
  *   plugins: [
  *     viteResolve({
- *       // resolve external module
+ *       // resolve external module, this like Vite external plugin
  *       vue: `const vue = window.Vue; export default vue;`,
  *
  *       // nested moduleId and return Promis<string>
@@ -43,4 +52,8 @@ export interface ModifyAlias {
     config: UserConfig,
     aliaList: { [moduleId: string]: string; }[],
   ): void;
+}
+
+export interface ModifyOptimizeDepsExclude {
+  (config: UserConfig, exclude: string[]): void;
 }

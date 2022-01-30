@@ -4,7 +4,8 @@ const path = require('path');
 /**
  * @type {import('.').VitePluginResolve}
  */
-module.exports = function resolve(resolves = {}) {
+module.exports = function resolve(resolves = {}, options = {}) {
+  const { optimize = true } = options;
   let root = process.cwd();
   let cacheDir = '.vite-plugin-resolve';
 
@@ -19,6 +20,8 @@ module.exports = function resolve(resolves = {}) {
 
       // absolute path
       cacheDir = path.join(node_modules(root), cacheDir);
+
+      if (optimize) modifyOptimizeDepsExclude(config, Object.keys(resolves));
 
       modifyAlias(
         config,
@@ -37,15 +40,12 @@ async function generateESModule(cacheDir, resolves) {
   // generate custom-resolve module file
   for (const [module, strOrFn] of Object.entries(resolves)) {
     const moduleId = path.join(cacheDir, module + '.js');
-    const moduleContent = typeof strOrFn === 'function' ? strOrFn() : strOrFn;
+    const moduleContent = await (typeof strOrFn === 'function' ? strOrFn() : strOrFn);
 
     // supported nest moduleId ('@scope/name')
     ensureDir(path.parse(moduleId).dir);
     // write custom-resolve
-    fs.writeFileSync(
-      moduleId,
-      moduleContent instanceof Promise ? await moduleContent : moduleContent,
-    );
+    fs.writeFileSync(moduleId, moduleContent);
   }
 }
 
@@ -67,6 +67,16 @@ function modifyAlias(config, aliaList) {
   }));
 
   config.resolve.alias = alias;
+}
+
+/**
+ * @type {import('.').ModifyOptimizeDepsExclude}
+ */
+ function modifyOptimizeDepsExclude(config, exclude) {
+  if (!config.optimizeDeps) config.optimizeDeps = {};
+  if (!config.optimizeDeps.exclude) config.optimizeDeps.exclude = [];
+
+  config.optimizeDeps.exclude.push(...exclude);
 }
 
 // --------- utils ---------
