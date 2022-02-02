@@ -5,9 +5,9 @@
 [![NPM version](https://img.shields.io/npm/v/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
 [![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
 
-> 不使用语法转换, 支持自定义 external 代码段
-
 **[English](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external#readme) | 简体中文**
+
+- 不使用语法转换, 支持自定义 external 代码段
 
 - 类似 webpack 的 externals，支持浏览器、Node.js、Electron 等多环境 -- 环境无关
 
@@ -23,7 +23,7 @@ fastExternal({
   vue: 'Vue',
 
   // 自定义 external 代码段在 Node.js 中使用
-  nodeJsModule: () => `module.exports = require('模块ID');`,
+  nodeJsModule: () => `export default require('moduleId');`,
 })
 ```
 
@@ -49,6 +49,9 @@ export default defineConfig({
 
       // 还支持返回 Promise<string> 很容易配合文件、网络等 IO
       externalId: async () => await require('fs').promises.readFile('path', 'utf-8'),
+
+      // 在 Electron 渲染进程中使用
+      electron: () => `const { ipcRenderer } = require('electron'); export { ipcRenderer }`,
     })
   ]
 })

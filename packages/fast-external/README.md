@@ -5,9 +5,9 @@
 [![NPM version](https://img.shields.io/npm/v/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
 [![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
 
-> Without lexical transform, support custom external code
-
 **English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/fast-external/README.zh-CN.md)**
+
+- Without lexical transform, support custom external code.
 
 - Like Webpack externals, support browser, Node.js and Electron -- without environment
 
@@ -23,7 +23,7 @@ fastExternal({
   vue: 'Vue',
 
   // Custom external code snippets used in Node.js
-  nodeJsModule: () => `module.exports = require('moduleId');`,
+  nodeJsModule: () => `export default require('moduleId');`,
 })
 ```
 
@@ -49,6 +49,9 @@ export default defineConfig({
 
       // Read a template file and return Promise<string>
       externalId: async () => await require('fs').promises.readFile('path', 'utf-8'),
+
+      // Electron Renderer-process
+      electron: () => `const { ipcRenderer } = require('electron'); export { ipcRenderer }`,
     })
   ]
 })
