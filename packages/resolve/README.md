@@ -51,7 +51,7 @@ export type viteResolve = (
      * @default true
      * Whether to insert the resolve module into "optimizeDeps.exclude"
      */
-    optimize: boolean
+    optimizeDepsExclude: boolean
   }
 ) => import('vite').VitePlugin
 ```
@@ -87,7 +87,7 @@ const vue = window.Vue; export { vue as default }
 }
 ```
 
-3. Add `vue` to the `optimizeDeps.exclude` **by default**. You can disable it through `options.optimize`
+3. Add `vue` to the `optimizeDeps.exclude` **by default**. You can disable it through `options.optimizeDepsExclude`
 
 ```js
 export default {

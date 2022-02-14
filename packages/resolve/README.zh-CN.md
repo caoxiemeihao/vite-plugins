@@ -51,7 +51,7 @@ export type viteResolve = (
      * @default true
      * 是否将模块插入到 "optimizeDeps.exclude"
      */
-    optimize: boolean
+    optimizeDepsExclude: boolean
   }
 ) => import('vite').VitePlugin
 ```
@@ -87,7 +87,7 @@ const vue = window.Vue; export { vue as default }
 }
 ```
 
-3. 默认会将 `vue` 添加到 `optimizeDeps.exclude` 中. 你可以通过 `options.optimize` 禁用
+3. 默认会将 `vue` 添加到 `optimizeDeps.exclude` 中. 你可以通过 `options.optimizeDepsExclude` 禁用
 
 ```js
 export default {

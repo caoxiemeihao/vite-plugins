@@ -12,7 +12,7 @@ export interface VitePluginResolve {
        * @default true
        * Whether to insert the external module into "optimizeDeps.exclude"
        */
-      optimize: boolean;
+      optimizeDepsExclude: boolean;
     },
   ): Plugin;
 }

@@ -5,7 +5,7 @@ const path = require('path');
  * @type {import('.').VitePluginResolve}
  */
 module.exports = function resolve(resolves = {}, options = {}) {
-  const { optimize = true } = options;
+  const { optimizeDepsExclude = true } = options;
   let root = process.cwd();
   let cacheDir = '.vite-plugin-resolve';
 
@@ -21,7 +21,7 @@ module.exports = function resolve(resolves = {}, options = {}) {
       // absolute path
       cacheDir = path.join(node_modules(root), cacheDir);
 
-      if (optimize) modifyOptimizeDepsExclude(config, Object.keys(resolves));
+      if (optimizeDepsExclude) modifyOptimizeDepsExclude(config, Object.keys(resolves));
 
       modifyAlias(
         config,
