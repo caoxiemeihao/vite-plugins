@@ -1,13 +1,13 @@
 # vite-plugin-fast-external
 
 [![npm package](https://nodei.co/npm/vite-plugin-fast-external.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/vite-plugin-fast-external)
-
+<br/>
 [![NPM version](https://img.shields.io/npm/v/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
 [![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
 
-**English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/fast-external/README.zh-CN.md)**
+Without lexical transform, support custom external code
 
-- Without lexical transform, support custom external code.
+**English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/fast-external/README.zh-CN.md)**
 
 - Like Webpack externals, support browser, Node.js and Electron -- without environment
 
@@ -73,7 +73,7 @@ export type fastExternal = (
      * @default true
      * Whether to insert the external module into "optimizeDeps.exclude"
      */
-    optimize: boolean
+    optimizeDepsExclude: boolean
   }
 ) => VitePlugin
 ```

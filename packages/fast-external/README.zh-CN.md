@@ -1,13 +1,13 @@
 # vite-plugin-fast-external
 
 [![npm package](https://nodei.co/npm/vite-plugin-fast-external.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/vite-plugin-fast-external)
-
+<br/>
 [![NPM version](https://img.shields.io/npm/v/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
 [![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
 
-**[English](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external#readme) | 简体中文**
+不使用语法转换, 支持自定义 external 代码段
 
-- 不使用语法转换, 支持自定义 external 代码段
+**[English](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external#readme) | 简体中文**
 
 - 类似 webpack 的 externals，支持浏览器、Node.js、Electron 等多环境 -- 环境无关
 
