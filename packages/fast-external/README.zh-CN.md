@@ -73,25 +73,48 @@ export type fastExternal = (
      * @default true
      * 是否要把 external 插入到 "optimizeDeps.exclude" 中，这样能避开 vite 的预构建
      */
-    optimize: boolean
+    optimizeDepsExclude: boolean
   }
 ) => VitePlugin
 ```
 
 ## 工作原理
 
-1. external 在 vite 启动时会将代码段生成到对应的文件，比如 `node_modules/.vite-plugin-fast-external/vue.js`
-2. 并且在 `resolve.alias` 插入 external 和生成文件的对应配置
+**用 Vue 来举个 🌰**
 
-  ```js
-  {
-    resolve: {
-      alias: [
-        {
-          find: 'vue',
-          replacement: 'User/work-directory/node_modules/.vite-plugin-fast-external/vue.js',
-        },
-      ],
-    },
-  }
-  ```
+```js
+fastExternal({
+  vue: 'Vue',
+})
+```
+
+1. 创建 `node_modules/.vite-plugin-fast-external/vue.js` 文件并包含下面的代码
+
+```js
+const vue = window['Vue']; export { vue as default }
+```
+
+2. 创建一个 `vue` 的别名项，并且添加到 `resolve.alias`
+
+```js
+{
+  resolve: {
+    alias: [
+      {
+        find: 'vue',
+        replacement: 'User/work-directory/node_modules/.vite-plugin-fast-external/vue.js',
+      },
+    ],
+  },
+}
+```
+
+3. 默认会将 `vue` 添加到 `optimizeDeps.exclude` 中. 你可以通过 `options.optimizeDepsExclude` 禁用
+
+```js
+export default {
+  optimizeDeps: {
+    exclude: ['vue'],
+  },
+}
+```

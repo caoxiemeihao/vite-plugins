@@ -80,18 +80,41 @@ export type fastExternal = (
 
 ## How to work
 
-1. External-module will be generated code into `node_modules/.vite-plugin-fast-external/vue.js`
-2. Append an external-module alias
+**Let's use Vue as an example**
 
-  ```js
-  {
-    resolve: {
-      alias: [
-        {
-          find: 'vue',
-          replacement: 'User/work-directory/node_modules/.vite-plugin-fast-external/vue.js',
-        },
-      ],
-    },
-  }
-  ```
+```js
+fastExternal({
+  vue: 'Vue',
+})
+```
+
+1. Create `node_modules/.vite-plugin-fast-external/vue.js` and contains the following code
+
+```js
+const vue = window['Vue']; export { vue as default }
+```
+
+2. Create a `vue` alias item and add it to `resolve.alias`
+
+```js
+{
+  resolve: {
+    alias: [
+      {
+        find: 'vue',
+        replacement: 'User/work-directory/node_modules/.vite-plugin-fast-external/vue.js',
+      },
+    ],
+  },
+}
+```
+
+3. Add `vue` to the `optimizeDeps.exclude` **by default**. You can disable it through `options.optimizeDepsExclude`
+
+```js
+export default {
+  optimizeDeps: {
+    exclude: ['vue'],
+  },
+}
+```

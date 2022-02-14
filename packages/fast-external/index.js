@@ -10,7 +10,7 @@ module.exports = function external(
 ) {
   let root = process.cwd();
   let externalDir = '.vite-plugin-fast-external';
-  const { format = 'esm', optimize = true } = options;
+  const { format = 'esm', optimizeDepsExclude = true } = options;
 
   return {
     name: 'vite-plugin-fast-external',
@@ -24,7 +24,7 @@ module.exports = function external(
       // absolute path
       externalDir = path.join(node_modules(root), externalDir);
 
-      if (optimize) modifyOptimizeDepsExclude(config, Object.keys(external));
+      if (optimizeDepsExclude) modifyOptimizeDepsExclude(config, Object.keys(external));
 
       modifyAlias(
         config,
