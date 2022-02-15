@@ -41,7 +41,6 @@ function langJsx(options = {}) {
 
   return {
     name: 'vite-plugin-lang-jsx',
-    enforce: 'pre',
     async transform(code, id) {
       if (!id.endsWith('.vue')) return;
 
