@@ -7,9 +7,6 @@
   "author": "草鞋没号 <308487730@qq.com>",
   "license": "MIT",
   "scripts": {},
-  "peerDependencies": {
-    "vue-template-compiler": "^2.x"
-  },
   "dependencies": {
     "acorn": "^8.6.0",
     "acorn-jsx": "^5.3.2"
