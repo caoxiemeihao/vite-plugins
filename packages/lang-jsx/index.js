@@ -17,7 +17,6 @@ module.exports = function langJsx(options = {}) {
 
   return {
     name,
-    enforce: 'pre',
     config(config) {
       if (!config.optimizeDeps) config.optimizeDeps = {};
       if (!config.optimizeDeps.esbuildOptions) config.optimizeDeps.esbuildOptions = {};
