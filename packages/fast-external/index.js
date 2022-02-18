@@ -10,7 +10,7 @@ module.exports = function external(
 ) {
   let root = process.cwd();
   let externalDir = '.vite-plugin-fast-external';
-  const { format = 'esm', optimizeDepsExclude = true } = options;
+  const { optimizeDepsExclude = true } = options;
 
   return {
     name: 'vite-plugin-fast-external',
@@ -31,11 +31,7 @@ module.exports = function external(
         Object.keys(external).map(moduleId => ({ [moduleId]: path.join(externalDir, moduleId) })),
       );
 
-      await generateExternalFile(
-        externalDir,
-        external,
-        format,
-      );
+      await generateExternalFile(externalDir, external);
     }
   }
 }
@@ -43,23 +39,16 @@ module.exports = function external(
 /**
  * @type {import('.').GenerateExternalFile}
  */
-async function generateExternalFile(
-  externalDir,
-  external,
-  format,
-) {
+async function generateExternalFile(externalDir, external) {
   // generate external module file
   for (const [module, strOrFn] of Object.entries(external)) {
     const moduleId = path.join(externalDir, `${module}.js`);
     let moduleContent;
     if (typeof strOrFn === 'string') {
-      const iifeName = strOrFn;
-      moduleContent = format === 'cjs'
-        ? `const ${iifeName} = window['${iifeName}']; module.exports = ${iifeName};`
-        : `const ${iifeName} = window['${iifeName}']; export { ${iifeName} as default }`;
+      const libName = strOrFn;
+      moduleContent = `const ${libName} = window['${libName}']; export { ${libName} as default }`;
     } else {
-      const content = strOrFn();
-      moduleContent = content instanceof Promise ? await content : content;
+      moduleContent = await strOrFn();
     }
 
     // supported nest moduleId ('@scope/name')

@@ -7,12 +7,6 @@ export interface VitePluginFastExternal {
     external: External,
     options?: {
       /**
-       * @default 'esm'
-       * esm will generate code -> const vue = window['Vue']; export { vue as default }
-       * cjs will generate code -> const vue = window['Vue']; module.exports = vue;
-       */
-      format: 'esm' | 'cjs';
-      /**
        * @default true
        * Whether to insert the external module into "optimizeDeps.exclude"
        */
@@ -42,11 +36,7 @@ export default fastExternal;
 
 // --------- utils ---------
 export interface GenerateExternalFile {
-  (
-    externalDir: string,
-    external: External,
-    format: Parameters<VitePluginFastExternal>[1]['format'],
-  ): Promise<void>;
+  (externalDir: string, external: External): Promise<void>;
 }
 
 export interface ModifyAlias {
