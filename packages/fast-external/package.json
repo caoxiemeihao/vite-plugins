@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-fast-external",
-  "version": "1.4.7",
+  "version": "1.4.8",
   "description": "Without lexical transform, support custom external code.",
   "main": "index.js",
   "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external",
