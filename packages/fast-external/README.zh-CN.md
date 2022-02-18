@@ -64,12 +64,6 @@ export type fastExternal = (
   external: Record<string, string | (() => string | Promise<string>)>,
   options?: {
     /**
-     * @default 'esm'
-     * esm 格式会生成 -> const vue = window['Vue']; export { vue as default }
-     * cjs 格式会生成 -> const vue = window['Vue']; module.exports = vue;
-     */
-    format: 'esm' | 'cjs'
-    /**
      * @default true
      * 是否要把 external 插入到 "optimizeDeps.exclude" 中，这样能避开 vite 的预构建
      */

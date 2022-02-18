@@ -13,7 +13,7 @@ Without lexical transform, support custom external code
 
 - It's actually implemented by modify `resolve.alias`
 
-- By default `window` is used as the environment object, you can also customize the code snippets by return string from function -- Very flexible 🎉  
+- By default `window` is used as the environment object, you can also customize the code snippets by return string from function -- Real flexible 🎉  
 
 **eg:**
 
@@ -63,12 +63,6 @@ export default defineConfig({
 export type fastExternal = (
   external: Record<string, string | (() => string | Promise<string>)>,
   options?: {
-    /**
-     * @default 'esm'
-     * esm will generate code -> const vue = window['Vue']; export { vue as default }
-     * cjs will generate code -> const vue = window['Vue']; module.exports = vue;
-     */
-    format: 'esm' | 'cjs'
     /**
      * @default true
      * Whether to insert the external module into "optimizeDeps.exclude"
