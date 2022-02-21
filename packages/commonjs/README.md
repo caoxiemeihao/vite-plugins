@@ -13,7 +13,7 @@ English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/tree/main/
 
 ### Usage
 
-**🚧 The plugin can only transform `.js` file. So it should be placed behind other plug-ins, such as `@vitejs/plugin-vue` `@vitejs/plugin-react` `vite-plugin-vue2`**
+**🚧 The plugin can only transform JavaScript. So it should be placed behind other plug-ins, such as `@vitejs/plugin-vue` `@vitejs/plugin-react` `vite-plugin-vue2`**
 
 ```js
 import vue from '@vitejs/plugin-vue'
