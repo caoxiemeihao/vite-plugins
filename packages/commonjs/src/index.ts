@@ -3,19 +3,21 @@ import { Plugin, ResolvedConfig } from 'vite'
 import {
   cleanUrl,
   DEFAULT_EXTENSIONS,
+  isCommonjs,
 } from './utils'
+import cjs2esm from './cjs2esm'
 
-export interface VitePluginCommonjsOptions {
+export interface CommonjsOptions {
   /**
    * By default
    * - First priority use `config.resolve.extensions` if it exists  
    * - Second priority use default extensions - `['.js', '.jsx', '.ts', '.tsx', '.vue']`
    */
   extensions?: string[]
-  filter?: (...args: Parameters<Plugin['transform']>) => boolean
+  ignore?: (...args: Parameters<Plugin['transform']>) => boolean
 }
 
-export function vitePluginCommonjs(options: VitePluginCommonjsOptions = {}): Plugin {
+export function commonjs(options: CommonjsOptions = {}): Plugin {
   let config: ResolvedConfig
 
   return {
@@ -30,24 +32,16 @@ export function vitePluginCommonjs(options: VitePluginCommonjsOptions = {}): Plu
       if (!extensions.includes(ext)) {
         return null
       }
-      if (options.filter) {
-        let stop: boolean
-        try {
-          stop = options.filter.call(this, code, id, opts)
-        } catch (error) {
-          // Avoid arrow function
-          options.filter(code, id, opts)
-        }
-        if (stop) {
-          return null
-        }
+      if (options.ignore && options.ignore.call(this, code, id, opts)) {
+        return null
+      }
+      if (!isCommonjs(code)) {
+        return null
       }
 
       // -------------------------------------------------
 
-      
-
-      return null
+      return cjs2esm.call(this, code, id)
     },
   }
 }
