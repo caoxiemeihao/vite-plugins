@@ -5,7 +5,7 @@ import {
   DEFAULT_EXTENSIONS,
   isCommonjs,
 } from './utils'
-import cjs2esm from './cjs2esm'
+import cjs2esm from './cjs-esm'
 
 export interface CommonjsOptions {
   /**
