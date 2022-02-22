@@ -1,62 +1,53 @@
 import path from 'path'
-import { Plugin as VitePlugin, UserConfig } from 'vite'
-import { transform } from './cjs-esm'
+import { Plugin, ResolvedConfig } from 'vite'
 import {
+  cleanUrl,
   DEFAULT_EXTENSIONS,
-  isCommonjs,
-  parsePathQuery,
-  detectFileExist,
-  resolveFilename,
 } from './utils'
 
 export interface VitePluginCommonjsOptions {
+  /**
+   * By default
+   * - First priority use `config.resolve.extensions` if it exists  
+   * - Second priority use default extensions - `['.js', '.jsx', '.ts', '.tsx', '.vue']`
+   */
   extensions?: string[]
-  catch?: (error: Error, ext: { filename: string;[k: string]: any; }) => void
+  filter?: (...args: Parameters<Plugin['transform']>) => boolean
 }
 
-export function vitePluginCommonjs(options: VitePluginCommonjsOptions = {}): VitePlugin {
-  /** @todo .ts .tsx process */
-  const extensions = options.extensions ?? DEFAULT_EXTENSIONS
-  const refConifg: { current: UserConfig } = { current: null }
+export function vitePluginCommonjs(options: VitePluginCommonjsOptions = {}): Plugin {
+  let config: ResolvedConfig
 
   return {
     name: 'vite-plugin-commonjs',
-    config(config) {
-      refConifg.current = config
+    apply: 'serve',
+    configResolved(_config) {
+      config = _config
     },
-    transform(code, id) {
-      if (/node_modules/.test(id)) return
-      if (!extensions.some(ext => id.endsWith(ext))) return
-      // if (parsePathQuery(id).query) return
-      if (!isCommonjs(code)) return
-
-      try {
-        const transformed = transform(code, {
-          // transformImport: {
-          //   transformPre(arg0) {
-          //     /**
-          //      * Complete suffix
-          //      */
-          //     const filepath = arg0.CallExpression.require
-          //     if (Array.isArray(refConifg.current.resolve.alias)) {
-          //       // @todo Array typed alias options
-          //       const tmp = detectFileExist(filepath, { cwd: path.dirname(id) })
-          //       arg0.CallExpression.require = tmp ? detectFileExist.join(filepath, tmp) : filepath
-          //     } else {
-          //       arg0.CallExpression.require = resolveFilename(refConifg.current.resolve.alias ?? {}, filepath)
-          //     }
-          //   }
-          // },
-        })
-
-        return transformed.code
-      } catch (error) {
-        if (options.catch) {
-          options.catch(error, { filename: id })
-        } else {
-          throw error
+    transform(code, id, opts) {
+      const extensions = options.extensions || config.resolve?.extensions || DEFAULT_EXTENSIONS
+      const { ext } = path.parse(cleanUrl(id))
+      if (!extensions.includes(ext)) {
+        return null
+      }
+      if (options.filter) {
+        let stop: boolean
+        try {
+          stop = options.filter.call(this, code, id, opts)
+        } catch (error) {
+          // Avoid arrow function
+          options.filter(code, id, opts)
+        }
+        if (stop) {
+          return null
         }
       }
+
+      // -------------------------------------------------
+
+      
+
+      return null
     },
   }
 }
