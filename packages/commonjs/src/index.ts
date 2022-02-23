@@ -37,9 +37,10 @@ export default function commonjs(options: CommonjsOptions = {}): Plugin {
       if (orderIndex !== -1) {
         const commonjsIndex = pluginNames.findIndex(name => name === COMMONJS_PLUGIN_NAME)
         const commonjsPlugin = plugins.splice(commonjsIndex, 1)[0]
-        if (commonjsIndex < orderIndex) { // It is located before a known plugin
+        if (commonjsIndex < orderIndex) {
+          // It is located before a known plugin
           // Move it to after known plugins
-          plugins.splice(orderIndex + 1, 0, commonjsPlugin)
+          plugins.splice(orderIndex, 0, commonjsPlugin)
         }
         _config.plugins = plugins
         return _config
