@@ -5,5 +5,11 @@
   "license": "MIT",
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "scripts": {
+    "commonjs": "ts-node packages/commonjs/test"
+  },
+  "devDependencies": {
+    "ts-node": "^10.5.0"
+  }
 }
