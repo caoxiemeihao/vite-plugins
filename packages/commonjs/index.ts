@@ -1,11 +1,5 @@
 import path from 'path'
 import { Plugin, ResolvedConfig } from 'vite'
-import {
-  DEFAULT_EXTENSIONS,
-  KNOWN_PLUGINS,
-  cleanUrl,
-  isCommonjs,
-} from './utils'
 import cjs2esm from './cjs-esm'
 
 export interface CommonjsOptions {
@@ -20,7 +14,27 @@ export interface CommonjsOptions {
 
 export default function commonjs(options: CommonjsOptions = {}): Plugin {
   const COMMONJS_PLUGIN_NAME = 'vite-plugin-commonjs'
+  const DEFAULT_EXTENSIONS = ['.js', '.jsx', '.ts', '.tsx', '.vue']
+  const KNOWN_PLUGINS = {
+    '@vitejs/plugin-vue': 'vite:vue',
+    'vite-plugin-vue2': 'vite-plugin-vue2',
+    '@vitejs/plugin-vue-jsx': 'vite:vue-jsx',
+    '@sveltejs/vite-plugin-svelte': 'vite-plugin-svelte',
+    '@vitejs/plugin-react': [
+      'vite:react-babel',
+      'vite:react-refresh',
+      'vite:react-jsx',
+    ],
+  }
   let config: ResolvedConfig
+
+  function cleanUrl(url: string) {
+    return url.replace(/\?.*$/s, '').replace(/#.*$/s, '')
+  }
+  function isCommonjs(code: string) {
+    // Avoid matching the content of the comment
+    return /\b(?:require|module|exports)\b/.test(code)
+  }
 
   return {
     name: COMMONJS_PLUGIN_NAME,
@@ -52,17 +66,10 @@ export default function commonjs(options: CommonjsOptions = {}): Plugin {
     transform(code, id, opts) {
       const extensions = options.extensions || config.resolve?.extensions || DEFAULT_EXTENSIONS
       const { ext } = path.parse(cleanUrl(id))
-      if (!extensions.includes(ext)) {
-        return null
-      }
-      if (options.ignore && options.ignore.call(this, code, id, opts)) {
-        return null
-      }
-      if (!isCommonjs(code)) {
-        return null
-      }
 
-      // -------------------------------------------------
+      if (!extensions.includes(ext)) return null
+      if (options.ignore && options.ignore.call(this, code, id, opts)) return null
+      if (!isCommonjs(code)) return null
 
       return cjs2esm.call(this, code, id)
     },
