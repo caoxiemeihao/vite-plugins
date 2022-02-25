@@ -1,5 +1,7 @@
 # vitejs-plugins
 
+## 为社区尽一份绵薄之力 🔥
+
 ---
 
 ###### [vite-plugin-commonjs](packages/commonjs): Pure javascript vite plugin for support CommonJs
