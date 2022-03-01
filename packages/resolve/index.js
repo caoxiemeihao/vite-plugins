@@ -7,7 +7,7 @@ const path = require('path');
 module.exports = function resolve(resolves = {}, options = {}) {
   const { optimizeDepsExclude = true } = options;
   let root = process.cwd();
-  let cacheDir = '.vite-plugin-resolve';
+  let dir = '.vite-plugin-resolve';
 
   return {
     name: 'vite-plugin-resolve',
@@ -19,16 +19,16 @@ module.exports = function resolve(resolves = {}, options = {}) {
       }
 
       // absolute path
-      cacheDir = path.join(node_modules(root), cacheDir);
+      dir = path.join(node_modules(root), dir);
 
       if (optimizeDepsExclude) modifyOptimizeDepsExclude(config, Object.keys(resolves));
 
       modifyAlias(
         config,
-        Object.keys(resolves).map(moduleId => ({ [moduleId]: path.join(cacheDir, moduleId) })),
+        Object.keys(resolves).map(moduleId => ({ [moduleId]: path.join(dir, moduleId) })),
       );
 
-      await generateESModule(cacheDir, resolves);
+      await generateESModule(dir, resolves);
     },
   }
 }
@@ -36,11 +36,12 @@ module.exports = function resolve(resolves = {}, options = {}) {
 /**
  * @type {import('.').GenerateESModule}
  */
-async function generateESModule(cacheDir, resolves) {
+async function generateESModule(dir, resolves) {
   // generate custom-resolve module file
   for (const [module, strOrFn] of Object.entries(resolves)) {
-    const moduleId = path.join(cacheDir, module + '.js');
-    const moduleContent = await (typeof strOrFn === 'function' ? strOrFn() : strOrFn);
+    const moduleId = path.join(dir, module + '.js');
+    const moduleContent = await (typeof strOrFn === 'function' ? strOrFn({ dir }) : strOrFn);
+    if (moduleContent == null) continue;
 
     // supported nest moduleId ('@scope/name')
     ensureDir(path.parse(moduleId).dir);

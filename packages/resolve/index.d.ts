@@ -1,7 +1,7 @@
 import { Plugin, UserConfig } from 'vite';
 
 export interface Resolves {
-  [moduleId: string]: string | (() => string | Promise<string>);
+  [moduleId: string]: string | ((args: { dir: string }) => string | Promise<string | void> | void) | void;
 }
 
 export interface VitePluginResolve {
@@ -44,7 +44,7 @@ export default resolve;
 
 // --------- utils ---------
 export interface GenerateESModule {
-  (cacheDir: string, resolves: Resolves): Promise<void>;
+  (dir: string, resolves: Resolves): Promise<void>;
 }
 
 export interface ModifyAlias {
