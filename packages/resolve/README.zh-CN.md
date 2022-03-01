@@ -45,7 +45,7 @@ export default defineConfig({
 
 ```ts
 export type viteResolve = (
-  resolves: [moduleId: string]: string | (() => string | Promise<string>),
+  resolves: [moduleId: string]: string | ((args: { dir: string }) => string | Promise<string | void> | void) | void,
   options?: {
     /**
      * @default true
