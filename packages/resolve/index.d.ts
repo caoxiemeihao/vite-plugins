@@ -1,20 +1,31 @@
 import { Plugin, UserConfig } from 'vite';
 
-export interface Resolves {
-  [moduleId: string]: string | ((args: { dir: string }) => string | Promise<string | void> | void) | void;
+export interface ResolveArgs {
+  /** Generated file cache directory */
+  dir: string;
 }
 
-export interface VitePluginResolve {
-  (
-    resolves: Resolves,
-    options?: {
-      /**
-       * @default true
-       * Whether to insert the external module into "optimizeDeps.exclude"
-       */
-      optimizeDepsExclude: boolean;
-    },
-  ): Plugin;
+export interface Resolves {
+  [moduleId: string]:
+  | string
+  | ((args: ResolveArgs) =>
+    | string
+    | Promise<string | void>
+    | void)
+  | void;
+}
+
+export interface ResolveOptions {
+  /**
+   * Whether to insert the external module into "optimizeDeps.exclude"
+   * @default true
+   */
+  optimizeDepsExclude: boolean;
+  /**
+   * Absolute path or relative path
+   * @default ".vite-plugin-resolve"
+   */
+  dir: string;
 }
 
 /**

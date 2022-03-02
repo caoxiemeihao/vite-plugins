@@ -2,26 +2,21 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * @type {import('.').VitePluginResolve}
+ * @type {(resolves: import('.').Resolves, options?: import('.').ResolveOptions) => import('vite').Plugin}
  */
 module.exports = function resolve(resolves = {}, options = {}) {
-  const { optimizeDepsExclude = true } = options;
+  let { optimizeDepsExclude = true, dir = '.vite-plugin-resolve' } = options;
   let root = process.cwd();
-  let dir = '.vite-plugin-resolve';
 
   return {
     name: 'vite-plugin-resolve',
     async config(config) {
-      // init root path
-      if (config.root && path.isAbsolute(config.root)) {
-        // TODO: config.root is relative path
-        root = config.root;
+      if (!path.isAbsolute(dir)) dir = path.join(node_modules(root), dir);
+      if (config.root) root = path.resolve(config.root);
+
+      if (optimizeDepsExclude) {
+        modifyOptimizeDepsExclude(config, Object.keys(resolves));
       }
-
-      // absolute path
-      dir = path.join(node_modules(root), dir);
-
-      if (optimizeDepsExclude) modifyOptimizeDepsExclude(config, Object.keys(resolves));
 
       modifyAlias(
         config,
@@ -73,7 +68,7 @@ function modifyAlias(config, aliaList) {
 /**
  * @type {import('.').ModifyOptimizeDepsExclude}
  */
- function modifyOptimizeDepsExclude(config, exclude) {
+function modifyOptimizeDepsExclude(config, exclude) {
   if (!config.optimizeDeps) config.optimizeDeps = {};
   if (!config.optimizeDeps.exclude) config.optimizeDeps.exclude = [];
 
