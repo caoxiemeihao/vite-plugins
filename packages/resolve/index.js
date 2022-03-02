@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * @type {(resolves: import('.').Resolves, options?: import('.').ResolveOptions) => import('vite').Plugin}
+ * @type {import('.').VitePluginResolve}
  */
 module.exports = function resolve(resolves = {}, options = {}) {
   let { optimizeDepsExclude = true, dir = '.vite-plugin-resolve' } = options;

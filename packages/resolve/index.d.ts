@@ -20,37 +20,19 @@ export interface ResolveOptions {
    * Whether to insert the external module into "optimizeDeps.exclude"
    * @default true
    */
-  optimizeDepsExclude: boolean;
+  optimizeDepsExclude?: boolean;
   /**
    * Absolute path or relative path
    * @default ".vite-plugin-resolve"
    */
-  dir: string;
+  dir?: string;
 }
 
-/**
- * Custom resolve code for vite
- *
- * @example 
- * ```js
- * export default defineConfig({
- *   plugins: [
- *     viteResolve({
- *       // resolve external module, this like Vite external plugin
- *       vue: `const vue = window.Vue; export default vue;`,
- *
- *       // nested moduleId and return Promis<string>
- *       '@scope/name': async () => await require('fs').promises.readFile('path', 'utf-8'),
- *
- *       // electron
- *       electron: `const { ipcRenderer } = require('electron'); export { ipcRenderer };`,
- *     })
- *   ]
- * })
- * ```
- */
-declare const resolve: VitePluginResolve;
+export interface VitePluginResolve {
+  (resolves: Resolves, options?: ResolveOptions)
+}
 
+declare const resolve: VitePluginResolve;
 export default resolve;
 
 // --------- utils ---------
