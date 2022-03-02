@@ -1,5 +1,8 @@
 import { Plugin, UserConfig } from 'vite';
 
+declare const resolve: VitePluginResolve;
+export default resolve;
+
 export interface ResolveArgs {
   /** Generated file cache directory */
   dir: string;
@@ -29,11 +32,8 @@ export interface ResolveOptions {
 }
 
 export interface VitePluginResolve {
-  (resolves: Resolves, options?: ResolveOptions)
+  (resolves: Resolves, options?: ResolveOptions): Plugin;
 }
-
-declare const resolve: VitePluginResolve;
-export default resolve;
 
 // --------- utils ---------
 export interface GenerateESModule {
