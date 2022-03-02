@@ -9,25 +9,28 @@
 
 **English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/resolve#readme)**
 
-- 兼容 Browser, Node.js and Electron, 无关环境
+- 兼容 Browser, Node.js and Electron
 - 你可以认为它是一个加强版的 Vite external 插件
 - 你可以认为它是手动版的 Vite 预构建 [Pre-Bundling](https://vitejs.dev/guide/dep-pre-bundling.html)
 
 ## 安装
 
 ```bash
-npm i -D vite-plugin-resolve
+npm i vite-plugin-resolve -D
 ```
 
 ## 使用
 
-```js
-import { defineConfig } from 'vite'
-import viteResolve from 'vite-plugin-resolve'
+```ts
+// vite.config.ts
+
+import { builtinModules } from 'module'
+import { defineConfig, build } from 'vite'
+import resolve from 'vite-plugin-resolve'
 
 export default defineConfig({
   plugins: [
-    viteResolve({
+    resolve({
       // 加载外部 vue 这个场景就是 external
       vue: `const vue = window.Vue; export { vue as default }`,
 
@@ -36,24 +39,83 @@ export default defineConfig({
 
       // 在 Electron 中使用
       electron: `const { ipcRenderer } = require('electron'); export { ipcRenderer };`,
+
+      // 将 Node.js ES Module 模块转换成 CommonJs 模块. 比如 execa, node-fetch
+      ...['execa', 'node-fetch'].reduce((memo, moduleId) => Object.assign(memo, {
+        async [moduleId](args) {
+          await build({
+            plugins: [
+              {
+                name: 'vite-plugin[node:mod-to-mod]',
+                enforce: 'pre',
+                resolveId(source) {
+                  if (source.startsWith('node:')) {
+                    return source.replace('node:', '')
+                  }
+                },
+              }
+            ],
+            build: {
+              outDir: args.dir,
+              minify: false,
+              emptyOutDir: false,
+              lib: {
+                entry: require.resolve(moduleId),
+                formats: ['cjs'],
+                fileName: () => `${moduleId}.js`,
+              },
+              rollupOptions: {
+                external: [
+                  ...builtinModules,
+                ],
+              },
+            },
+          })
+        },
+      } as Parameters<typeof resolve>[0]), {}),
     })
   ]
 })
 ```
 
-## 类型定义
+## API
+
+### resolve(resolves[, options])
+
+##### resolves
 
 ```ts
-export type viteResolve = (
-  resolves: [moduleId: string]: string | ((args: { dir: string }) => string | Promise<string | void> | void) | void,
-  options?: {
-    /**
-     * @default true
-     * 是否将模块插入到 "optimizeDeps.exclude"
-     */
-    optimizeDepsExclude: boolean
-  }
-) => import('vite').VitePlugin
+export interface ResolveArgs {
+  /** 生成缓存文件夹 */
+  dir: string;
+}
+
+export interface Resolves {
+  [moduleId: string]:
+  | string
+  | ((args: ResolveArgs) =>
+    | string
+    | Promise<string | void>
+    | void)
+  | void;
+}
+```
+
+##### options
+
+```ts
+export interface ResolveOptions {
+  /**
+   * 是否将模块插入到 "optimizeDeps.exclude"
+   * @default true
+   */
+  optimizeDepsExclude: boolean;
+  /**
+   * 相对或绝对路径
+   * @default ".vite-plugin-resolve"
+   */
+  dir: string;
+}
 ```
 
 ## 工作原理

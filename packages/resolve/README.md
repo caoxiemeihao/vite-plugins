@@ -9,51 +9,113 @@ Custom resolve module content
 
 **English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/resolve/README.zh-CN.md)**
 
-- It can be compatible with Browser, Node.js and Electron, without environment
+- It can be compatible with Browser, Node.js and Electron
 - You can think of it as an enhanced Vite external plugin
-- You can think of it as manual version [Pre-Bundling](https://vitejs.dev/guide/dep-pre-bundling.html)
+- You can think of it as manually [Pre-Bundling](https://vitejs.dev/guide/dep-pre-bundling.html)
 
 ## Install
 
 ```bash
-npm i -D vite-plugin-resolve
+npm i vite-plugin-resolve -D
 ```
 
 ## Usage
 
-```js
-import { defineConfig } from 'vite'
-import viteResolve from 'vite-plugin-resolve'
+```ts
+// vite.config.ts
+
+import { builtinModules } from 'module'
+import { defineConfig, build } from 'vite'
+import resolve from 'vite-plugin-resolve'
 
 export default defineConfig({
   plugins: [
-    viteResolve({
-      // resolve external module, this like Vite external plugin
+    resolve({
+      // Resolve external module, this like Vite external plugin
       vue: `const vue = window.Vue; export { vue as default }`,
 
-      // nested moduleId and return Promis<string>
+      // Supported nested moduleId and return an Promis<string>
       '@scope/name': async () => await require('fs').promises.readFile('path', 'utf-8'),
 
-      // electron
+      // Resolve Electron ipcRenderer
       electron: `const { ipcRenderer } = require('electron'); export { ipcRenderer };`,
+
+      // Resolve Node.js ES Module as CommonJs Module. Such as execa, node-fetch
+      ...['execa', 'node-fetch'].reduce((memo, moduleId) => Object.assign(memo, {
+        async [moduleId](args) {
+          await build({
+            plugins: [
+              {
+                name: 'vite-plugin[node:mod-to-mod]',
+                enforce: 'pre',
+                resolveId(source) {
+                  if (source.startsWith('node:')) {
+                    return source.replace('node:', '')
+                  }
+                },
+              }
+            ],
+            build: {
+              outDir: args.dir,
+              minify: false,
+              emptyOutDir: false,
+              lib: {
+                entry: require.resolve(moduleId),
+                formats: ['cjs'],
+                fileName: () => `${moduleId}.js`,
+              },
+              rollupOptions: {
+                external: [
+                  ...builtinModules,
+                ],
+              },
+            },
+          })
+        },
+      } as Parameters<typeof resolve>[0]), {}),
     })
   ]
 })
 ```
 
-## Type define
+## API
+
+### resolve(resolves[, options])
+
+##### resolves
 
 ```ts
-export type viteResolve = (
-  resolves: [moduleId: string]: string | ((args: { dir: string }) => string | Promise<string | void> | void) | void,
-  options?: {
-    /**
-     * @default true
-     * Whether to insert the resolve module into "optimizeDeps.exclude"
-     */
-    optimizeDepsExclude: boolean
-  }
-) => import('vite').VitePlugin
+export interface ResolveArgs {
+  /** Generated file cache directory */
+  dir: string;
+}
+
+export interface Resolves {
+  [moduleId: string]:
+  | string
+  | ((args: ResolveArgs) =>
+    | string
+    | Promise<string | void>
+    | void)
+  | void;
+}
+```
+
+##### options
+
+```ts
+export interface ResolveOptions {
+  /**
+   * Whether to insert the external module into "optimizeDeps.exclude"
+   * @default true
+   */
+  optimizeDepsExclude: boolean;
+  /**
+   * Absolute path or relative path
+   * @default ".vite-plugin-resolve"
+   */
+  dir: string;
+}
 ```
 
 ## How to work
@@ -61,7 +123,7 @@ export type viteResolve = (
 **Let's use Vue as an example**
 
 ```js
-viteResolve({
+resolve({
   vue: `const vue = window.Vue; export { vue as default }`,
 })
 ```
