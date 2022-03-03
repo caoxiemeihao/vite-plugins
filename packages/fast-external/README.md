@@ -9,39 +9,28 @@ Without lexical transform, support custom external code
 
 **English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/fast-external/README.zh-CN.md)**
 
-- Like Webpack externals, support browser, Node.js and Electron -- without environment
+- Like Webpack externals, support browser, Node.js and Electron
 
 - It's actually implemented by modify `resolve.alias`
 
 - By default `window` is used as the environment object, you can also customize the code snippets by return string from function -- Real flexible 🎉  
 
-**eg:**
-
-```js
-fastExternal({
-  // By default will generated code -> const Vue = window['Vue']; export { Vue as default }
-  vue: 'Vue',
-
-  // Custom external code snippets used in Node.js
-  nodeJsModule: () => `export default require('moduleId');`,
-})
-```
-
 ## Install
 
 ```bash
-npm i -D vite-plugin-fast-external
+npm i vite-plugin-fast-external -D
 ```
 
 ## Usage
 
 ```js
-import fastExternal from 'vite-plugin-fast-external';
+import external from 'vite-plugin-fast-external';
 
 export default defineConfig({
   plugins: [
-    fastExternal({
+    external({
       // Simple example
+      // By default will generated code -> const Vue = window['Vue']; export { Vue as default }
       vue: 'Vue',
 
       // Custom external code by function
@@ -50,26 +39,38 @@ export default defineConfig({
       // Read a template file and return Promise<string>
       externalId: async () => await require('fs').promises.readFile('path', 'utf-8'),
 
-      // Electron Renderer-process
+      // Use in Electron
       electron: () => `const { ipcRenderer } = require('electron'); export { ipcRenderer }`,
     })
   ]
 })
 ```
 
-## Type define
+## API
+
+### external(externals[, options])
+
+#### externals
 
 ```ts
-export type fastExternal = (
-  external: Record<string, string | (() => string | Promise<string>)>,
-  options?: {
-    /**
-     * @default true
-     * Whether to insert the external module into "optimizeDeps.exclude"
-     */
-    optimizeDepsExclude: boolean
-  }
-) => VitePlugin
+export type Externals = Record<string, string | ((args: { dir: string; }) => string | Promise<string>)>;
+```
+
+#### options
+
+```ts
+export interface ExternalOptions {
+  /**
+   * Whether to insert the external module into "optimizeDeps.exclude"
+   * @default true
+   */
+  optimizeDepsExclude?: boolean;
+  /**
+   * Absolute path or relative path
+   * @default ".vite-plugin-fast-external"
+   */
+  dir?: string;
+}
 ```
 
 ## How to work
@@ -77,7 +78,7 @@ export type fastExternal = (
 **Let's use Vue as an example**
 
 ```js
-fastExternal({
+external({
   vue: 'Vue',
 })
 ```

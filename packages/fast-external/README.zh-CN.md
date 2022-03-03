@@ -9,39 +9,28 @@
 
 **[English](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external#readme) | 简体中文**
 
-- 类似 webpack 的 externals，支持浏览器、Node.js、Electron 等多环境 -- 环境无关
+- 类似 webpack 的 externals，支持浏览器、Node.js、Electron 等多环境
 
 - 本质上是通过 `resolve.alias` 实现的模块重定向加载
 
 - 默认使用的 window 作为宿主对象，你也可以通过函数返回字符串的形式任意定制代码段 -- 十分灵活！🎉
 
-**比如：**
-
-```js
-fastExternal({
-  // 默认会生成 const Vue = window['Vue']; export { Vue as default }
-  vue: 'Vue',
-
-  // 自定义 external 代码段在 Node.js 中使用
-  nodeJsModule: () => `export default require('moduleId');`,
-})
-```
-
 ## 安装
 
 ```bash
-npm i -D vite-plugin-fast-external
+npm i vite-plugin-fast-external -D
 ```
 
 ## 使用
 
 ```js
-import fastExternal from 'vite-plugin-fast-external';
+import external from 'vite-plugin-fast-external';
 
 export default defineConfig({
   plugins: [
-    fastExternal({
+    external({
       // 基本使用
+      // 默认会生成 const Vue = window['Vue']; export { Vue as default }
       vue: 'Vue',
 
       // 支持包命名空间，通过函数可以自定义返回任何代码段 - 但你要知道 vite 开发期只支持 ESM
@@ -57,19 +46,31 @@ export default defineConfig({
 })
 ```
 
-## 类型定义
+## API
+
+### external(externals[, options])
+
+#### externals
 
 ```ts
-export type fastExternal = (
-  external: Record<string, string | (() => string | Promise<string>)>,
-  options?: {
-    /**
-     * @default true
-     * 是否要把 external 插入到 "optimizeDeps.exclude" 中，这样能避开 vite 的预构建
-     */
-    optimizeDepsExclude: boolean
-  }
-) => VitePlugin
+export type Externals = Record<string, string | ((args: { dir: string; }) => string | Promise<string>)>;
+```
+
+#### options
+
+```ts
+export interface ExternalOptions {
+  /**
+   * 是否要把 external 插入到 "optimizeDeps.exclude" 中，这样能避开 vite 的预构建
+   * @default true
+   */
+  optimizeDepsExclude?: boolean;
+  /**
+   * 相对或绝对路径
+   * @default ".vite-plugin-fast-external"
+   */
+  dir?: string;
+}
 ```
 
 ## 工作原理
@@ -77,7 +78,7 @@ export type fastExternal = (
 **用 Vue 来举个 🌰**
 
 ```js
-fastExternal({
+external({
   vue: 'Vue',
 })
 ```

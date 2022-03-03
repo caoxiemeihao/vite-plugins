@@ -1,111 +1,21 @@
-const fs = require('fs');
-const path = require('path');
+const resolve = require('vite-plugin-resolve');
 
 /**
  * @type {import('.').VitePluginFastExternal}
  */
-module.exports = function external(
-  external,
-  options = {},
-) {
-  let root = process.cwd();
-  let externalDir = '.vite-plugin-fast-external';
-  const { optimizeDepsExclude = true } = options;
+module.exports = function external(externals, options = {}) {
+  const { optimizeDepsExclude = true, dir = '.vite-plugin-fast-external' } = options;
 
-  return {
-    name: 'vite-plugin-fast-external',
-    async config(config) {
-      // init root path
-      if (config.root && path.isAbsolute(config.root)) {
-        // TODO: config.root is relative path
-        root = config.root;
-      }
-
-      // absolute path
-      externalDir = path.join(node_modules(root), externalDir);
-
-      if (optimizeDepsExclude) modifyOptimizeDepsExclude(config, Object.keys(external));
-
-      modifyAlias(
-        config,
-        Object.keys(external).map(moduleId => ({ [moduleId]: path.join(externalDir, moduleId) })),
-      );
-
-      await generateExternalFile(externalDir, external);
-    }
-  }
-}
-
-/**
- * @type {import('.').GenerateExternalFile}
- */
-async function generateExternalFile(externalDir, external) {
-  // generate external module file
-  for (const [module, strOrFn] of Object.entries(external)) {
-    const moduleId = path.join(externalDir, `${module}.js`);
-    let moduleContent;
+  Object.keys(externals).forEach(key => {
+    const strOrFn = Object.values(externals[key])[0];
     if (typeof strOrFn === 'string') {
-      const libName = strOrFn;
-      moduleContent = `const ${libName} = window['${libName}']; export { ${libName} as default }`;
-    } else {
-      moduleContent = await strOrFn();
+      const iifeName = strOrFn;
+      externals[key] = `const ${iifeName} = window['${iifeName}']; export { ${iifeName} as default }`;
     }
+  });
 
-    // supported nest moduleId ('@scope/name')
-    ensureDir(path.parse(moduleId).dir);
-    fs.writeFileSync(moduleId, moduleContent);
-  }
-}
+  const plugin = resolve(externals, { optimizeDepsExclude, dir });
+  plugin.name = 'vite-plugin-fast-external';
 
-/**
- * @type {import('.').ModifyAlias}
- */
-function modifyAlias(config, aliaList) {
-  if (!config.resolve) config.resolve = {};
-
-  let alias = config.resolve.alias || [];
-  if (!Array.isArray(alias)) {
-    // keep the the original alias
-    alias = Object.entries(alias).map(([k, v]) => ({ find: k, replacement: v }));
-  }
-  // redirect resolve-module to `node_modules/.vite-plugin-resolve`
-  alias.push(...aliaList.map(item => {
-    const [find, replacement] = Object.entries(item)[0];
-    return { find, replacement };
-  }));
-
-  config.resolve.alias = alias;
-}
-
-/**
- * @type {import('.').ModifyOptimizeDepsExclude}
- */
-function modifyOptimizeDepsExclude(config, exclude) {
-  if (!config.optimizeDeps) config.optimizeDeps = {};
-  if (!config.optimizeDeps.exclude) config.optimizeDeps.exclude = [];
-
-  config.optimizeDeps.exclude.push(...exclude);
-}
-
-// --------- utils ---------
-
-function ensureDir(dir) {
-  if (!(fs.existsSync(dir) && fs.statSync(dir).isDirectory())) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-  return dir;
-}
-
-function node_modules(root, count = 0) {
-  if (node_modules.p) {
-    return node_modules.p;
-  }
-  const p = path.join(root, 'node_modules');
-  if (fs.existsSync(p)) {
-    return node_modules.p = p;
-  }
-  if (count >= 19) {
-    throw new Error('Can not found node_modules directory.');
-  }
-  return node_modules(path.join(root, '..'), count + 1);
-}
+  return plugin;
+};

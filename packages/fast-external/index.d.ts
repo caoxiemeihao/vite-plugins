@@ -1,18 +1,22 @@
-import { Plugin, UserConfig } from 'vite';
+import { Plugin } from 'vite';
 
-export type External = Record<string, string | (() => string | Promise<string>)>;
+export type Externals = Record<string, string | ((args: { dir: string; }) => string | Promise<string>)>;
+
+export interface ExternalOptions {
+  /**
+   * Whether to insert the external module into "optimizeDeps.exclude"
+   * @default true
+   */
+  optimizeDepsExclude?: boolean;
+  /**
+   * Absolute path or relative path
+   * @default ".vite-plugin-fast-external"
+   */
+  dir?: string;
+}
 
 export interface VitePluginFastExternal {
-  (
-    external: External,
-    options?: {
-      /**
-       * @default true
-       * Whether to insert the external module into "optimizeDeps.exclude"
-       */
-      optimizeDepsExclude: boolean;
-    },
-  ): Plugin;
+  (externals: Externals, options?: ExternalOptions): Plugin;
 }
 
 /**
@@ -33,19 +37,3 @@ export interface VitePluginFastExternal {
 declare const fastExternal: VitePluginFastExternal;
 
 export default fastExternal;
-
-// --------- utils ---------
-export interface GenerateExternalFile {
-  (externalDir: string, external: External): Promise<void>;
-}
-
-export interface ModifyAlias {
-  (
-    config: UserConfig,
-    aliaList: { [external: string]: string; }[],
-  ): void;
-}
-
-export interface ModifyOptimizeDepsExclude {
-  (config: UserConfig, exclude: string[]): void;
-}
