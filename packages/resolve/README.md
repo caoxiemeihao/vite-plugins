@@ -1,9 +1,7 @@
 # vite-plugin-resolve
 
-[![npm package](https://nodei.co/npm/vite-plugin-resolve.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/vite-plugin-resolve)
-<br/>
-[![NPM version](https://img.shields.io/npm/v/vite-plugin-resolve.svg?style=flat)](https://npmjs.org/package/vite-plugin-resolve)
-[![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-resolve.svg?style=flat)](https://npmjs.org/package/vite-plugin-resolve)
+[![NPM version](https://img.shields.io/npm/v/vite-plugin-resolve.svg)](https://npmjs.org/package/vite-plugin-resolve)
+[![NPM Downloads](https://img.shields.io/npm/dw/vite-plugin-resolve.svg)](https://npmjs.org/package/vite-plugin-resolve)
 
 Custom resolve module content
 
@@ -22,8 +20,44 @@ npm i vite-plugin-resolve -D
 ## Usage
 
 ```ts
-// vite.config.ts
+import { defineConfig } from 'vite'
+import resolve from 'vite-plugin-resolve'
 
+export default defineConfig({
+  plugins: [
+    resolve({
+      // Resolve custom module content
+      // This like Vite external plugin
+      vue: `const vue = window.Vue; export { vue as default }`,
+    }),
+  ]
+})
+```
+
+#### Read a local file
+
+```ts
+resolve({
+  // Supported nested moduleId
+  // Supported return an Promis<string>
+  '@scope/name': async () => await require('fs').promises.readFile('path', 'utf-8'),
+})
+```
+
+#### Electron
+
+```ts
+resolve({
+  // Resolve Electron ipcRenderer in Renderer-process
+  electron: `const { ipcRenderer } = require('electron'); export { ipcRenderer };`,
+})
+```
+
+#### Resolve an ES module as an CommonJs module for Node.js
+
+**Such as [execa](https://www.npmjs.com/package/execa), [node-fetch](https://www.npmjs.com/package/node-fetch)**
+
+```ts
 import { builtinModules } from 'module'
 import { defineConfig, build } from 'vite'
 import resolve from 'vite-plugin-resolve'
@@ -31,48 +65,40 @@ import resolve from 'vite-plugin-resolve'
 export default defineConfig({
   plugins: [
     resolve({
-      // Resolve external module, this like Vite external plugin
-      vue: `const vue = window.Vue; export { vue as default }`,
-
-      // Supported nested moduleId and return an Promis<string>
-      '@scope/name': async () => await require('fs').promises.readFile('path', 'utf-8'),
-
-      // Resolve Electron ipcRenderer
-      electron: `const { ipcRenderer } = require('electron'); export { ipcRenderer };`,
-
-      // Resolve Node.js ES Module as CommonJs Module. Such as execa, node-fetch
-      ...['execa', 'node-fetch'].reduce((memo, moduleId) => Object.assign(memo, {
-        async [moduleId](args) {
-          await build({
-            plugins: [
-              {
-                name: 'vite-plugin[node:mod-to-mod]',
-                enforce: 'pre',
-                resolveId(source) {
-                  if (source.startsWith('node:')) {
-                    return source.replace('node:', '')
-                  }
-                },
-              }
-            ],
-            build: {
-              outDir: args.dir,
-              minify: false,
-              emptyOutDir: false,
-              lib: {
-                entry: require.resolve(moduleId),
-                formats: ['cjs'],
-                fileName: () => `${moduleId}.js`,
+      async execa(args) {
+        // Build execa as an CommonJs module
+        await build({
+          plugins: [
+            {
+              name: 'vite-plugin[node:mod-to-mod]',
+              enforce: 'pre',
+              // Replace `import fs from "node:fs"` with `import fs from "fs"`
+              resolveId(source) {
+                if (source.startsWith('node:')) {
+                  return source.replace('node:', '')
+                }
               },
-              rollupOptions: {
-                external: [
-                  ...builtinModules,
-                ],
-              },
+            }
+          ],
+
+          // Build execa.js into cache directory
+          build: {
+            outDir: args.dir,
+            minify: false,
+            emptyOutDir: false,
+            lib: {
+              entry: require.resolve('execa'),
+              formats: ['cjs'],
+              fileName: () => `execa.js`,
             },
-          })
-        },
-      } as Parameters<typeof resolve>[0]), {}),
+            rollupOptions: {
+              external: [
+                ...builtinModules,
+              ],
+            },
+          },
+        })
+      },
     })
   ]
 })
@@ -85,11 +111,6 @@ export default defineConfig({
 ##### resolves
 
 ```ts
-export interface ResolveArgs {
-  /** Generated file cache directory */
-  dir: string;
-}
-
 export interface Resolves {
   [moduleId: string]:
   | string
@@ -99,17 +120,17 @@ export interface Resolves {
     | void)
   | void;
 }
+
+export interface ResolveArgs {
+  /** Generated file cache directory */
+  dir: string;
+}
 ```
 
 ##### options
 
 ```ts
 export interface ResolveOptions {
-  /**
-   * Whether to insert the external module into "optimizeDeps.exclude"
-   * @default true
-   */
-  optimizeDepsExclude: boolean;
   /**
    * Absolute path or relative path
    * @default ".vite-plugin-resolve"
@@ -120,7 +141,7 @@ export interface ResolveOptions {
 
 ## How to work
 
-**Let's use Vue as an example**
+#### Let's use Vue as an example
 
 ```js
 resolve({
@@ -149,7 +170,8 @@ const vue = window.Vue; export { vue as default }
 }
 ```
 
-3. Add `vue` to the `optimizeDeps.exclude` **by default**. You can disable it through `options.optimizeDepsExclude`
+3. Add `vue` to the `optimizeDeps.exclude` by default.  
+  You can avoid it through `optimizeDeps.include`
 
 ```js
 export default {

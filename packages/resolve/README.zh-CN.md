@@ -1,9 +1,7 @@
 # vite-plugin-resolve
 
-[![npm package](https://nodei.co/npm/vite-plugin-resolve.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/vite-plugin-resolve)
-<br/>
-[![NPM version](https://img.shields.io/npm/v/vite-plugin-resolve.svg?style=flat)](https://npmjs.org/package/vite-plugin-resolve)
-[![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-resolve.svg?style=flat)](https://npmjs.org/package/vite-plugin-resolve)
+[![NPM version](https://img.shields.io/npm/v/vite-plugin-resolve.svg)](https://npmjs.org/package/vite-plugin-resolve)
+[![NPM Downloads](https://img.shields.io/npm/dw/vite-plugin-resolve.svg)](https://npmjs.org/package/vite-plugin-resolve)
 
 自定义加载模块内容
 
@@ -22,8 +20,44 @@ npm i vite-plugin-resolve -D
 ## 使用
 
 ```ts
-// vite.config.ts
+import { defineConfig } from 'vite'
+import resolve from 'vite-plugin-resolve'
 
+export default defineConfig({
+  plugins: [
+    resolve({
+      // 加载自定模块内容
+      // 这个场景就是 external
+      vue: `const vue = window.Vue; export { vue as default }`,
+    }),
+  ]
+})
+```
+
+#### 读取本地文件
+
+```ts
+resolve({
+  // 支持嵌套模块命名
+  // 支持返回 Promis<string>
+  '@scope/name': async () => await require('fs').promises.readFile('path', 'utf-8'),
+})
+```
+
+#### Electron
+
+```ts
+resolve({
+  // 在 Electron 渲染进程中加载 ipcRenderer
+  electron: `const { ipcRenderer } = require('electron'); export { ipcRenderer };`,
+})
+```
+
+#### 将 ES 模块转换成 CommonJs 模块供 Node.js 使用
+
+**例如 [execa](https://www.npmjs.com/package/execa), [node-fetch](https://www.npmjs.com/package/node-fetch)**
+
+```ts
 import { builtinModules } from 'module'
 import { defineConfig, build } from 'vite'
 import resolve from 'vite-plugin-resolve'
@@ -31,48 +65,40 @@ import resolve from 'vite-plugin-resolve'
 export default defineConfig({
   plugins: [
     resolve({
-      // 加载外部 vue 这个场景就是 external
-      vue: `const vue = window.Vue; export { vue as default }`,
-
-      // 支持嵌套模块命名，支持返回 Promis<string>
-      '@scope/name': async () => await require('fs').promises.readFile('path', 'utf-8'),
-
-      // 在 Electron 中使用
-      electron: `const { ipcRenderer } = require('electron'); export { ipcRenderer };`,
-
-      // 将 Node.js ES Module 模块转换成 CommonJs 模块. 比如 execa, node-fetch
-      ...['execa', 'node-fetch'].reduce((memo, moduleId) => Object.assign(memo, {
-        async [moduleId](args) {
-          await build({
-            plugins: [
-              {
-                name: 'vite-plugin[node:mod-to-mod]',
-                enforce: 'pre',
-                resolveId(source) {
-                  if (source.startsWith('node:')) {
-                    return source.replace('node:', '')
-                  }
-                },
-              }
-            ],
-            build: {
-              outDir: args.dir,
-              minify: false,
-              emptyOutDir: false,
-              lib: {
-                entry: require.resolve(moduleId),
-                formats: ['cjs'],
-                fileName: () => `${moduleId}.js`,
+      async execa(args) {
+        // 将 execa 构建成 CommonJs 模块
+        await build({
+          plugins: [
+            {
+              name: 'vite-plugin[node:mod-to-mod]',
+              enforce: 'pre',
+              // 将 import fs from "node:fs" 替换为 import fs from "fs"
+              resolveId(source) {
+                if (source.startsWith('node:')) {
+                  return source.replace('node:', '')
+                }
               },
-              rollupOptions: {
-                external: [
-                  ...builtinModules,
-                ],
-              },
+            }
+          ],
+
+          // 将 execa.js 写入到缓存目录
+          build: {
+            outDir: args.dir,
+            minify: false,
+            emptyOutDir: false,
+            lib: {
+              entry: require.resolve('execa'),
+              formats: ['cjs'],
+              fileName: () => `execa.js`,
             },
-          })
-        },
-      } as Parameters<typeof resolve>[0]), {}),
+            rollupOptions: {
+              external: [
+                ...builtinModules,
+              ],
+            },
+          },
+        })
+      },
     })
   ]
 })
@@ -85,11 +111,6 @@ export default defineConfig({
 ##### resolves
 
 ```ts
-export interface ResolveArgs {
-  /** 生成缓存文件夹 */
-  dir: string;
-}
-
 export interface Resolves {
   [moduleId: string]:
   | string
@@ -99,17 +120,17 @@ export interface Resolves {
     | void)
   | void;
 }
+
+export interface ResolveArgs {
+  /** 生成缓存文件夹 */
+  dir: string;
+}
 ```
 
 ##### options
 
 ```ts
 export interface ResolveOptions {
-  /**
-   * 是否将模块插入到 "optimizeDeps.exclude"
-   * @default true
-   */
-  optimizeDepsExclude: boolean;
   /**
    * 相对或绝对路径
    * @default ".vite-plugin-resolve"
@@ -120,7 +141,7 @@ export interface ResolveOptions {
 
 ## 工作原理
 
-**用 Vue 来举个 🌰**
+#### 用 Vue 来举个 🌰
 
 ```js
 viteResolve({
@@ -149,7 +170,8 @@ const vue = window.Vue; export { vue as default }
 }
 ```
 
-3. 默认会将 `vue` 添加到 `optimizeDeps.exclude` 中. 你可以通过 `options.optimizeDepsExclude` 禁用
+3. 默认会将 `vue` 添加到 `optimizeDeps.exclude` 中  
+  你可以通过 `optimizeDeps.include` 绕开
 
 ```js
 export default {
