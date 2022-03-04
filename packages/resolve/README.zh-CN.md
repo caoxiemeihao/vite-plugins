@@ -1,11 +1,8 @@
-# vite-plugin-resolve
-
-[![NPM version](https://img.shields.io/npm/v/vite-plugin-resolve.svg)](https://npmjs.org/package/vite-plugin-resolve)
-[![NPM Downloads](https://img.shields.io/npm/dw/vite-plugin-resolve.svg)](https://npmjs.org/package/vite-plugin-resolve)
+# vite-plugin-resolve [![NPM version](https://img.shields.io/npm/v/vite-plugin-resolve.svg)](https://npmjs.org/package/vite-plugin-resolve) [![awesome-vite](https://awesome.re/badge.svg)](https://github.com/vitejs/awesome-vite)
 
 自定义加载模块内容
 
-**English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/resolve#readme)**
+**[English](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/resolve#readme) | 简体中文**
 
 - 兼容 Browser, Node.js and Electron
 - 你可以认为它是一个加强版的 Vite external 插件
