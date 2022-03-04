@@ -1,68 +1,122 @@
-# vitejs-plugins
+## 黑发不知勤学早，白首方悔读书迟
 
-## 为社区尽一份绵薄之力 🔥
-
----
-
-###### [vite-plugin-commonjs](packages/commonjs): Pure javascript vite plugin for support CommonJs
-
-[![NPM version](https://img.shields.io/npm/v/vite-plugin-commonjs.svg)](https://npmjs.org/package/vite-plugin-commonjs)
-[![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-commonjs.svg)](https://npmjs.org/package/vite-plugin-commonjs)
-
-- [x] `require` syntax.
-- [ ] `exports` syntax.
-
-###### TODO: refactor with `esbuild`
-
----
-
-###### [vite-plugin-dynamic-import](packages/dynamic-import): Supported use alias in dynamic import
-
-[![NPM version](https://img.shields.io/npm/v/vite-plugin-dynamic-import.svg)](https://npmjs.org/package/vite-plugin-dynamic-import)
-[![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-dynamic-import.svg)](https://npmjs.org/package/vite-plugin-dynamic-import)
-
----
-
-###### [vitejs-plugin-electron](packages/electron): An vite plugin for Electron Renderer-process use NodeJs API
-
-[![NPM version](https://img.shields.io/npm/v/vitejs-plugin-electron.svg)](https://npmjs.org/package/vitejs-plugin-electron)
-[![NPM Downloads](https://img.shields.io/npm/dm/vitejs-plugin-electron.svg)](https://npmjs.org/package/vitejs-plugin-electron)
-
-> 🚧 Use Electron and NodeJs API in Renderer-porocess, `vite-plugin-electron-renderer` is better
-
----
-
-###### [vite-plugin-electron-renderer](packages/electron-renderer): Use Electron and NodeJs API in Renderer-process
-
-[![NPM version](https://img.shields.io/npm/v/vite-plugin-electron-renderer.svg)](https://npmjs.org/package/vite-plugin-electron-renderer)
-[![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-electron-renderer.svg)](https://npmjs.org/package/vite-plugin-electron-renderer)
-
-- [x] use `import electron from 'electron'`, `import fs from 'fs'` in Renderer-process
-- [x] custom resolve code
-
----
-
-###### [vite-plugin-fast-external](packages/fast-external): An tiny and fast external plugin for vite.
-
-[![NPM version](https://img.shields.io/npm/v/vite-plugin-fast-external.svg)](https://npmjs.org/package/vite-plugin-fast-external)
-[![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-fast-external.svg)](https://npmjs.org/package/vite-plugin-fast-external)
-
----
-
-###### [vite-plugin-lang-jsx](packages/lang-jsx): Automatically add `lang="jsx"` attribute for when using vite-plugin-vue2
-
-[![NPM version](https://img.shields.io/npm/v/vite-plugin-lang-jsx.svg)](https://npmjs.org/package/vite-plugin-lang-jsx)
-[![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-lang-jsx.svg)](https://npmjs.org/package/vite-plugin-lang-jsx)
-
----
-
-###### [vite-plugin-resolve](packages/resolve): Custom resolve code for vite
-
-[![NPM version](https://img.shields.io/npm/v/vite-plugin-resolve.svg)](https://npmjs.org/package/vite-plugin-resolve)
-[![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-resolve.svg)](https://npmjs.org/package/vite-plugin-resolve)
-
-- [x] external module in vite
-- [x] custom resolve code in vite
-- [x] support use in electron
-
----
+<table>
+  <thead>
+    <th width="217">Name</th>
+    <th>Description</th>
+    <th>Npm</th>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <a href="packages/resolve">vite-plugin-resolve</a>
+      </td>
+      <td>
+        Custom resolve code for vite
+        <a href="https://github.com/vitejs/awesome-vite">
+          <img src="https://awesome.re/badge.svg">
+        </a>
+      </td>
+      <td>
+        <a href="https://npmjs.org/package/vite-plugin-resolve">
+          <img src="https://img.shields.io/npm/v/vite-plugin-resolve.svg">
+        </a>
+        <a href="https://npmjs.org/package/vite-plugin-resolve">
+          <img src="https://img.shields.io/npm/dw/vite-plugin-resolve.svg">
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a href="packages/commonjs">vite-plugin-commonjs</a>
+      </td>
+      <td>
+        A pure JavaScript implementation of vite-plugin-commonjs
+        <br/>
+        <font color="#fa6470">[2022-03-04] 🛠 🛠 🛠 🛠 Refactoring 🛠 🛠 🛠 🛠</font>
+      </td>
+      <td>
+        <a href="https://npmjs.org/package/vite-plugin-commonjs.svg">
+          <img src="https://img.shields.io/npm/v/vite-plugin-commonjs.svg">
+        </a>
+        <a href="https://npmjs.org/package/vite-plugin-commonjs.svg">
+          <img src="https://img.shields.io/npm/dw/vite-plugin-commonjs.svg">
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a href="packages/dynamic-import">vite-plugin-dynamic-import</a>
+      </td>
+      <td>Enhance the builtin dynamic import plugin of Vite</td>
+      <td>
+        <a href="https://npmjs.org/package/vite-plugin-dynamic-import.svg">
+          <img src="https://img.shields.io/npm/v/vite-plugin-dynamic-import.svg">
+        </a>
+        <a href="https://npmjs.org/package/vite-plugin-dynamic-import.svg">
+          <img src="https://img.shields.io/npm/dw/vite-plugin-dynamic-import.svg">
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a href="packages/electron-renderer">vite-plugin-electron-renderer</a>
+      </td>
+      <td>Use Electron and NodeJs API in Renderer-process</td>
+      <td>
+        <a href="https://npmjs.org/package/vite-plugin-electron-renderer.svg">
+          <img src="https://img.shields.io/npm/v/vite-plugin-electron-renderer.svg">
+        </a>
+        <a href="https://npmjs.org/package/vite-plugin-electron-renderer.svg">
+          <img src="https://img.shields.io/npm/dw/vite-plugin-electron-renderer.svg">
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a href="packages/electron-renderer">vitejs-plugin-electron</a>
+      </td>
+      <td>
+        Integrate Vite and Electron
+        <br/>
+        <font color="#fa6470">[2022-03-04] In refactoring plan</font>
+      </td>
+      <td>
+        <a href="https://npmjs.org/package/vitejs-plugin-electron.svg">
+          <img src="https://img.shields.io/npm/v/vitejs-plugin-electron.svg">
+        </a>
+        <a href="https://npmjs.org/package/vitejs-plugin-electron.svg">
+          <img src="https://img.shields.io/npm/dw/vitejs-plugin-electron.svg">
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a href="packages/fast-external">vite-plugin-fast-external</a>
+      </td>
+      <td>Without lexical transform, support custom external code</td>
+      <td>
+        <a href="https://npmjs.org/package/vite-plugin-fast-external.svg">
+          <img src="https://img.shields.io/npm/v/vite-plugin-fast-external.svg">
+        </a>
+        <a href="https://npmjs.org/package/vite-plugin-fast-external.svg">
+          <img src="https://img.shields.io/npm/dw/vite-plugin-fast-external.svg">
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a href="packages/fast-external">vite-plugin-lang-jsx</a>
+      </td>
+      <td>Automatically add <code>lang="jsx"</code> attribute for when using vite-plugin-vue2</td>
+      <td>
+        <a href="https://npmjs.org/package/vite-plugin-lang-jsx.svg">
+          <img src="https://img.shields.io/npm/v/vite-plugin-lang-jsx.svg">
+        </a>
+        <a href="https://npmjs.org/package/vite-plugin-lang-jsx.svg">
+          <img src="https://img.shields.io/npm/dw/vite-plugin-lang-jsx.svg">
+        </a>
+      </td>
+    </tr>
+  </tbody>
+</table>
