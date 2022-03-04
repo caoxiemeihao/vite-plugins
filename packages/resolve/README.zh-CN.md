@@ -39,7 +39,7 @@ export default defineConfig({
 ```ts
 resolve({
   // 支持嵌套模块命名
-  // 支持返回 Promis<string>
+  // 支持返回 Promise
   '@scope/name': async () => await require('fs').promises.readFile('path', 'utf-8'),
 })
 ```
@@ -55,7 +55,10 @@ resolve({
 
 #### 将 ES 模块转换成 CommonJs 模块供 Node.js 使用
 
-**例如 [execa](https://www.npmjs.com/package/execa), [node-fetch](https://www.npmjs.com/package/node-fetch)**
+例如 [execa](https://www.npmjs.com/package/execa), [node-fetch](https://www.npmjs.com/package/node-fetch)
+
+这里使用 "vite" 作为构建工具  
+你也可以选用其他的工具，比如 [rollup](https://rollupjs.org), [webpack](https://webpack.js.org), [esbuild](https://esbuild.github.io), [swc](https://swc.rs)  等等
 
 ```ts
 import { builtinModules } from 'module'

@@ -7,7 +7,7 @@ Custom resolve module content
 
 **English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/resolve/README.zh-CN.md)**
 
-- It can be compatible with Browser, Node.js and Electron
+- Compatible Browser, Node.js and Electron
 - You can think of it as an enhanced Vite external plugin
 - You can think of it as manually [Pre-Bundling](https://vitejs.dev/guide/dep-pre-bundling.html)
 
@@ -34,12 +34,12 @@ export default defineConfig({
 })
 ```
 
-#### Read a local file
+#### Load a local file
 
 ```ts
 resolve({
-  // Supported nested moduleId
-  // Supported return an Promis<string>
+  // Supported nested module id
+  // Supported return Promise
   '@scope/name': async () => await require('fs').promises.readFile('path', 'utf-8'),
 })
 ```
@@ -55,7 +55,10 @@ resolve({
 
 #### Resolve an ES module as an CommonJs module for Node.js
 
-**Such as [execa](https://www.npmjs.com/package/execa), [node-fetch](https://www.npmjs.com/package/node-fetch)**
+Such as [execa](https://www.npmjs.com/package/execa), [node-fetch](https://www.npmjs.com/package/node-fetch)  
+
+Here, Vite is used as the build tool  
+You can also choose other tools, such as [rollup](https://rollupjs.org), [webpack](https://webpack.js.org), [esbuild](https://esbuild.github.io), [swc](https://swc.rs) and so on
 
 ```ts
 import { builtinModules } from 'module'
