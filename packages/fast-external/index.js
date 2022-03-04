@@ -8,13 +8,11 @@ module.exports = function external(externals, options = {}) {
     options.dir = '.vite-plugin-fast-external';
   }
 
-  Object.keys(externals).forEach(key => {
-    const strOrFn = Object.values(externals[key])[0];
+  for (const [moduleId, strOrFn] of Object.entries(externals)) {
     if (typeof strOrFn === 'string') {
-      const iifeName = strOrFn;
-      externals[key] = `const ${iifeName} = window['${iifeName}']; export { ${iifeName} as default }`;
+      externals[moduleId] = `const ${moduleId} = window['${/* iife name */strOrFn}']; export { ${moduleId} as default }`;
     }
-  });
+  }
 
   const plugin = resolve(externals, options);
   plugin.name = 'vite-plugin-fast-external';
