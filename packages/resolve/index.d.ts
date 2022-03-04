@@ -20,11 +20,6 @@ export interface Resolves {
 
 export interface ResolveOptions {
   /**
-   * Whether to insert the external module into "optimizeDeps.exclude"
-   * @default true
-   */
-  optimizeDepsExclude?: boolean;
-  /**
    * Absolute path or relative path
    * @default ".vite-plugin-resolve"
    */

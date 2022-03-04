@@ -5,7 +5,7 @@ const path = require('path');
  * @type {import('.').VitePluginResolve}
  */
 module.exports = function resolve(resolves = {}, options = {}) {
-  let { optimizeDepsExclude = true, dir = '.vite-plugin-resolve' } = options;
+  let { dir = '.vite-plugin-resolve' } = options;
   let root = process.cwd();
 
   return {
@@ -14,10 +14,7 @@ module.exports = function resolve(resolves = {}, options = {}) {
       if (!path.isAbsolute(dir)) dir = path.join(node_modules(root), dir);
       if (config.root) root = path.resolve(config.root);
 
-      if (optimizeDepsExclude) {
-        modifyOptimizeDepsExclude(config, Object.keys(resolves));
-      }
-
+      modifyOptimizeDepsExclude(config, Object.keys(resolves));
       modifyAlias(
         config,
         Object.keys(resolves).map(moduleId => ({ [moduleId]: path.join(dir, moduleId) })),
@@ -72,6 +69,9 @@ function modifyOptimizeDepsExclude(config, exclude) {
   if (!config.optimizeDeps) config.optimizeDeps = {};
   if (!config.optimizeDeps.exclude) config.optimizeDeps.exclude = [];
 
+  if (config.optimizeDeps.include) {
+    exclude = exclude.filter(e => !config.optimizeDeps.include.includes(e));
+  }
   config.optimizeDeps.exclude.push(...exclude);
 }
 
