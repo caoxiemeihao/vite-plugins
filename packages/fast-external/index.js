@@ -4,7 +4,9 @@ const resolve = require('vite-plugin-resolve');
  * @type {import('.').VitePluginFastExternal}
  */
 module.exports = function external(externals, options = {}) {
-  const { optimizeDepsExclude = true, dir = '.vite-plugin-fast-external' } = options;
+  if (!options.dir) {
+    options.dir = '.vite-plugin-fast-external';
+  }
 
   Object.keys(externals).forEach(key => {
     const strOrFn = Object.values(externals[key])[0];
@@ -14,7 +16,7 @@ module.exports = function external(externals, options = {}) {
     }
   });
 
-  const plugin = resolve(externals, { optimizeDepsExclude, dir });
+  const plugin = resolve(externals, options);
   plugin.name = 'vite-plugin-fast-external';
 
   return plugin;

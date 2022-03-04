@@ -61,11 +61,6 @@ export type Externals = Record<string, string | ((args: { dir: string; }) => str
 ```ts
 export interface ExternalOptions {
   /**
-   * 是否要把 external 插入到 "optimizeDeps.exclude" 中，这样能避开 vite 的预构建
-   * @default true
-   */
-  optimizeDepsExclude?: boolean;
-  /**
    * 相对或绝对路径
    * @default ".vite-plugin-fast-external"
    */
@@ -104,7 +99,8 @@ const vue = window['Vue']; export { vue as default }
 }
 ```
 
-3. 默认会将 `vue` 添加到 `optimizeDeps.exclude` 中. 你可以通过 `options.optimizeDepsExclude` 禁用
+3. 默认会将 `vue` 添加到 `optimizeDeps.exclude` 中  
+  你可以通过 `optimizeDeps.include` 绕开
 
 ```js
 export default {

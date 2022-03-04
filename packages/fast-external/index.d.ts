@@ -4,11 +4,6 @@ export type Externals = Record<string, string | ((args: { dir: string; }) => str
 
 export interface ExternalOptions {
   /**
-   * Whether to insert the external module into "optimizeDeps.exclude"
-   * @default true
-   */
-  optimizeDepsExclude?: boolean;
-  /**
    * Absolute path or relative path
    * @default ".vite-plugin-fast-external"
    */

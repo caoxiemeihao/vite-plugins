@@ -61,11 +61,6 @@ export type Externals = Record<string, string | ((args: { dir: string; }) => str
 ```ts
 export interface ExternalOptions {
   /**
-   * Whether to insert the external module into "optimizeDeps.exclude"
-   * @default true
-   */
-  optimizeDepsExclude?: boolean;
-  /**
    * Absolute path or relative path
    * @default ".vite-plugin-fast-external"
    */
@@ -104,7 +99,8 @@ const vue = window['Vue']; export { vue as default }
 }
 ```
 
-3. Add `vue` to the `optimizeDeps.exclude` **by default**. You can disable it through `options.optimizeDepsExclude`
+3. Add `vue` to the `optimizeDeps.exclude` by default.  
+  You can avoid it through `optimizeDeps.include`
 
 ```js
 export default {
