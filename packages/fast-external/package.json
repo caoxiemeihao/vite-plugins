@@ -9,7 +9,7 @@
   "license": "MIT",
   "scripts": {},
   "dependencies": {
-    "vite-plugin-resolve": "^1.6.0"
+    "vite-plugin-resolve": "^1.8.0"
   },
   "devDependencies": {
     "vite": "^2.6.13"
