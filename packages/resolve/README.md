@@ -35,8 +35,8 @@ export default defineConfig({
 
 ```ts
 resolve({
-  // Supported nested module id
-  // Supported return Promise
+  // Support nested module id
+  // Support return Promise
   '@scope/name': async () => await require('fs').promises.readFile('path', 'utf-8'),
 })
 ```
@@ -66,7 +66,7 @@ export default defineConfig({
   plugins: [
     resolve({
       async execa(args) {
-        // Build execa as an CommonJs module
+        // Transpile execa as an CommonJs module
         await build({
           plugins: [
             {
