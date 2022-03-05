@@ -1,10 +1,10 @@
-import fs from 'node:fs';
-import path from 'node:path';
+const fs = require('fs');
+const path = require('path');
 
 /**
  * @type {import('.').VitePluginResolve}
  */
-export default function resolve(resolves = {}, options = {}) {
+module.exports = function resolve(resolves = {}, options = {}) {
   let { dir = '.vite-plugin-resolve' } = options;
   let root = process.cwd();
 
