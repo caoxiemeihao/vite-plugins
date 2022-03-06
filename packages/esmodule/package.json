@@ -1,0 +1,34 @@
+{
+  "name": "vite-plugin-esmodule",
+  "version": "1.0.0",
+  "description": "Build ES module to CommonJs module for Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caoxiemeihao/vite-plugins.git#main"
+  },
+  "keywords": [
+    "vite",
+    "plugin",
+    "node",
+    "esm",
+    "cjs",
+    "esmodule",
+    "commonjs"
+  ],
+  "author": "草鞋没号 <308487730@qq.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/caoxiemeihao/vite-plugins/issues"
+  },
+  "homepage": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/esmodule#readme",
+  "dependencies": {
+    "vite-plugin-resolve": "^1.8.0"
+  },
+  "devDependencies": {
+    "vite": "^2.6.13"
+  }
+}
