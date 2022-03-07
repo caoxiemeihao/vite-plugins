@@ -5,8 +5,7 @@
   "author": "草鞋没号 <308487730@qq.com>",
   "license": "MIT",
   "scripts": {
-    "build": "vite build",
-    "test": "node dist/index.js"
+    "build": "vite build"
   },
   "dependencies": {
     "execa": "^6.1.0",

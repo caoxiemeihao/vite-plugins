@@ -1,6 +1,14 @@
-import { execa } from 'execa';
-import fetch from 'node-fetch';
+const { execa } = require('.vite-plugin-esmodule/execa');
+const fetch = require('.vite-plugin-esmodule/node-fetch').default;
 
-console.log(execa);
 
-console.log(fetch);
+(async () => {
+  const { stdout } = await execa('echo', ['unicorns']);
+  console.log(stdout);
+
+  console.log('\n-----------------\n');
+
+  const response = await fetch('https://github.com/');
+  const body = await response.text();
+  console.log(body);
+})();

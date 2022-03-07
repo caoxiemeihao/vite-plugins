@@ -12,9 +12,9 @@ module.exports = defineConfig({
   build: {
     minify: false,
     rollupOptions: {
-      input: 'index.js',
+      input: '_.js',
       output: {
-        dir: 'dist',
+        dir: '.',
         entryFileNames: '[name].js',
         format: 'cjs',
       },
