@@ -46,6 +46,20 @@
     </tr>
     <tr>
       <td>
+        <a href="packages/esmodule">vite-plugin-esmodule</a>
+      </td>
+      <td>Build ES module to CommonJs module for Node.js</td>
+      <td>
+        <a href="https://npmjs.org/package/vite-plugin-esmodule.svg">
+          <img src="https://img.shields.io/npm/v/vite-plugin-esmodule.svg">
+        </a>
+        <a href="https://npmjs.org/package/vite-plugin-esmodule.svg">
+          <img src="https://img.shields.io/npm/dw/vite-plugin-esmodule.svg">
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td>
         <a href="packages/dynamic-import">vite-plugin-dynamic-import</a>
       </td>
       <td>Enhance the builtin dynamic import plugin of Vite</td>
