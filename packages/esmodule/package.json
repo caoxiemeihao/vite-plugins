@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-esmodule",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Build ES module to CommonJs module for Node.js",
   "main": "index.js",
   "scripts": {
