@@ -2,11 +2,14 @@
   "name": "vite-plugin-commonjs",
   "version": "0.2.6",
   "description": "A pure JavaScript implementation of vite-plugin-commonjs",
-  "main": "index.ts",
+  "main": "dist/index.js",
   "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/commonjs",
   "author": "草鞋没号 <308487730@qq.com>",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "build": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
   "devDependencies": {
     "@types/node": "^17.0.18",
     "tslib": "^2.3.1",
