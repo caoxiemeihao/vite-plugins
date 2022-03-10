@@ -36,10 +36,10 @@
         <font color="#fa6470">[2022-03-04] 🛠 🛠 🛠 🛠 Refactoring 🛠 🛠 🛠 🛠</font>
       </td>
       <td>
-        <a href="https://npmjs.org/package/vite-plugin-commonjs.svg">
+        <a href="https://npmjs.org/package/vite-plugin-commonjs">
           <img src="https://img.shields.io/npm/v/vite-plugin-commonjs.svg">
         </a>
-        <a href="https://npmjs.org/package/vite-plugin-commonjs.svg">
+        <a href="https://npmjs.org/package/vite-plugin-commonjs">
           <img src="https://img.shields.io/npm/dw/vite-plugin-commonjs.svg">
         </a>
       </td>
@@ -50,10 +50,10 @@
       </td>
       <td>Build ES module to CommonJs module for Node.js</td>
       <td>
-        <a href="https://npmjs.org/package/vite-plugin-esmodule.svg">
+        <a href="https://npmjs.org/package/vite-plugin-esmodule">
           <img src="https://img.shields.io/npm/v/vite-plugin-esmodule.svg">
         </a>
-        <a href="https://npmjs.org/package/vite-plugin-esmodule.svg">
+        <a href="https://npmjs.org/package/vite-plugin-esmodule">
           <img src="https://img.shields.io/npm/dw/vite-plugin-esmodule.svg">
         </a>
       </td>
@@ -64,10 +64,10 @@
       </td>
       <td>Enhance the builtin dynamic import plugin of Vite</td>
       <td>
-        <a href="https://npmjs.org/package/vite-plugin-dynamic-import.svg">
+        <a href="https://npmjs.org/package/vite-plugin-dynamic-import">
           <img src="https://img.shields.io/npm/v/vite-plugin-dynamic-import.svg">
         </a>
-        <a href="https://npmjs.org/package/vite-plugin-dynamic-import.svg">
+        <a href="https://npmjs.org/package/vite-plugin-dynamic-import">
           <img src="https://img.shields.io/npm/dw/vite-plugin-dynamic-import.svg">
         </a>
       </td>
@@ -78,10 +78,10 @@
       </td>
       <td>Use Electron and NodeJs API in Renderer-process</td>
       <td>
-        <a href="https://npmjs.org/package/vite-plugin-electron-renderer.svg">
+        <a href="https://npmjs.org/package/vite-plugin-electron-renderer">
           <img src="https://img.shields.io/npm/v/vite-plugin-electron-renderer.svg">
         </a>
-        <a href="https://npmjs.org/package/vite-plugin-electron-renderer.svg">
+        <a href="https://npmjs.org/package/vite-plugin-electron-renderer">
           <img src="https://img.shields.io/npm/dw/vite-plugin-electron-renderer.svg">
         </a>
       </td>
@@ -96,10 +96,10 @@
         <font color="#fa6470">[2022-03-04] In refactoring plan</font>
       </td>
       <td>
-        <a href="https://npmjs.org/package/vitejs-plugin-electron.svg">
+        <a href="https://npmjs.org/package/vitejs-plugin-electron">
           <img src="https://img.shields.io/npm/v/vitejs-plugin-electron.svg">
         </a>
-        <a href="https://npmjs.org/package/vitejs-plugin-electron.svg">
+        <a href="https://npmjs.org/package/vitejs-plugin-electron">
           <img src="https://img.shields.io/npm/dw/vitejs-plugin-electron.svg">
         </a>
       </td>
@@ -110,10 +110,10 @@
       </td>
       <td>Without lexical transform, support custom external code</td>
       <td>
-        <a href="https://npmjs.org/package/vite-plugin-fast-external.svg">
+        <a href="https://npmjs.org/package/vite-plugin-fast-external">
           <img src="https://img.shields.io/npm/v/vite-plugin-fast-external.svg">
         </a>
-        <a href="https://npmjs.org/package/vite-plugin-fast-external.svg">
+        <a href="https://npmjs.org/package/vite-plugin-fast-external">
           <img src="https://img.shields.io/npm/dw/vite-plugin-fast-external.svg">
         </a>
       </td>
@@ -124,10 +124,10 @@
       </td>
       <td>Automatically add <code>lang="jsx"</code> attribute for when using vite-plugin-vue2</td>
       <td>
-        <a href="https://npmjs.org/package/vite-plugin-lang-jsx.svg">
+        <a href="https://npmjs.org/package/vite-plugin-lang-jsx">
           <img src="https://img.shields.io/npm/v/vite-plugin-lang-jsx.svg">
         </a>
-        <a href="https://npmjs.org/package/vite-plugin-lang-jsx.svg">
+        <a href="https://npmjs.org/package/vite-plugin-lang-jsx">
           <img src="https://img.shields.io/npm/dw/vite-plugin-lang-jsx.svg">
         </a>
       </td>
