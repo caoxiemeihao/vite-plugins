@@ -60,7 +60,7 @@ export type LangJsx = (options?: {
       return <div>Hello world!</div>;
     },
   }
-</scrpt>
+</script>
 
 // 转换后代码
 <script lang="jsx">
@@ -69,5 +69,5 @@ export type LangJsx = (options?: {
       return <div>Hello world!</div>;
     },
   }
-</scrpt>
+</script>
 ```

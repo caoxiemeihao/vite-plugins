@@ -68,5 +68,5 @@ export type LangJsx = (options?: {
       return <div>Hello world!</div>;
     },
   }
-</scrpt>
+</script>
 ```
