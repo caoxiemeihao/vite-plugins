@@ -100,7 +100,7 @@ const vue = window['Vue']; export { vue as default }
 ```
 
 3. Add `vue` to the `optimizeDeps.exclude` by default.  
-  You can avoid it through `optimizeDeps.include`
+  You can avoid it by `optimizeDeps.include`
 
 ```js
 export default {
