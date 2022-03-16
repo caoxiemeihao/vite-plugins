@@ -1,0 +1,19 @@
+{
+  "name": "vite-plugin-optimizer",
+  "version": "1.0.0",
+  "description": "Manually Pre-Bundling of Vite",
+  "main": "index.js",
+  "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/optimizer",
+  "author": "草鞋没号 <308487730@qq.com>",
+  "license": "MIT",
+  "scripts": {},
+  "devDependencies": {
+    "vite": "^2.6.13"
+  },
+  "keywords": [
+    "vite",
+    "resolve",
+    "external",
+    "optimizer"
+  ]
+}
