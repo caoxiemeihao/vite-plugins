@@ -46,20 +46,6 @@
     </tr>
     <tr>
       <td>
-        <a href="packages/esmodule">vite-plugin-esmodule</a>
-      </td>
-      <td>Build ES module to CommonJs module for Node.js</td>
-      <td>
-        <a href="https://npmjs.org/package/vite-plugin-esmodule">
-          <img src="https://img.shields.io/npm/v/vite-plugin-esmodule.svg">
-        </a>
-        <a href="https://npmjs.org/package/vite-plugin-esmodule">
-          <img src="https://img.shields.io/npm/dw/vite-plugin-esmodule.svg">
-        </a>
-      </td>
-    </tr>
-    <tr>
-      <td>
         <a href="packages/dynamic-import">vite-plugin-dynamic-import</a>
       </td>
       <td>Enhance the builtin dynamic import plugin of Vite</td>
@@ -69,6 +55,34 @@
         </a>
         <a href="https://npmjs.org/package/vite-plugin-dynamic-import">
           <img src="https://img.shields.io/npm/dw/vite-plugin-dynamic-import.svg">
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a href="packages/optimizer">vite-plugin-optimizer</a>
+      </td>
+      <td>Manually Pre-Bundling of Vite</td>
+      <td>
+        <a href="https://npmjs.org/package/vite-plugin-optimizer">
+          <img src="https://img.shields.io/npm/v/vite-plugin-optimizer.svg">
+        </a>
+        <a href="https://npmjs.org/package/vite-plugin-optimizer">
+          <img src="https://img.shields.io/npm/dw/vite-plugin-optimizer.svg">
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a href="packages/esmodule">vite-plugin-esmodule</a>
+      </td>
+      <td>Build ES module to CommonJs module for Node.js</td>
+      <td>
+        <a href="https://npmjs.org/package/vite-plugin-esmodule">
+          <img src="https://img.shields.io/npm/v/vite-plugin-esmodule.svg">
+        </a>
+        <a href="https://npmjs.org/package/vite-plugin-esmodule">
+          <img src="https://img.shields.io/npm/dw/vite-plugin-esmodule.svg">
         </a>
       </td>
     </tr>
