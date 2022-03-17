@@ -13,14 +13,22 @@ module.exports = function optimizer(entries = {}, options = {}) {
     async config(config) {
       if (!path.isAbsolute(dir)) dir = path.join(node_modules(root), dir);
       if (config.root) root = path.resolve(config.root);
-
-      registerOptimizeDepsExclude(config, Object.keys(entries));
+      if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true });
 
       // avoid vite builtin 'vite:resolve' plugin by alias
       registerAlias(
         config,
         Object.keys(entries).map(moduleId => ({ [moduleId]: path.join(dir, moduleId) })),
       );
+
+      // insert optimize module to `optimizeDeps.exclude`
+      // you can avoid it by `optimizeDeps.include`
+      const excludeDeps = registerOptimizeDepsExclude(config, Object.keys(entries));
+
+      entries = Object
+        .entries(entries)
+        .filter(([key]) => excludeDeps.includes(key))
+        .reduce((memo, [key, val]) => Object.assign(memo, { [key]: val }), {});
 
       await generateModule(dir, entries, ext);
     },
@@ -73,6 +81,8 @@ function registerOptimizeDepsExclude(config, exclude) {
     exclude = exclude.filter(e => !config.optimizeDeps.include.includes(e));
   }
   config.optimizeDeps.exclude.push(...exclude);
+
+  return exclude;
 }
 
 // --------- utils ---------

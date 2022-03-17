@@ -46,5 +46,5 @@ export interface RegisterAlias {
 }
 
 export interface RegisterOptimizeDepsExclude {
-  (config: UserConfig, exclude: string[]): void;
+  (config: UserConfig, exclude: string[]): string[];
 }
