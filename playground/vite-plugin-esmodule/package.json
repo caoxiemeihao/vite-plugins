@@ -9,9 +9,7 @@
   },
   "dependencies": {
     "execa": "^6.1.0",
-    "node-fetch": "^3.2.1"
-  },
-  "devDependencies": {
-    "vite": "^2.8.6"
+    "node-fetch": "^3.2.1",
+    "vite": "^2.x"
   }
 }
