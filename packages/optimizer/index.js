@@ -5,7 +5,7 @@ const path = require('path');
  * @type {import('.').VitePluginOptimizer}
  */
 module.exports = function optimizer(entries = {}, options = {}) {
-  let { dir = '.vite-plugin-optimizer' } = options;
+  let { dir = '.vite-plugin-optimizer', ext = '.js' } = options;
   let root = process.cwd();
 
   return {
@@ -22,7 +22,7 @@ module.exports = function optimizer(entries = {}, options = {}) {
         Object.keys(entries).map(moduleId => ({ [moduleId]: path.join(dir, moduleId) })),
       );
 
-      await generateModule(dir, entries);
+      await generateModule(dir, entries, ext);
     },
   }
 }
@@ -30,9 +30,9 @@ module.exports = function optimizer(entries = {}, options = {}) {
 /**
  * @type {import('.').GenerateModule}
  */
-async function generateModule(dir, entries) {
+async function generateModule(dir, entries, ext) {
   for (const [module, strOrFn] of Object.entries(entries)) {
-    const moduleId = path.join(dir, module + '.js');
+    const moduleId = path.join(dir, module + ext);
     const moduleContent = await (typeof strOrFn === 'function' ? strOrFn({ dir }) : strOrFn);
     if (moduleContent == null) continue;
 

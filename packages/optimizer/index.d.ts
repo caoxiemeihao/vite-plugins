@@ -23,6 +23,10 @@ export interface OptimizerOptions {
    * @default ".vite-plugin-optimizer"
    */
   dir?: string;
+  /**
+   * @default ".js"
+   */
+  ext?: string;
 }
 
 export interface VitePluginOptimizer {
@@ -31,7 +35,7 @@ export interface VitePluginOptimizer {
 
 // --------- utils ---------
 export interface GenerateModule {
-  (dir: string, entries: Entries): Promise<void>;
+  (dir: string, entries: Entries, ext: string): Promise<void>;
 }
 
 export interface RegisterAlias {
