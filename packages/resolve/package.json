@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {},
   "devDependencies": {
-    "vite": "^2.6.13"
+    "vite": "^2.x"
   },
   "keywords": [
     "vite",
