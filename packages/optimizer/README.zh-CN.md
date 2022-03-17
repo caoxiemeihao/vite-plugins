@@ -132,6 +132,10 @@ export interface OptimizerOptions {
    * @default ".vite-plugin-optimizer"
    */
   dir?: string;
+  /**
+   * @default ".js"
+   */
+  ext?: string;
 }
 ```
 
