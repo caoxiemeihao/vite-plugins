@@ -31,13 +31,13 @@ export default {
 **We assume that the project structure is as follows**
 
 ```tree
-├── src
-├   ├── views
-├   ├   ├── foo
-├   ├   ├   ├── index.js
-├   ├   ├── bar.js
-├   ├── router.js
-├── vite.config.js
+├─┬ src
+│ ├─┬ views
+│ │ ├─┬ foo
+│ │ │ └── index.js
+│ │ └── bar.js
+│ └── router.js
+└── vite.config.js
 ```
 
 ```js
