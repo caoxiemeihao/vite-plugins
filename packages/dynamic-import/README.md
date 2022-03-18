@@ -1,10 +1,23 @@
-# vite-plugin-dynamic-import
-An vite plugin for dynamic import
+# vite-plugin-dynamic-import [![NPM version](https://img.shields.io/npm/v/vite-plugin-dynamic-import.svg)](https://npmjs.org/package/vite-plugin-dynamic-import) [![awesome-vite](https://awesome.re/badge.svg)](https://github.com/vitejs/awesome-vite)
+
+Enhance Vite builtin dynamic import
+
+**English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/dynamic-import/README.zh-CN.md)**
+
+- Support alias
+- Based on the `glob` looser restrictions
+
+## Install
+
+```bash
+npm i vite-plugin-dynamic-import -D
+```
+
 
 
 ## Usage
 ```javascript
-import { dynamicImport } from 'vite-plugin-dynamic-import'
+import dynamicImport from 'vite-plugin-dynamic-import'
 
 export default {
   plugins: [
@@ -15,87 +28,84 @@ export default {
 
 ## How and why?
 
-- In my project has below code
+**We assume that the project structure is as follows**
 
-  ```javascript
-  const constantRouterMap = [];
-  const format = (x) => {
-    const route = {
-      path: x.path,
-      icon: x.icon || 'setting',
-      name: x.path,
-      component: () => import(`@/views${x.component || x.path}`),
-      hidden: x.hidden,
-      meta: {
-        desc: x.desc,
-        actionId: x.actionId || 'ALL',
-        breadcrumb: x.breadcrumb,
-      },
-    };
-    if (!x.children || x.children.length === 0) {
-      constantRouterMap.push(route);
-    } else {
-      x.children.forEach(format);
-    }
-  };
-  ```
+```tree
+├── src
+├   ├── views
+├   ├   ├── foo
+├   ├   ├   ├── index.js
+├   ├   ├── bar.js
+├   ├── router.js
+├── vite.config.js
+```
 
-- It's got a warning in vite
+```js
+// vite.config.js
+export default {
+  resolve: {
+    alias: {
+      // "@" -> "/User/project-root/src/views"
+      '@': path.join(__dirname, 'src/views'),
+    },
+  },
+}
+```
 
-  ```bash
-  2:03:22 PM [vite] warning: 
-  /Users/atom/Desktop/hello/AppAccountPlatformWeb-mm/base/router/index.js
-  21 |      icon: x.icon || 'setting',
-  22 |      name: x.path,
-  23 |      component: () => import(`@/views${x.component || x.path}`),
-    |                              ^
-  24 |      hidden: x.hidden,
-  25 |      meta: {
-  The above dynamic import cannot be analyzed by vite.
-  See https://github.com/rollup/plugins/tree/master/packages/dynamic-import-vars#limitations for supported dynamic import formats. If this is intended to be left as-is, you can use the /* @vite-ignore */ comment inside the import() call to suppress this warning.
+**Dynamic import is not well supported in vite, such as**
 
-    Plugin: vite:import-analysis
-    File: /Users/atom/Desktop/hello/AppAccountPlatformWeb-mm/base/router/index.js
-  ```
+- Alias are not supported
 
-## The plugin try fix the warning
-- supported `alias`
+```js
+// router.js
+❌ import(`@/views/${variable}.js`)
+```
 
-  * original code
-  ```javascript
-  import(`@/views${x.component || x.path}`)
-  ```
+- Must be relative
 
-  * alias will be replaced
-  ```javascript
-  // "../" is calculated based on the alias path
-  import(`../views${x.component || x.path}`)
-  ```
+```js
+// router.js
+❌ import(`/User/project-root/src/views/${variable}.js`)
+```
 
-- list all the possibilities
+- Must have extension
 
-  * after replacing alias code
-  ```javascript
-  import(`../views${x.component || x.path}`)
-  ```
+```js
+// router.js
+❌ import(`./views/${variable}`)
+```
 
-  * will be transformed
-  ```javascript
-  __variableDynamicImportRuntime0__(`../views${x.component || x.path}`)
+**We try to fix these problems**
 
-  // other codes...
+For the alias in `import()`, we can calculate the relative path according to `UserConfig.root`
 
-  function __variableDynamicImportRuntime0__(path) {
-    switch (path) {
-      case '../views/foo': return import('../views/foo/index.vue');
-      case '../views/foo/index': return import('../views/foo/index.vue');
-      case '../views/foo/index.vue': return import('../views/foo/index.vue');
-      default: return new Promise(function(resolve, reject) {
-        (typeof queueMicrotask === 'function' ? queueMicrotask : setTimeout)(
-          reject.bind(null, new Error("Unknown variable dynamic import: " + path))
-        );
-      });
-    }
-  }
-  ```
+```js
+// router.js
+✅ import(`./views/${variable}.js`)
+```
 
+If the import path has no suffix, we use **[glob](https://www.npmjs.com/package/fast-glob)** to find the file according to `UserConfig.resolve.extensions` and supplement the suffix of the import path.  
+So we need to list all the possibilities
+
+1. transpire dynamic import variable, yout can see [@rollup/plugin-dynamic-import-vars](https://github.com/rollup/plugins/tree/master/packages/dynamic-import-vars#how-it-works)
+
+`./views/${variable}` -> `./views/*`
+
+2. generate runtime code
+
+```diff
+- // import(`./views/${variable}`)
++ __variableDynamicImportRuntime(`./views/${variable}`)
+
++ function __variableDynamicImportRuntime(path) {
++   switch (path) {
++     case 'foo':
++     case 'foo/index':
++     case 'foo/index.js':
++       return import('./views/foo/index.js');
++ 
++     case 'bar':
++     case 'bar.js':
++       return import('./views/bar.js');
++ }
+```
