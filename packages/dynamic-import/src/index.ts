@@ -1,322 +1,173 @@
-import fs from 'fs'
 import path from 'path'
-import { Plugin, UserConfig, Alias, AliasOptions } from 'vite'
-import * as walk from 'acorn-walk'
-import utilsGlob from 'glob'
+import type { Plugin, ResolvedConfig } from 'vite'
+import { simple } from 'acorn-walk'
+import fastGlob from 'fast-glob'
 import {
+  hasDynamicImport,
+  cleanUrl,
   DEFAULT_EXTENSIONS,
-  FileExistStat,
-  parsePathQuery,
-  detectFileExist,
-  BaseOptions,
-  message,
+  fixGlob,
 } from './utils'
+import { sortPlugin } from './sort-plugin'
+import type { AcornNode } from './types'
+import { AliasContext } from './alias'
+import { DynamicImportVars } from './dynamic-import-vars'
+import { DynamicImportRuntime, generateDynamicImportRuntime } from './dynamic-import-helper'
 
-export interface DynamicImportOptions extends BaseOptions {
-  onmessage?: (type: MessageType, message: string | Error) => void
-}
+const PLUGIN_NAME = 'vite-plugin-dynamic-import'
 
-export function dynamicImport(options: DynamicImportOptions = {}): Plugin {
-  const name = 'vite-plugin-dynamic-import'
-  const extensions = options.extensions ?? DEFAULT_EXTENSIONS
-  const refConifg: { current: UserConfig } = { current: null }
+export default function dynamicImport(): Plugin {
+  let config: ResolvedConfig
+  let aliasCtx: AliasContext
+  let dynamicImport: DynamicImportVars
 
   return {
-    name,
-    config(config) {
-      refConifg.current = config
+    name: PLUGIN_NAME,
+    config(_config) {
+      sortPlugin(PLUGIN_NAME, _config)
     },
-    transform(code, id) {
-      if (/node_modules/.test(id)) return
-      if (!extensions.some(ext => id.endsWith(ext))) return
-      if (parsePathQuery(id).query) return
-      if (!/import[\n\s]*?\(/g.test(code)) return
+    configResolved(_config) {
+      config = _config
+      aliasCtx = new AliasContext(_config)
+      dynamicImport = new DynamicImportVars(aliasCtx)
+    },
+    async transform(code, id) {
+      const pureId = cleanUrl(id)
+      const extensions = config.resolve?.extensions || DEFAULT_EXTENSIONS
+      const { ext } = path.parse(cleanUrl(id))
 
-      try {
-        // let code2 = id.endsWith('.vue') ? vtc.parseComponent(code).script.content : code
-        let code2 = code
-        const ast = this.parse(code)
-        const dirname = path.dirname(id)
-        const aliasCtx = createAliasContext({ alias: refConifg.current?.resolve?.alias, cwd: dirname })
-        const importRecords: ImportRecord[] = []
-        let dynamicImportIndex = -1
-        const repleaceImports: ReplaceImportRecord[] = []
+      if (/node_modules/.test(pureId)) return
+      if (!extensions.includes(ext)) return
+      if (!hasDynamicImport(code)) return
 
-        walk.simple(ast, {
-          ImportExpression(node: AcornNode) {
-            const importRawArgument = code2.slice(node.source.start, node.source.end)
-            const aliasGlob = expressionToGlob(node.source)
-            let glob: string = null
-            try {
-              glob = canBeAnalyzedGlob(
-                aliasCtx.replace(aliasGlob),
-                code2.substring(node.start, node.end),
-              )
-            } catch (error) {
-              if (options.onmessage) {
-                options.onmessage('error', error)
-              } else {
-                message.info({
-                  plugin: name,
-                  filename: id,
-                  error,
-                })
-              }
-            }
+      const ast = this.parse(code)
+      let dynamicImportIndex = 0
+      const dynamicImportRecord: {
+        node: AcornNode
+        importRawArgument: string
+        importRuntime: DynamicImportRuntime
+      }[] = []
 
-            if (!glob) {
-              // this was not a variable dynamic import
-              return
-            }
-            const glob2 = glob.slice(0, glob.indexOf('/*')) + '/**/*'
-            const filepaths: string[] = utilsGlob.sync(glob2, { cwd: dirname })
+      simple(ast, {
+        ImportExpression(node: AcornNode) {
+          const importRawArgument = code.slice(node.source.start, node.source.end)
+          const { files, startsWithAliasFiles } = globFiles(
+            dynamicImport,
+            node,
+            code,
+            pureId,
+            extensions,
+          )
+          if (!files || !files.length) {
+            return null
+          }
 
-            for (let i = 0, l = filepaths.length; i < l; i++) {
-              const filepath = filepaths[i]
-              const stat = fs.statSync(path.join(dirname, filepath))
-              const isDirectory = stat.isDirectory()
-              const item: ImportRecord = {
-                importRawArgument,
-                aliasGlob,
-                glob,
-                glob2,
-                filepath,
-                isDirectory,
-                realFile: filepath, // glob.sync 已经把文件都挑出来了
-                fileStat: detectFileExist(filepath, { cwd: dirname }) || null,
-                id,
-              }
-              if (item.fileStat) {
-                // xxxx/index.(vue|js|jsx|mjs|json|ts|tsx)
-                item.realFile = path.join(item.filepath, item.fileStat.tail)
-              }
-              if (!extensions.some(ext => item.realFile.endsWith(ext))) {
-                // ignore non exist file
-                continue
-              }
-              importRecords.push(item)
-            }
+          const allImportee = listAllImportee(
+            extensions,
+            files,
+            startsWithAliasFiles,
+          )
+          const importRuntime = generateDynamicImportRuntime(allImportee, dynamicImportIndex)
 
-            dynamicImportIndex += 1
+          dynamicImportRecord.push({
+            node: {
+              type: node.type,
+              start: node.start,
+              end: node.end,
+            },
+            importRawArgument,
+            importRuntime,
+          })
+        },
+      })
 
-            // expand import case
-            const importRecordsExplands: ImportRecord[] = []
-            for (let i = 0, l = importRecords.length; i < l; i++) {
-              const impt = importRecords[i]
-              if (impt.isDirectory) {
-                // glob2 模式下不需要对 isDirectory 加工
-                // importRecordsExplands.push(
-                //   { ...impt, expland: true, filepath: `${impt.filepath}/index` },
-                //   { ...impt, expland: true, filepath: `${impt.filepath}/${impt.fileStat.tail}` },
-                // )
-              } else {
-                importRecordsExplands.push(
-                  { ...impt, expland: true, filepath: impt.filepath.replace(RegExp(`${impt.fileStat.ext}$`), '') },
-                )
-              }
-            }
-
-            const importVars = generateImportVars(
-              importRecords.concat(importRecordsExplands),
-              dynamicImportIndex,
-            )
-            const repleaceImport = `${importVars.name}(${aliasCtx.replace(importRawArgument, { raw: true })})`
-
-            repleaceImports.push({
-              node,
-              repleaceImport,
-              importVars,
-            })
-          },
-        })
-
-        if (!repleaceImports.length) return // 可加可不加
-
-        // execute replace import()
-        for (let len = repleaceImports.length, i = len - 1; i >= 0; i--) {
-          const { node, repleaceImport } = repleaceImports[i]
-          code2 = code2.slice(0, node.start) + repleaceImport + code2.slice(node.end)
+      if (dynamicImportRecord.length) {
+        for (let len = dynamicImportRecord.length, i = len - 1; i >= 0; i--) {
+          const { node, importRawArgument, importRuntime } = dynamicImportRecord[i]
+          const dyImptFnName = `${importRuntime.name}(${importRawArgument})`
+          code = code.slice(0, node.start) + dyImptFnName + code.slice(node.end)
         }
+        const dyImptFnBody = dynamicImportRecord.map(e => e.importRuntime.body).join('\n')
 
-        code2 += repleaceImports
-          .map(impt => impt.importVars.func)
-          .join('\n')
+        // TODO: sourcemap
 
-        return code2
-      } catch (error) {
-        if (options.catch) {
-          options.catch(error, { filename: id })
-        } else {
-          throw error
-        }
+        return code + `
+// --------- ${PLUGIN_NAME} ---------
+${dyImptFnBody}
+`
       }
+
+      return null
     },
   }
 }
 
-// ----------------------------------------- utils -----------------------------------------
+function globFiles(
+  dynamicImport: DynamicImportVars,
+  ImportExpressionNode: AcornNode,
+  sourceString: string,
+  pureId: string,
+  extensions: string[],
+) {
+  const node = ImportExpressionNode
+  const code = sourceString
 
-export type AcornNode = acorn.Node & Record<string, any>
-export type MessageType = 'error' | 'warn' | 'info'
-export interface ImportRecord {
-  /** origin import code */
-  importRawArgument: string
-  /** possible alias prefix */
-  aliasGlob: string
-  glob: string
-  /** enhance glob */
-  glob2: string
-  filepath: string
-  realFile: string
-  isDirectory: boolean
-  fileStat: null | FileExistStat
-  expland?: boolean
-  id: string
-}
-export interface ReplaceImportRecord {
-  node: AcornNode
-  repleaceImport: string
-  importVars: ImportVars
-}
-
-export interface ImportVars {
-  name: string
-  func: string
-}
-function generateImportVars(imports: ImportRecord[], dynamicImportIndex: number | string): ImportVars {
-  const name = `__variableDynamicImportRuntime${dynamicImportIndex}__`
-  const func = `\nfunction ${name}(path) {
-  switch (path) {
-${imports.map((impt) => `    case '${impt.filepath}': return import('${impt.realFile}');`).join('\n')}
-${`    default: return new Promise(function(resolve, reject) {
-      (typeof queueMicrotask === 'function' ? queueMicrotask : setTimeout)(
-        reject.bind(null, new Error("Unknown variable dynamic import: " + path))
-      );
-    });\n`}  }
-}\n`
-
-  return { name, func }
-}
-
-function createAliasContext(options: {
-  alias: AliasOptions
-  cwd: string
-}) {
-  return { replace }
-  function replace(importPath: string, opts = { /* with colon */raw: false }) {
-    if (!options.alias) return importPath
-
-    const startsWithColon = opts.raw
-      ? (/^['"\`]/.test(importPath) ? importPath.slice(0, 1) : '')
-      : null
-    if (startsWithColon) { importPath = importPath.slice(1) }
-
-    const hitAlias = {} as { find: string | RegExp, replacement: string }
-    if (Array.isArray(options.alias)) {
-      for (const alia of options.alias as Alias[]) {
-        if (alia.find instanceof RegExp ? alia.find.test(importPath) : importPath.startsWith(`${alia.find}/`)) {
-          Object.assign(hitAlias, alia)
-          break
-        }
-      }
-    } else {
-      for (const [find, replacement] of Object.entries(options.alias)) {
-        if (importPath.startsWith(`${find}/`)) { // new RegExp(`^['"\`]?${alia}\/`).test(importPath)
-          Object.assign(hitAlias, { find, replacement })
-          break
-        }
-      }
-    }
-    if (!hitAlias.find) return importPath
-
-    const leftHalf = path.join(path.relative(options.cwd, /* Only support absolute path */hitAlias.replacement))
-    const rightHalf = importPath.replace(hitAlias.find, '')
-    const finalPath = path.join(leftHalf, rightHalf)
-
-    return startsWithColon ? startsWithColon + finalPath : finalPath
-  }
-}
-
-// -------------------------- dynamic-import-vars  --------------------------
-function canBeAnalyzedGlob(glob: string, sourceString: string) {
-  if (!glob.includes('*')) {
+  let { glob, alias } = dynamicImport.dynamicImportToGlob(
+    node.source,
+    code.substring(node.start, node.end),
+    pureId,
+  )
+  if (!glob) {
+    // this was not a variable dynamic import
     return null
   }
-  const glob2 = glob.replace(/\*\*/g, '*')
-  const example = 'For example: import(`./foo/${bar}.js`).';
+  let globWithIndex: string
 
-  if (glob2.startsWith('*')) {
-    throw new Error(
-      `invalid import "${sourceString}". It cannot be statically analyzed. Variable dynamic imports must start with ./ and be limited to a specific directory. ${example}`
-    )
+  glob = fixGlob(glob) || glob
+
+  // fill necessary ext
+  // e.g. `../views/*` -> `../views/*{.js,.ts,.vue ...}`
+  if (!extensions.includes(path.extname(glob))) {
+    globWithIndex = glob + '/index' + `{${extensions.join(',')}}`
+    glob = glob + `{${extensions.join(',')}}`
   }
 
-  if (glob2.startsWith('/')) {
-    throw new Error(
-      `invalid import "${sourceString}". Variable absolute imports are not supported, imports must start with ./ in the static part of the import. ${example}`
-    )
+  const files = fastGlob.sync(
+    globWithIndex ? [glob, globWithIndex] : glob,
+    { cwd: /* 🚧 */path.dirname(pureId) },
+  )
+
+  let startsWithAliasFiles: string[]
+
+  if (alias) {
+    const static1 = alias.importee.slice(0, alias.importee.indexOf('*'))
+    const static2 = alias.replacedImportee.slice(0, alias.replacedImportee.indexOf('*'))
+    startsWithAliasFiles = files.map(file => file.replace(static2, static1))
   }
 
-  if (!glob2.startsWith('./') && !glob2.startsWith('../')) {
-    throw new Error(
-      `invalid import "${sourceString}". Variable bare imports are not supported, imports must start with ./ in the static part of the import. ${example}`
-    )
-  }
-  return glob
-}
-
-// https://github.com/rollup/plugins/tree/master/packages/dynamic-import-vars
-function expressionToGlob(node: AcornNode) {
-  switch (node.type) {
-    case 'TemplateLiteral':  // import(`@/pages/${path}`)
-      return templateLiteralToGlob(node)
-    case 'CallExpression':   // import('@/pages/'.concat(path))
-      return callExpressionToGlob(node)
-    case 'BinaryExpression': // import('@/pages/' + path)
-      return binaryExpressionToGlob(node)
-    case 'Literal':          // import('@/pages/path')
-      return sanitizeString(node.value)
-    default:
-      return '*'
+  return {
+    glob,
+    alias,
+    files,
+    startsWithAliasFiles,
   }
 }
 
-function templateLiteralToGlob(node: AcornNode) {
-  let glob = ''
-
-  for (let i = 0, l = node.quasis.length; i < l; i++) {
-    glob += sanitizeString(node.quasis[i].value.raw)
-    if (node.expressions[i]) { // quasis 永远比 expressions 长一位
-      glob += expressionToGlob(node.expressions[i])
+function listAllImportee(
+  extensions: string[],
+  importeeList: string[],
+  importeeWithAliasList?: string[],
+) {
+  return (importeeWithAliasList || importeeList).reduce((memo, importee, idx) => {
+    const ext = extensions.find(ext => importee.endsWith(ext))
+    const list = [
+      importee,
+      importee.replace(ext, ''),
+    ]
+    if (importee.endsWith('index' + ext)) {
+      list.push(importee.replace('/index' + ext, ''))
     }
-  }
 
-  return glob
+    return Object.assign(memo, { [importeeList[idx]]: list })
+  }, {} as Record<string, string[]>)
 }
-
-function callExpressionToGlob(node: AcornNode) {
-  const { callee } = node
-  if (
-    callee.type === 'MemberExpression' &&
-    callee.property.type === 'Identifier' &&
-    callee.property.name === 'concat'
-  ) {
-    return expressionToGlob(callee.object) + node.arguments.map(expressionToGlob).join('')
-  }
-  return '*'
-}
-
-function binaryExpressionToGlob(node: AcornNode) {
-  if (node.operator !== '+') {
-    throw new Error(`${node.operator} operator is not supported.`)
-  }
-  return expressionToGlob(node.left) + expressionToGlob(node.right)
-}
-
-function sanitizeString(str: string) {
-  if (str.includes('*')) {
-    throw new Error('A dynamic import cannot contain * characters.')
-  }
-  return str
-}
-// -------------------------- dynamic-import-vars  --------------------------
