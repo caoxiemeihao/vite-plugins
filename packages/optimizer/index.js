@@ -11,8 +11,8 @@ module.exports = function optimizer(entries = {}, options = {}) {
   return {
     name: 'vite-plugin-optimizer',
     async config(config) {
-      if (!path.isAbsolute(dir)) dir = path.join(node_modules(root), dir);
       if (config.root) root = path.resolve(config.root);
+      if (!path.isAbsolute(dir)) dir = path.join(node_modules(root), dir);
       if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true });
 
       // avoid vite builtin 'vite:resolve' plugin by alias
