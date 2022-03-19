@@ -14,6 +14,6 @@
     "vite",
     "resolve",
     "external",
-    "vite-plugin-resolve"
+    "vite-plugin"
   ]
 }
