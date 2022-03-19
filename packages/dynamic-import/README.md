@@ -13,8 +13,6 @@ Enhance Vite builtin dynamic import
 npm i vite-plugin-dynamic-import -D
 ```
 
-
-
 ## Usage
 ```javascript
 import dynamicImport from 'vite-plugin-dynamic-import'
@@ -52,7 +50,7 @@ export default {
 }
 ```
 
-**Dynamic import is not well supported in vite, such as**
+**Dynamic import is not well supported in Vite, such as**
 
 - Alias are not supported
 
