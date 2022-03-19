@@ -5,8 +5,7 @@ Custom resolve module content
 **English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/resolve/README.zh-CN.md)**
 
 - Compatible Browser, Node.js and Electron
-- You can think of it as an enhanced Vite external plugin
-- You can think of it as manually [Pre-Bundling](https://vitejs.dev/guide/dep-pre-bundling.html)
+- You can think of this as the implementation of the official tutorial 👉 [Virtual Modules Convention](https://vitejs.dev/guide/api-plugin.html#virtual-modules-convention)
 
 ## Install
 
@@ -37,7 +36,7 @@ export default defineConfig({
 resolve({
   // Support nested module id
   // Support return Promise
-  '@scope/name': async () => await require('fs').promises.readFile('path', 'utf-8'),
+  '@scope/name': () => require('fs').promises.readFile('path', 'utf-8'),
 })
 ```
 
@@ -50,133 +49,25 @@ resolve({
 })
 ```
 
-#### Resolve an ES module as an CommonJs module for Node.js
-
-Such as [execa](https://www.npmjs.com/package/execa), [node-fetch](https://www.npmjs.com/package/node-fetch)  
-
-Here, Vite is used as the build tool  
-You can also choose other tools, such as [rollup](https://rollupjs.org), [webpack](https://webpack.js.org), [esbuild](https://esbuild.github.io), [swc](https://swc.rs) and so on
-
-```ts
-import { builtinModules } from 'module'
-import { defineConfig, build } from 'vite'
-import resolve from 'vite-plugin-resolve'
-
-export default defineConfig({
-  plugins: [
-    resolve({
-      async execa(args) {
-        // Transpile execa as an CommonJs module
-        await build({
-          plugins: [
-            {
-              name: 'vite-plugin[node:mod-to-mod]',
-              enforce: 'pre',
-              // Replace `import fs from "node:fs"` with `import fs from "fs"`
-              resolveId(source) {
-                if (source.startsWith('node:')) {
-                  return source.replace('node:', '')
-                }
-              },
-            }
-          ],
-
-          // Build execa.js into cache directory
-          build: {
-            outDir: args.dir,
-            minify: false,
-            emptyOutDir: false,
-            lib: {
-              entry: require.resolve('execa'),
-              formats: ['cjs'],
-              fileName: () => `execa.js`,
-            },
-            rollupOptions: {
-              external: [
-                ...builtinModules,
-              ],
-            },
-          },
-        })
-      },
-    })
-  ]
-})
-```
-
 ## API
 
-### resolve(resolves[, options])
+#### resolve(entries)
 
-##### resolves
-
-```ts
-export interface Resolves {
-  [moduleId: string]:
-  | string
-  | ((args: ResolveArgs) =>
-    | string
-    | Promise<string | void>
-    | void)
-  | void;
-}
-
-export interface ResolveArgs {
-  /** Generated file cache directory */
-  dir: string;
-}
-```
-
-##### options
+**entries**
 
 ```ts
-export interface ResolveOptions {
-  /**
-   * Absolute path or relative path
-   * @default ".vite-plugin-resolve"
-   */
-  dir: string;
-}
-```
-
-## How to work
-
-#### Let's use Vue as an example
-
-```js
-resolve({
-  vue: `const vue = window.Vue; export { vue as default }`,
-})
-```
-
-1. Create `node_modules/.vite-plugin-resolve/vue.js` and contains the following code
-
-```js
-const vue = window.Vue; export { vue as default }
-```
-
-2. Create a `vue` alias item and add it to `resolve.alias`
-
-```js
 {
-  resolve: {
-    alias: [
-      {
-        find: 'vue',
-        replacement: 'User/work-directory/node_modules/.vite-plugin-resolve/vue.js',
-      },
-    ],
-  },
+  [moduleId: string]:
+    | ReturnType<Plugin['load']>
+    | ((...args: Parameters<Plugin['load']>) => ReturnType<Plugin['load']>)
 }
 ```
 
-3. Add `vue` to the `optimizeDeps.exclude` by default.  
-  You can avoid it by `optimizeDeps.include`
+You can see the return value type definition here [rollup/types.d.ts#L272](https://github.com/rollup/rollup/blob/b8315e03f9790d610a413316fbf6d565f9340cab/src/rollup/types.d.ts#L272)
 
-```js
-export default {
-  optimizeDeps: {
-    exclude: ['vue'],
-  },
-}
-```
+## What's different from the official Demo?
+
+There are two main differences
+
+1. Bypass the builtin `vite:resolve` plugin
+2. Reasonably avoid [Pre-Bundling](https://vitejs.dev/guide/dep-pre-bundling.html) treatment

@@ -5,8 +5,7 @@
 **[English](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/resolve#readme) | 简体中文**
 
 - 兼容 Browser, Node.js and Electron
-- 你可以认为它是一个加强版的 Vite external 插件
-- 你可以认为它是手动版的 Vite 预构建 [Pre-Bundling](https://vitejs.dev/guide/dep-pre-bundling.html)
+- 你可以认为它是官方教程的一个实现 👉 [Virtual Modules Convention](https://vitejs.dev/guide/api-plugin.html#virtual-modules-convention)
 
 ## 安装
 
@@ -50,133 +49,25 @@ resolve({
 })
 ```
 
-#### 将 ES 模块转换成 CommonJs 模块供 Node.js 使用
-
-例如 [execa](https://www.npmjs.com/package/execa), [node-fetch](https://www.npmjs.com/package/node-fetch)
-
-这里使用 "vite" 作为构建工具  
-你也可以选用其他的工具，比如 [rollup](https://rollupjs.org), [webpack](https://webpack.js.org), [esbuild](https://esbuild.github.io), [swc](https://swc.rs)  等等
-
-```ts
-import { builtinModules } from 'module'
-import { defineConfig, build } from 'vite'
-import resolve from 'vite-plugin-resolve'
-
-export default defineConfig({
-  plugins: [
-    resolve({
-      async execa(args) {
-        // 将 execa 构建成 CommonJs 模块
-        await build({
-          plugins: [
-            {
-              name: 'vite-plugin[node:mod-to-mod]',
-              enforce: 'pre',
-              // 将 import fs from "node:fs" 替换为 import fs from "fs"
-              resolveId(source) {
-                if (source.startsWith('node:')) {
-                  return source.replace('node:', '')
-                }
-              },
-            }
-          ],
-
-          // 将 execa.js 写入到缓存目录
-          build: {
-            outDir: args.dir,
-            minify: false,
-            emptyOutDir: false,
-            lib: {
-              entry: require.resolve('execa'),
-              formats: ['cjs'],
-              fileName: () => `execa.js`,
-            },
-            rollupOptions: {
-              external: [
-                ...builtinModules,
-              ],
-            },
-          },
-        })
-      },
-    })
-  ]
-})
-```
-
 ## API
 
-### resolve(resolves[, options])
+#### resolve(entries)
 
-##### resolves
-
-```ts
-export interface Resolves {
-  [moduleId: string]:
-  | string
-  | ((args: ResolveArgs) =>
-    | string
-    | Promise<string | void>
-    | void)
-  | void;
-}
-
-export interface ResolveArgs {
-  /** 生成缓存文件夹 */
-  dir: string;
-}
-```
-
-##### options
+**entries**
 
 ```ts
-export interface ResolveOptions {
-  /**
-   * 相对或绝对路径
-   * @default ".vite-plugin-resolve"
-   */
-  dir: string;
-}
-```
-
-## 工作原理
-
-#### 用 Vue 来举个 🌰
-
-```js
-viteResolve({
-  vue: `const vue = window.Vue; export { vue as default }`,
-})
-```
-
-1. 创建 `node_modules/.vite-plugin-resolve/vue.js` 文件并包含下面的代码
-
-```js
-const vue = window.Vue; export { vue as default }
-```
-
-2. 创建一个 `vue` 的别名项，并且添加到 `resolve.alias`
-
-```js
 {
-  resolve: {
-    alias: [
-      {
-        find: 'vue',
-        replacement: 'User/work-directory/node_modules/.vite-plugin-resolve/vue.js',
-      },
-    ],
-  },
+  [moduleId: string]:
+    | ReturnType<Plugin['load']>
+    | ((...args: Parameters<Plugin['load']>) => ReturnType<Plugin['load']>)
 }
 ```
 
-3. 默认会将 `vue` 添加到 `optimizeDeps.exclude` 中  
-  你可以通过 `optimizeDeps.include` 绕开
+详细的返回值类型看这里 [rollup/types.d.ts#L272](https://github.com/rollup/rollup/blob/b8315e03f9790d610a413316fbf6d565f9340cab/src/rollup/types.d.ts#L272)
 
-```js
-export default {
-  optimizeDeps: {
-    exclude: ['vue'],
-  },
-}
-```
+## 这与官方的 Demo 有何异同？
+
+主要有两点不一样
+
+1. 绕过内置的 `vite:resolve` 插件
+2. 合理的避开 [Pre-Bundling](https://vitejs.dev/guide/dep-pre-bundling.html)
