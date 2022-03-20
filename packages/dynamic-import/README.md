@@ -24,6 +24,20 @@ export default {
 }
 ```
 
+## API
+
+### DynamicImport([options])
+
+##### options: DynamicImportOptions
+
+```ts
+export interface DynamicImportOptions {
+  filter?: (...args: Parameters<Plugin['transform']>) => false | void | Promise<false | void>
+}
+```
+
+See the `filter` args [vite/src/node/plugin.ts#L131](https://github.com/vitejs/vite/blob/9a7b133d45979de0604b9507d87a2ffa2187a387/packages/vite/src/node/plugin.ts#L131)
+
 ## How and why?
 
 **We assume that the project structure is as follows**
