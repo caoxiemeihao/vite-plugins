@@ -12,7 +12,7 @@ export function generateDynamicImportRuntime(
   const cases = _entries.map(([localFile, importeeList]) => {
     const c = importeeList.map(importee => `    case '${importee}':`)
     return `${c.join('\n')}
-    return import('${localFile}');
+      return import('${localFile}');
 `
   })
   const body = `
