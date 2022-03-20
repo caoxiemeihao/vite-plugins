@@ -39,7 +39,7 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
       if (/node_modules/.test(pureId)) return
       if (!extensions.includes(ext)) return
       if (!hasDynamicImport(code)) return
-      if (await options?.filter(code, id, opts) === false) return
+      if (await options.filter?.(code, id, opts) === false) return
 
       const ast = this.parse(code)
       let dynamicImportIndex = 0
