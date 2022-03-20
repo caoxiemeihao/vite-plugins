@@ -8,15 +8,15 @@ import {
   DEFAULT_EXTENSIONS,
   fixGlob,
 } from './utils'
-import { sortPlugin } from './sort-plugin'
-import type { AcornNode } from './types'
+// import { sortPlugin } from './sort-plugin'
+import type { AcornNode, DynamicImportOptions } from './types'
 import { AliasContext } from './alias'
 import { DynamicImportVars } from './dynamic-import-vars'
 import { DynamicImportRuntime, generateDynamicImportRuntime } from './dynamic-import-helper'
 
 const PLUGIN_NAME = 'vite-plugin-dynamic-import'
 
-export default function dynamicImport(): Plugin {
+export default function dynamicImport(options: DynamicImportOptions = {}): Plugin {
   let config: ResolvedConfig
   let aliasCtx: AliasContext
   let dynamicImport: DynamicImportVars
@@ -24,14 +24,14 @@ export default function dynamicImport(): Plugin {
   return {
     name: PLUGIN_NAME,
     config(_config) {
-      sortPlugin(PLUGIN_NAME, _config)
+      // sortPlugin(PLUGIN_NAME, _config)
     },
     configResolved(_config) {
       config = _config
       aliasCtx = new AliasContext(_config)
       dynamicImport = new DynamicImportVars(aliasCtx)
     },
-    async transform(code, id) {
+    async transform(code, id, opts) {
       const pureId = cleanUrl(id)
       const extensions = config.resolve?.extensions || DEFAULT_EXTENSIONS
       const { ext } = path.parse(cleanUrl(id))
@@ -39,6 +39,7 @@ export default function dynamicImport(): Plugin {
       if (/node_modules/.test(pureId)) return
       if (!extensions.includes(ext)) return
       if (!hasDynamicImport(code)) return
+      if (await options?.filter(code, id, opts) === false) return
 
       const ast = this.parse(code)
       let dynamicImportIndex = 0
