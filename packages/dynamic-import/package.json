@@ -20,8 +20,8 @@
   },
   "keywords": [
     "vite",
+    "plugin",
     "import",
-    "dynamic",
-    "dynamic-import"
+    "dynamic"
   ]
 }
