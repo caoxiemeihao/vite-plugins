@@ -5,8 +5,9 @@ import fastGlob from 'fast-glob'
 import {
   hasDynamicImport,
   cleanUrl,
-  DEFAULT_EXTENSIONS,
   fixGlob,
+  JS_EXTENSIONS,
+  KNOWN_SFC_EXTENSIONS,
 } from './utils'
 // import { sortPlugin } from './sort-plugin'
 import type { AcornNode, DynamicImportOptions } from './types'
@@ -33,11 +34,11 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
     },
     async transform(code, id, opts) {
       const pureId = cleanUrl(id)
-      const extensions = config.resolve?.extensions || DEFAULT_EXTENSIONS
+      const globExtensions = config.resolve?.extensions || JS_EXTENSIONS.concat(KNOWN_SFC_EXTENSIONS)
       const { ext } = path.parse(cleanUrl(id))
 
       if (/node_modules/.test(pureId)) return
-      if (!extensions.includes(ext)) return
+      if (!JS_EXTENSIONS.includes(ext)) return
       if (!hasDynamicImport(code)) return
       if (await options.filter?.(code, id, opts) === false) return
 
@@ -57,14 +58,14 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
             node,
             code,
             pureId,
-            extensions,
+            globExtensions,
           )
           if (!files || !files.length) {
             return null
           }
 
           const allImportee = listAllImportee(
-            extensions,
+            globExtensions,
             files,
             startsWithAliasFiles,
           )

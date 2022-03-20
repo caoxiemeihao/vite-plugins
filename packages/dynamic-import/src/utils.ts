@@ -1,4 +1,15 @@
-export const DEFAULT_EXTENSIONS = ['.js', '.jsx', '.mjs', '.ts', '.tsx', '.vue']
+export const JS_EXTENSIONS = [
+  '.mjs',
+  '.js',
+  '.ts',
+  '.jsx',
+  '.tsx',
+  '.cjs'
+]
+export const KNOWN_SFC_EXTENSIONS = [
+  '.vue',
+  '.svelte',
+]
 
 export const singleCommentsRegex = /([^\:])\/\/.*/g
 export const multilineCommentsRegex = /\/\*(.|[\r\n])*?\*\//gm
