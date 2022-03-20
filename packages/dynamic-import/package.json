@@ -17,5 +17,11 @@
     "@types/node": "^17.0.21",
     "typescript": "^4.6.2",
     "vite": "^2.x"
-  }
+  },
+  "keywords": [
+    "vite",
+    "import",
+    "dynamic",
+    "dynamic-import"
+  ]
 }
