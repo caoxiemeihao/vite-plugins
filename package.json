@@ -4,8 +4,8 @@
   "author": "草鞋没号 <308487730@qq.com>",
   "license": "MIT",
   "workspaces": [
-    "packages",
-    "playground"
+    "packages/*",
+    "playground/*"
   ],
   "scripts": {
     "commonjs": "ts-node packages/commonjs/test"
