@@ -31,11 +31,11 @@ module.exports = function resolve(resolves) {
 
         config.optimizeDeps.exclude.push(...keys);
       },
-      async load(id, opts) {
+      load(id, opts) {
         if (resolveKeysWithPrefix.includes(id)) {
           const stringOrFunction = resolves[id.replace(prefix, '')];
           return typeof stringOrFunction === 'function'
-            ? await stringOrFunction(id, opts)
+            ? stringOrFunction(id, opts)
             : stringOrFunction;
         }
       },
