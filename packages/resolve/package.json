@@ -12,8 +12,8 @@
   },
   "keywords": [
     "vite",
+    "plugin",
     "resolve",
-    "external",
-    "vite-plugin"
+    "external"
   ]
 }
