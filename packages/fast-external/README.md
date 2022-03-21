@@ -48,64 +48,10 @@ export default defineConfig({
 
 ## API
 
-### external(externals[, options])
+### external(entries)
 
-#### externals
-
-```ts
-export type Externals = Record<string, string | ((args: { dir: string; }) => string | Promise<string>)>;
-```
-
-#### options
+**entries**
 
 ```ts
-export interface ExternalOptions {
-  /**
-   * Absolute path or relative path
-   * @default ".vite-plugin-fast-external"
-   */
-  dir?: string;
-}
-```
-
-## How to work
-
-**Let's use Vue as an example**
-
-```js
-external({
-  vue: 'Vue',
-})
-```
-
-1. Create `node_modules/.vite-plugin-fast-external/vue.js` and contains the following code
-
-```js
-const vue = window['Vue']; export { vue as default }
-```
-
-2. Create a `vue` alias item and add it to `resolve.alias`
-
-```js
-{
-  resolve: {
-    alias: [
-      {
-        find: 'vue',
-        replacement: 'User/work-directory/node_modules/.vite-plugin-fast-external/vue.js',
-      },
-    ],
-  },
-}
-```
-
-3. Add `vue` to the `optimizeDeps.exclude` by default.  
-  You can avoid it by `optimizeDeps.include`
-
-```js
-export default {
-  optimizeDeps: {
-    exclude: ['vue'],
-  },
-}
+Record<string, string | ((id: string) => string | Promise<string>)>;
 ```

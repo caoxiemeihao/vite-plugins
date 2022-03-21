@@ -48,64 +48,10 @@ export default defineConfig({
 
 ## API
 
-### external(externals[, options])
+### external(entries)
 
-#### externals
-
-```ts
-export type Externals = Record<string, string | ((args: { dir: string; }) => string | Promise<string>)>;
-```
-
-#### options
+**entries**
 
 ```ts
-export interface ExternalOptions {
-  /**
-   * 相对或绝对路径
-   * @default ".vite-plugin-fast-external"
-   */
-  dir?: string;
-}
-```
-
-## 工作原理
-
-**用 Vue 来举个 🌰**
-
-```js
-external({
-  vue: 'Vue',
-})
-```
-
-1. 创建 `node_modules/.vite-plugin-fast-external/vue.js` 文件并包含下面的代码
-
-```js
-const vue = window['Vue']; export { vue as default }
-```
-
-2. 创建一个 `vue` 的别名项，并且添加到 `resolve.alias`
-
-```js
-{
-  resolve: {
-    alias: [
-      {
-        find: 'vue',
-        replacement: 'User/work-directory/node_modules/.vite-plugin-fast-external/vue.js',
-      },
-    ],
-  },
-}
-```
-
-3. 默认会将 `vue` 添加到 `optimizeDeps.exclude` 中  
-  你可以通过 `optimizeDeps.include` 绕开
-
-```js
-export default {
-  optimizeDeps: {
-    exclude: ['vue'],
-  },
-}
+Record<string, string | ((id: string) => string | Promise<string>)>;
 ```
