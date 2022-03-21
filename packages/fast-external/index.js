@@ -1,22 +1,44 @@
-const resolve = require('vite-plugin-resolve');
-
 /**
- * @type {import('.').VitePluginFastExternal}
+ * @type {import(".").VitePluginFastExternal}
  */
-module.exports = function external(externals, options = {}) {
-  if (!options.dir) {
-    options.dir = '.vite-plugin-fast-external';
-  }
+module.exports = function external(entries) {
+  const externalId = '__fast-external:';
+  const keys = Object.keys(entries);
 
-  for (const [moduleId, strOrFn] of Object.entries(externals)) {
-    if (typeof strOrFn === 'string') {
-      const iifeName = strOrFn;
-      externals[moduleId] = `const ${iifeName} = window['${iifeName}']; export { ${iifeName} as default }`;
-    }
-  }
+  return {
+    name: 'vite-plugin-fast-external',
+    config(config) {
+      if (!config.resolve) config.resolve = {};
+      if (!config.resolve.alias) config.resolve.alias = [];
+      if (!config.optimizeDeps) config.optimizeDeps = {};
+      if (!config.optimizeDeps.exclude) config.optimizeDeps.exclude = [];
 
-  const plugin = resolve(externals, options);
-  plugin.name = 'vite-plugin-fast-external';
+      for (const key of keys) {
+        if (Array.isArray(config.resolve.alias)) {
+          config.resolve.alias.push({
+            find: key,
+            replacement: externalId + key,
+          });
+        } else {
+          config.resolve.alias[key] = externalId + key;
+        }
+      }
 
-  return plugin;
+      let exclude = keys;
+      if (config.optimizeDeps.include) {
+        exclude = keys.filter(key => !config.optimizeDeps.include.includes(key));
+      }
+      config.optimizeDeps.exclude.push(...exclude);
+    },
+    load(id) {
+      if (id.startsWith(externalId)) {
+        const module = id.split(externalId)[1];
+        const fnOrIife = entries[module];
+
+        return typeof fnOrIife === 'function'
+          ? fnOrIife(id)
+          : `const M = window['${fnOrIife}']; export { M as default }`;
+      }
+    },
+  };
 };
