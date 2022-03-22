@@ -18,7 +18,11 @@ module.exports = function optimizer(entries = {}, options = {}) {
       // avoid vite builtin 'vite:resolve' plugin by alias
       registerAlias(
         config,
-        Object.keys(entries).map(moduleId => ({ [moduleId]: path.join(dir, moduleId) })),
+        Object.keys(entries).map(key => ({
+          find: key,
+          // redirect optimize module to `node_modules/.vite-plugin-optimizer`
+          replacement: path.join(dir, key),
+        })),
       );
 
       // insert optimize module to `optimizeDeps.exclude`
@@ -53,21 +57,17 @@ async function generateModule(dir, entries, ext) {
 /**
  * @type {import('.').RegisterAlias}
  */
-function registerAlias(config, aliaList) {
+function registerAlias(config, alias) {
   if (!config.resolve) config.resolve = {};
+  if (!config.resolve.alias) config.resolve.alias = [];
 
-  let alias = config.resolve.alias || [];
-  if (!Array.isArray(alias)) {
-    // keep the the original alias
-    alias = Object.entries(alias).map(([k, v]) => ({ find: k, replacement: v }));
+  for (const record of alias) {
+    if (Array.isArray(config.resolve.alias)) {
+      config.resolve.alias.push(record);
+    } else {
+      config.resolve.alias[record.find] = record.replacement;
+    }
   }
-  // redirect optimize module to `node_modules/.vite-plugin-optimizer`
-  alias.push(...aliaList.map(item => {
-    const [find, replacement] = Object.entries(item)[0];
-    return { find, replacement };
-  }));
-
-  config.resolve.alias = alias;
 }
 
 /**
