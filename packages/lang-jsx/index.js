@@ -123,7 +123,7 @@ class AstExt {
 
   async checkJSX(content) {
     return new Promise(resolve => {
-      const ast = this.acornExt.parse(content, { sourceType: 'module', ecmaVersion: 2019 });
+      const ast = this.acornExt.parse(content, { sourceType: 'module', ecmaVersion: 'latest' });
       this.deepWalk(ast, node => {
         if (['JSXElement', 'JSXFragment'].includes(node.type)) {
           resolve(true);
