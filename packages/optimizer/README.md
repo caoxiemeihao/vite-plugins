@@ -110,12 +110,9 @@ export default defineConfig({
 ```ts
 export interface Entries {
   [moduleId: string]:
-  | string
-  | ((args: OptimizerArgs) =>
     | string
-    | Promise<string | void>
-    | void)
-  | void;
+    | ((args: OptimizerArgs) => string | void | Promise<string | void>)
+    | void;
 }
 
 export interface OptimizerArgs {
