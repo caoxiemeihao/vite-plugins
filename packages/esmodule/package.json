@@ -26,7 +26,8 @@
   },
   "homepage": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/esmodule#readme",
   "dependencies": {
-    "vite-plugin-resolve": "^1.8.0"
+    "vite-plugin-optimizer": "^1.1.4",
+    "webpack": "^5.x.x"
   },
   "devDependencies": {
     "vite": "^2.x"
