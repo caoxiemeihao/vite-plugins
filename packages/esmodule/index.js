@@ -1,22 +1,24 @@
+const fs = require('fs');
 const path = require('path');
-const { builtinModules } = require('module');
-const { build } = require('vite');
-const resolve = require('vite-plugin-resolve');
+const vite = require('vite');
+const webpack = require('webpack');
+const optimizer = require('vite-plugin-optimizer');
+const { externalBuiltin } = require('./utils');
 
-// TODO: Modify by options.dir
-let name = 'vite-plugin-esmodule';
+const name = 'vite-plugin-esmodule';
 
 /**
  * @type {import('.').Esmodule}
  */
-module.exports = function esmodule(modules = []) {
-  const plugin = resolve({
-    ...modules.reduce((memo, mod) => Object.assign(memo, {
-      async [mod](args) {
-        await buildEsmodule(args.dir, mod);
-      },
+module.exports = function esmodule(modules, options = {}) {
+  const plugin = optimizer(
+    modules.reduce((memo, mod, idx) => Object.assign(memo, {
+      [mod]: args => idx === modules.length - 1
+        ? buildESModules(args, modules, options) // One time build
+        : null,
     }), {}),
-  }, { dir: `.${name}` });
+    { dir: `.${name}` },
+  );
 
   plugin.name = name;
   plugin.apply = 'build';
@@ -29,6 +31,7 @@ module.exports = function esmodule(modules = []) {
       enforce: 'pre',
       resolveId(source) {
         const module = modules.find(mod => mod === source);
+        // Tell vite not to process this module
         if (module) module;
       },
     },
@@ -37,47 +40,104 @@ module.exports = function esmodule(modules = []) {
 };
 
 /**
- * @type {() => import('vite').Plugin}
+ * Build CommonJs module here,
+ * and output the file to the alias pointing path of vite-plugin-optimizer
+ * 
+ * @type {(args: import('vite-plugin-optimizer').OptimizerArgs, ...args: Parameters<import('.').Esmodule>) => Promise<void>}
  */
-function externalBuiltin() {
-  return {
-    name: 'vite-plugin-external-builtin',
-    apply: 'build',
-    enforce: 'pre',
-    resolveId(source) {
-      if (source.startsWith('node:')) {
-        source = source.replace('node:', '');
-      }
-      if (builtinModules.includes(source)) {
-        return {
-          external: true,
-          id: source,
-        };
-      }
-    },
-  };
-}
+async function buildESModules(args, modules, options) {
+  const node_modules = args.dir.replace(`.${name}`, '');
+  const entries = modules.reduce((memo, mod) => {
+    const [key, val] = typeof mod === 'object' ? Object.entries(mod)[0] : [mod, mod];
+    return Object.assign(memo, { [key]: path.resolve(node_modules, val) });
+  }, {});
 
-/**
- * @type {(dir: string, moduleId: string) => Promise<void>}
- */
-async function buildEsmodule(dir, moduleId) {
-  await build({
-    // 🚧 Avoid recursive build caused by load config file
-    configFile: false,
-    plugins: [
-      externalBuiltin(),
-    ],
-    build: {
-      minify: false,
-      sourcemap: true,
-      emptyOutDir: false,
-      lib: {
-        entry: path.join(dir.replace(`.${name}`, ''), moduleId),
-        formats: ['cjs'],
-        fileName: () => '[name].js',
+  if (options.webpack) {
+    /**
+     * @type {import('webpack').Configuration}
+     */
+    let config = {
+      mode: 'none',
+      target: 'node10',
+      entry: entries,
+      output: {
+        library: {
+          type: 'commonjs2',
+        },
+        path: args.dir,
+        filename: '[name].js',
       },
-      outDir: path.join(dir, moduleId),
-    },
-  });
+    };
+    if (typeof options.webpack === 'function') {
+      config = options.webpack(config) || config;
+    }
+
+    await new Promise(resolve => {
+      fs.rmSync(args.dir, { recursive: true, force: true });
+
+      webpack.webpack(config).run((error, stats) => {
+        resolve(null);
+
+        if (error) {
+          console.log(error);
+          process.exit(1);
+        }
+        if (stats.hasErrors()) {
+          stats.toJson().errors.forEach(msg => {
+            console.log(msg.message, '\n');
+            console.log(msg.stack, '\n');
+          });
+          process.exit(1);
+        }
+
+        console.log(`[${name}] build with webpack success.`);
+      });
+    });
+  } else {
+    Object.entries(entries).forEach(async ([moduleId, filepath]) => {
+      await vite.build({
+        // 🚧 Avoid recursive build caused by load config file
+        configFile: false,
+        plugins: [
+          externalBuiltin(),
+        ],
+        build: {
+          minify: false,
+          emptyOutDir: false,
+          lib: {
+            entry: filepath,
+            formats: ['cjs'],
+            fileName: () => '[name].js',
+          },
+          outDir: path.join(args.dir, moduleId),
+        },
+      });
+    });
+
+    /**
+     * TODO: Building multiple modules in parallel
+    // Built using vite by default
+    await vite.build({
+      // 🚧 Avoid recursive build caused by load config file
+      configFile: false,
+      plugins: [
+        externalBuiltin(),
+      ],
+      build: {
+        minify: false,
+        emptyOutDir: false,
+        outDir: args.dir,
+        rollupOptions: {
+          input: entries,
+          output: {
+            format: 'cjs',
+            entryFileNames: '[name]/index.js',
+            chunkFileNames: '[name].js',
+            assetFileNames: '[name].[ext]',
+          },
+        },
+      },
+    });
+    */
+  }
 }
