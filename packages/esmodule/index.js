@@ -12,11 +12,17 @@ const name = 'vite-plugin-esmodule';
  */
 module.exports = function esmodule(modules, options = {}) {
   const plugin = optimizer(
-    modules.reduce((memo, mod, idx) => Object.assign(memo, {
-      [mod]: args => idx === modules.length - 1
-        ? buildESModules(args, modules, options) // One time build
-        : null,
-    }), {}),
+    modules.reduce((memo, mod, idx) => {
+      if (typeof mod === 'object') {
+        // e.g. { 'file-type': 'file-type/index.js' }
+        mod = Object.keys(mod)[0];
+      }
+      return Object.assign(memo, {
+        [mod]: args => idx === modules.length - 1
+          ? buildESModules(args, modules, options) // One time build
+          : null,
+      })
+    }, {}),
     { dir: `.${name}` },
   );
 
