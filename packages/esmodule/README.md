@@ -11,15 +11,11 @@ English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/tree/main/
 
 ## Why
 
-When ES module such as [execa](https://www.npmjs.com/package/execa), [node-fetch](https://www.npmjs.com/package/node-fetch), [file-type](https://www.npmjs.com/package/file-type) used in the Node.js project, we should compile them into CommonJs modules to ensure that they can work
+🤔 When ES module such as [execa](https://www.npmjs.com/package/execa), [node-fetch](https://www.npmjs.com/package/node-fetch), [file-type](https://www.npmjs.com/package/file-type) used in the Node.js project, we should compile them into CommonJs modules to ensure that they can work
 
-## 🚧 Warning
+👉 You can think that this plugin is to solve some NPM Packges released by [sindresorhus](https://www.npmjs.com/~sindresorhus) 😅
 
-The plugin only work in the  `vite build` phase
-
-The Plugin built NPM Packages use Vite by default, of course you can specify use Webpack by `options.webpack`
-
-If some NPM Packges have problems after being built with vite, please choose to build with `options.webpack`
+🚧 The plugin only work in the `vite build` phase
 
 ## Usage
 
@@ -34,10 +30,15 @@ export default {
   plugins: [
     esmodule([
       'execa',
-      'node-fetch',
+      'file-type',
+      // or
       // file-type have exports condition in package.json
-      { 'file-type': 'file-type/index.js' },
-    ]),
+      // { 'file-type': 'file-type/index.js' },
+    ], {
+      webpack: true, // -> default use webpack
+      // or
+      // vite: true, // -> there may be some problems
+    }),
   ],
 }
 ```
@@ -71,12 +72,12 @@ options?: WebpackOptions | ViteOptions
 
 export interface WebpackOptions {
   webpack?: true | ((config: Configuration) => Configuration | void | Promise<Configuration | void>);
-  vite: never;
+  vite?: never;
 }
 
 export interface ViteOptions {
   vite?: true | ((config: UserConfig) => UserConfig | void | Promise<UserConfig | void>);
-  webpack: never;
+  webpack?: never;
 }
 ```
 
