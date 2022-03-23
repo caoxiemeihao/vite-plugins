@@ -58,8 +58,31 @@ async function buildESModules(args, modules, options) {
     return Object.assign(memo, { [key]: path.resolve(node_modules, val) });
   }, {});
 
-  if (options.webpack) {
+  if (options.vite) {
+    // TODO: Building multiple modules in parallel
+    // 🚧 There may be some problems
+    Object.entries(entries).forEach(async ([moduleId, filepath]) => {
+      await vite.build({
+        // 🚧 Avoid recursive build caused by load config file
+        configFile: false,
+        plugins: [
+          externalBuiltin(),
+        ],
+        build: {
+          minify: false,
+          emptyOutDir: false,
+          lib: {
+            entry: filepath,
+            formats: ['cjs'],
+            fileName: () => '[name].js',
+          },
+          outDir: path.join(args.dir, moduleId),
+        },
+      });
+    });
+  } else {
     /**
+     * Built using vite by default
      * @type {import('webpack').Configuration}
      */
     let config = {
@@ -99,51 +122,5 @@ async function buildESModules(args, modules, options) {
         console.log(`[${name}] build with webpack success.`);
       });
     });
-  } else {
-    Object.entries(entries).forEach(async ([moduleId, filepath]) => {
-      await vite.build({
-        // 🚧 Avoid recursive build caused by load config file
-        configFile: false,
-        plugins: [
-          externalBuiltin(),
-        ],
-        build: {
-          minify: false,
-          emptyOutDir: false,
-          lib: {
-            entry: filepath,
-            formats: ['cjs'],
-            fileName: () => '[name].js',
-          },
-          outDir: path.join(args.dir, moduleId),
-        },
-      });
-    });
-
-    /**
-     * TODO: Building multiple modules in parallel
-    // Built using vite by default
-    await vite.build({
-      // 🚧 Avoid recursive build caused by load config file
-      configFile: false,
-      plugins: [
-        externalBuiltin(),
-      ],
-      build: {
-        minify: false,
-        emptyOutDir: false,
-        outDir: args.dir,
-        rollupOptions: {
-          input: entries,
-          output: {
-            format: 'cjs',
-            entryFileNames: '[name]/index.js',
-            chunkFileNames: '[name].js',
-            assetFileNames: '[name].[ext]',
-          },
-        },
-      },
-    });
-    */
   }
 }
