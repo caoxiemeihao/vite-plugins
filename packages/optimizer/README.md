@@ -160,7 +160,7 @@ const vue = window.Vue; export { vue as default }
     alias: [
       {
         find: 'vue',
-        replacement: '/User/work-directory/node_modules/.vite-plugin-optimizer/vue.js',
+        replacement: '/User/work-directory/node_modules/.vite-plugin-optimizer/vue',
       },
     ],
   },
