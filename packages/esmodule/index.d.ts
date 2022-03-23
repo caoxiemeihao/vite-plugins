@@ -6,12 +6,12 @@ declare const esmodule: Esmodule;
 
 export interface WebpackOptions {
   webpack?: true | ((config: Configuration) => Configuration | void | Promise<Configuration | void>);
-  vite: never;
+  vite?: never;
 }
 
 export interface ViteOptions {
   vite?: true | ((config: UserConfig) => UserConfig | void | Promise<UserConfig | void>);
-  webpack: never;
+  webpack?: never;
 }
 
 export interface Esmodule {
