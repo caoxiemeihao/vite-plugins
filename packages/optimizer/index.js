@@ -15,58 +15,100 @@ module.exports = function optimizer(entries = {}, options = {}) {
       if (!path.isAbsolute(dir)) dir = path.join(node_modules(root), dir);
       if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true });
 
-      // avoid vite builtin 'vite:resolve' plugin by alias
-      registerAlias(
-        config,
-        Object.keys(entries).map(key => ({
-          find: key,
-          // redirect optimize module to `node_modules/.vite-plugin-optimizer`
-          replacement: path.join(dir, key),
-        })),
-      );
+      // if the module is already in `optimizeDeps.include`, it should be filtered out
+      const includeDeps = (config.optimizeDeps || {}).include || [];
+      if (includeDeps.length) {
+        const keys = Object.keys(entries).filter(key => !includeDeps.includes(key));
+        entries = filterEntriesByKeys(entries, keys);
+      }
 
       // insert optimize module to `optimizeDeps.exclude`
       // you can avoid it by `optimizeDeps.include`
-      const excludeDeps = registerOptimizeDepsExclude(config, Object.keys(entries));
+      registerOptimizeDepsExclude(config, Object.keys(entries));
 
-      entries = Object
-        .entries(entries)
-        .filter(([key]) => excludeDeps.includes(key))
-        .reduce((memo, [key, val]) => Object.assign(memo, { [key]: val }), {});
+      // Pre-building modules
+      const generateRecords = await generateModule(dir, entries, ext);
 
-      await generateModule(dir, entries, ext);
+      // avoid vite builtin 'vite:resolve' plugin by alias
+      registerAlias(config, generateRecords);
     },
   }
+}
+
+/**
+ * @type {(entries: import('.').Entries, keys: string[]) => import('.').Entries}
+ */
+function filterEntriesByKeys(entries, keys) {
+  return Object
+    .entries(entries)
+    .filter(([key]) => keys.includes(key))
+    .reduce((memo, [key, val]) => Object.assign(memo, { [key]: val }), {});
 }
 
 /**
  * @type {import('.').GenerateModule}
  */
 async function generateModule(dir, entries, ext) {
-  for (const [module, strOrFn] of Object.entries(entries)) {
-    const moduleId = path.join(dir, module + ext);
-    const moduleContent = await (typeof strOrFn === 'function' ? strOrFn({ dir }) : strOrFn);
-    if (moduleContent == null) continue;
+  /**
+   * @type {import('.').GenerateRecord[]}
+   */
+  const generateRecords = [];
+  for (const [module, variableType] of Object.entries(entries)) {
+    if (!variableType) continue;
+
+    // `/project/node_modules/.vite-plugin-optimizer/${module}`
+    const filepath = path.join(dir, module);
+    const filename = filepath + ext;
+    let moduleContent = null;
+    /**
+     * @type {import('.').GenerateRecord}
+     */
+    const record = { module, filepath };
+
+    if (typeof variableType === 'function') {
+      const tmp = await variableType({ dir });
+      if (!tmp) continue;
+      if (typeof tmp === 'object') {
+        moduleContent = tmp.code;
+        record.find = tmp.find;
+      } else {
+        moduleContent = tmp; // string
+      }
+    } else if (typeof variableType === 'object') {
+      moduleContent = variableType.code;
+      record.find = variableType.find;
+    } else {
+      moduleContent = variableType; // string
+    }
 
     // supported nest moduleId '@scope/name'
-    ensureDir(path.parse(moduleId).dir);
-    fs.writeFileSync(moduleId, moduleContent);
+    ensureDir(filepath);
+    fs.writeFileSync(filename, moduleContent);
+
+    generateRecords.push(record);
   }
+  return generateRecords;
 }
 
 /**
  * @type {import('.').RegisterAlias}
  */
-function registerAlias(config, alias) {
+function registerAlias(config, records) {
   if (!config.resolve) config.resolve = {};
   if (!config.resolve.alias) config.resolve.alias = [];
 
-  for (const record of alias) {
-    if (Array.isArray(config.resolve.alias)) {
-      config.resolve.alias.push(record);
-    } else {
-      config.resolve.alias[record.find] = record.replacement;
-    }
+  if (!Array.isArray(config.resolve.alias)) {
+    // convert to Array
+    config.resolve.alias = Object.entries(config.resolve.alias).map(
+      ([find, replacement]) => ({ find, replacement }),
+    );
+  }
+
+  for (const record of records) {
+    config.resolve.alias.push({
+      find: /* if users want to customize find */record.find || record.module,
+      replacement: record.filepath,
+    });
   }
 }
 
@@ -77,12 +119,7 @@ function registerOptimizeDepsExclude(config, exclude) {
   if (!config.optimizeDeps) config.optimizeDeps = {};
   if (!config.optimizeDeps.exclude) config.optimizeDeps.exclude = [];
 
-  if (config.optimizeDeps.include) {
-    exclude = exclude.filter(e => !config.optimizeDeps.include.includes(e));
-  }
   config.optimizeDeps.exclude.push(...exclude);
-
-  return exclude;
 }
 
 // --------- utils ---------
