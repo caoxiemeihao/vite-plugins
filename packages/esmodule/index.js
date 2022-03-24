@@ -78,11 +78,14 @@ async function buildESModules(args, modules, options) {
           },
           outDir: path.join(args.dir, moduleId),
         },
+        resolve: {
+          conditions: ['node'],
+        },
       });
     });
   } else {
     /**
-     * Built using vite by default
+     * Built using webpack by default
      * @type {import('webpack').Configuration}
      */
     let config = {
