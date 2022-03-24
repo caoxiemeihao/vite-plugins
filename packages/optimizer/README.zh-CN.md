@@ -55,59 +55,11 @@ optimizer({
 })
 ```
 
+## 高级
+
 #### 将 ES 模块转换成 CommonJs 模块供 Node.js 使用
 
-例如 [execa](https://www.npmjs.com/package/execa), [node-fetch](https://www.npmjs.com/package/node-fetch)
-
-这里使用 Vite 作为构建工具  
-你也可以选用其他的工具，比如 [rollup](https://rollupjs.org), [webpack](https://webpack.js.org), [esbuild](https://esbuild.github.io), [swc](https://swc.rs)  等等
-
-```ts
-import { builtinModules } from 'module'
-import { defineConfig, build } from 'vite'
-import optimizer from 'vite-plugin-optimizer'
-
-export default defineConfig({
-  plugins: [
-    optimizer({
-      async execa(args) {
-        // 将 execa 构建成 CommonJs 模块
-        await build({
-          plugins: [
-            {
-              name: 'vite-plugin[node:mod-to-mod]',
-              enforce: 'pre',
-              // 将 import fs from "node:fs" 替换为 import fs from "fs"
-              resolveId(source) {
-                if (source.startsWith('node:')) {
-                  return source.replace('node:', '')
-                }
-              },
-            }
-          ],
-
-          // 将 execa.js 写入到缓存目录
-          build: {
-            outDir: args.dir,
-            minify: false,
-            emptyOutDir: false,
-            lib: {
-              entry: require.resolve('execa'),
-              formats: ['cjs'],
-              fileName: () => `execa.js`,
-            },
-            rollupOptions: {
-              external: [
-                ...builtinModules,
-              ],
-            },
-          },
-        })
-      },
-    })
-  ]
-})
-```
+例如 [execa](https://www.npmjs.com/package/execa)，[node-fetch](https://www.npmjs.com/package/node-fetch)，你可以看这个 👉 [vite-plugin-esmodule](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/esmodule)
 
 ## API
 

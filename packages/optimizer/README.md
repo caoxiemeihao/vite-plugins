@@ -55,59 +55,11 @@ optimizer({
 })
 ```
 
+## Advance
+
 #### Optimize an ES module as an CommonJs module for Node.js
 
-Such as [execa](https://www.npmjs.com/package/execa), [node-fetch](https://www.npmjs.com/package/node-fetch)  
-
-Here, Vite is used as the build tool  
-You can also choose other tools, such as [rollup](https://rollupjs.org), [webpack](https://webpack.js.org), [esbuild](https://esbuild.github.io), [swc](https://swc.rs) and so on
-
-```ts
-import { builtinModules } from 'module'
-import { defineConfig, build } from 'vite'
-import optimizer from 'vite-plugin-optimizer'
-
-export default defineConfig({
-  plugins: [
-    optimizer({
-      async execa(args) {
-        // Transpile execa as an CommonJs module
-        await build({
-          plugins: [
-            {
-              name: 'vite-plugin[node:mod-to-mod]',
-              enforce: 'pre',
-              // Replace `import fs from "node:fs"` with `import fs from "fs"`
-              resolveId(source) {
-                if (source.startsWith('node:')) {
-                  return source.replace('node:', '')
-                }
-              },
-            }
-          ],
-
-          // Build execa.js into cache directory
-          build: {
-            outDir: args.dir,
-            minify: false,
-            emptyOutDir: false,
-            lib: {
-              entry: require.resolve('execa'),
-              formats: ['cjs'],
-              fileName: () => `execa.js`,
-            },
-            rollupOptions: {
-              external: [
-                ...builtinModules,
-              ],
-            },
-          },
-        })
-      },
-    })
-  ]
-})
-```
+Such as [execa](https://www.npmjs.com/package/execa), [node-fetch](https://www.npmjs.com/package/node-fetch), you can see this 👉 [vite-plugin-esmodule](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/esmodule)
 
 ## API
 
