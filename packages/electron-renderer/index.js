@@ -44,6 +44,7 @@ module.exports = function () {
         // ----------------------------------------
 
         if (!config.resolve) config.resolve = {};
+        if (!config.resolve.conditions) config.resolve.conditions = ['node'];
         if (!config.resolve.alias) config.resolve.alias = [];
         const electronjs = path.join(__dirname, 'modules/electron-renderer.js');
 
