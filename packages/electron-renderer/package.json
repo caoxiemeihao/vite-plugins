@@ -7,8 +7,10 @@
   "readme": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/electron-renderer#readme",
   "author": "草鞋没号 <308487730@qq.com>",
   "license": "MIT",
+  "dependencies": {
+    "vite-plugin-optimizer": "^1.1.4"
+  },
   "devDependencies": {
-    "@types/node": "^16.x",
     "vite": "^2.x"
   },
   "keywords": [
