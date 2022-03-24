@@ -19,7 +19,7 @@
 
 ## 来玩玩吧
 
-随手举几个 ES module 的 🌰 -> execa, node-fetch and file-type
+随手举几个 ES module 的 🌰 -> execa, node-fetch, file-type
 
 - vite.config.js
 
@@ -30,16 +30,12 @@ export default {
   plugins: [
     esmodule([
       'execa',
+      'node-fetch',
 
       // 在 file-type 的 package.json 中有 exports 条件导出
       // 这里表示你可以显示的指定你要以哪个文件作为入口
       // 🌱 这样设计的目的是为了抹平 Vite 和 Webpack 之间的差异
       { 'file-type': 'file-type/index.js' },
-      // 当使用 Webpack 并设置了 target: 'node' 的时候，Webpack 会自动以 exports.node 为入口
-      // 也就是说这里使用 'filt-type' 字符串也是可行的
-      // 但是 Vite 总是优先使用 exports.browser 字段作为入口
-      // 🙉 在 Webpack 下这样写也可行
-      // 'filt-type',
     ]),
   ],
 }
