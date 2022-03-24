@@ -1,14 +1,23 @@
+# vite-plugin-electron-renderer
+
 [![npm package](https://nodei.co/npm/vite-plugin-electron-renderer.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/vite-plugin-electron-renderer)
-
-# Use Electron and NodeJs API in Renderer-process | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/electron-renderer/README.zh-CN.md)
-
+<br/>
 [![NPM version](https://img.shields.io/npm/v/vite-plugin-electron-renderer.svg?style=flat)](https://npmjs.org/package/vite-plugin-electron-renderer)
 [![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-electron-renderer.svg?style=flat)](https://npmjs.org/package/vite-plugin-electron-renderer)
 
-### Example 👉 [electron-vite-boilerplate](https://github.com/caoxiemeihao/electron-vite-boilerplate)
+Use Electron and Node.js API in Renderer-process
 
+English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/electron-renderer/README.zh-CN.md)
 
-### Usage
+## Example 👉 [electron-vite-boilerplate](https://github.com/caoxiemeihao/electron-vite-boilerplate)
+
+## Install
+
+```bash
+npm i vite-plugin-electron-renderer -D
+```
+
+## Usage
 
 **vite.config.ts**
 
@@ -23,56 +32,17 @@ export default defineConfig({
 })
 ```
 
-**renderer/foo.ts**
+**renderer.js**
 
 ```ts
+import { readFile } from 'fs'
 import { ipcRenderer } from 'electron'
 
-ipcRenderer.on('event-name', () => {
-  // somethine code...
-})
+readFile(/* something code... */)
+ipcRenderer.on('event-name', () => {/* something code... */})
 ```
 
----
-
-### Options.resolve
-
-In some cases, you just want "vite" to load a module like NodeJs.  
-You can custom-resolve the module **eg:**  
-
-**vite.config.ts**
-
-```ts
-import { defineConfig } from 'vite'
-import electron from 'vite-plugin-electron-renderer'
-
-export default defineConfig({
-  plugins: [
-    electron({
-      resolve: {
-        // In 'vite serve' phase 'electron-store' will generate file to `node_modules/.vite-plugin-electron-renderer/electron-store.js`
-        // Then point 'electron-store' to this path through 'resolve.alias'
-        'electron-store': `const Store=require('electron-store'); export default Store;`;
-        sqlite3: () => {
-          // dynamic calculate module exported members
-          const sqlite3 = require('sqlite3');
-          const members = Object.keys(sqlite3);
-          const code = `
-            const sqlite3 = require("sqlite3");
-            const { ${members.join(', ')} } = sqlite3;
-            export { ${members.join(', ')}, sqlite3 as default }
-          `;
-          return code;
-        },
-      },
-    }),
-  ],
-})
-```
-
----
-
-### How to work
+## How to work
 
 1. Fist, the plugin will configuration something.
 
@@ -82,24 +52,14 @@ export default defineConfig({
   * `build.assetsDir = ''` -> *TODO: Automatic splicing "build.assetsDir"*
   * `build.rollupOptions.output.format = 'cjs'`
 
-- Add "electron", NodeJs built-in modules and "options.resolve" to "optimizeDeps.exclude"
+2. The plugin transform Electron and Node.js built-in modules to ESModule format in "vite serve" phase.
 
-  ```js
-  {
-    optimizeDeps: {
-      exclude: [
-        'electron',
-        ...'built-in modules',
-        ...Object.keys(options.resolve),
-      ],
-    },
-  }
-  ```
+3. Add Electron and Node.js built-in modules to Rollup "output.external" option in the "vite build" phase.
 
-2. The plugin transform "electron" and NodeJs built-in modules to ESModule format in "vite serve" phase.
+**Using Electron API in Renderer-process** `import { ipcRenderer } from 'electron`  
 
-3. Add "electron" and NodeJs built-in modules to Rollup "output.external" option in the "vite build" phase.
+Actually redirect to "[node_modules/vite-plugin-electron-renderer/modules/electron-renderer.js](modules/electron-renderer.js)" by `resolve.alias`
 
-**Using electron in Renderer-process** `import { ipcRenderer } from 'electron`  
+**Using Node.js API in Renderer-process**  `import { readFile } from 'fs'`
 
-Actually redirect to "[node_modules/vite-plugin-electron-renderer/modules/electron-renderer.js](modules/electron-renderer.js)" through "resolve.alias".
+All Node.js API will be built into the `node_modules/.vite-plugin-electron-renderer` directory by [vite-plugin-optimizer](https://www.npmjs.com/package/vite-plugin-optimizer)
