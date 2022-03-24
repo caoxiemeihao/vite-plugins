@@ -44,6 +44,25 @@ ipcRenderer.on('event-name', () => {/* something code... */})
 
 ## How to work
 
+- Using Electron API in Renderer-process
+
+```js
+import { ipcRenderer } from 'electron'
+```
+
+Actually redirect to "[node_modules/vite-plugin-electron-renderer/modules/electron-renderer.js](modules/electron-renderer.js)" by `resolve.alias`
+
+- Using Node.js API in Renderer-process
+
+```js
+import { readFile } from 'fs'
+```
+
+All Node.js API will be built into the `node_modules/.vite-plugin-electron-renderer` directory by [vite-plugin-optimizer](https://www.npmjs.com/package/vite-plugin-optimizer)
+
+
+## 🚧 Some additional instructions
+
 1. Fist, the plugin will configuration something.
 
 - If you do not configure the following options, the plugin will modify their default values
@@ -55,11 +74,3 @@ ipcRenderer.on('event-name', () => {/* something code... */})
 2. The plugin transform Electron and Node.js built-in modules to ESModule format in "vite serve" phase.
 
 3. Add Electron and Node.js built-in modules to Rollup "output.external" option in the "vite build" phase.
-
-**Using Electron API in Renderer-process** `import { ipcRenderer } from 'electron`  
-
-Actually redirect to "[node_modules/vite-plugin-electron-renderer/modules/electron-renderer.js](modules/electron-renderer.js)" by `resolve.alias`
-
-**Using Node.js API in Renderer-process**  `import { readFile } from 'fs'`
-
-All Node.js API will be built into the `node_modules/.vite-plugin-electron-renderer` directory by [vite-plugin-optimizer](https://www.npmjs.com/package/vite-plugin-optimizer)

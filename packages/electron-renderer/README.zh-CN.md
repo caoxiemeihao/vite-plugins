@@ -43,6 +43,24 @@ ipcRenderer.on('event-name', () => {/* something code... */})
 
 ## 工作原理
 
+- 在染进程中使用 electron
+
+```js
+import { ipcRenderer } from 'electron'
+```
+
+实际上通过 `resolve.alias` 重定向到 "[node_modules/vite-plugin-electron-renderer/modules/electron-renderer.js](modules/electron-renderer.js)"
+
+- 在染进程中使用 Node.js API
+
+```js
+import { readFile } from 'fs'
+```
+
+所有的 Node.js API 将会通过 [vite-plugin-optimizer](https://www.npmjs.com/package/vite-plugin-optimizer) 构建到 `node_modules/.vite-plugin-electron-renderer` 目录
+
+## 🚧 一些额外的说明
+
 1. 首先，插件会修改一些配置
 
 - 在你没主动配置过下列配置时，插件会修改它们的默认值
@@ -56,12 +74,3 @@ ipcRenderer.on('event-name', () => {/* something code... */})
 2. 开发阶段(`vite serve`) 将 Electron 和 Node.Js 内置模块转换成 ESModule 格式
 
 3. 打包阶段(`vite build`) 将 Electron 和 Node.Js 内置模块插入到 Rollup 的 `output.external` 中
-
-**在染进程中使用 electron** `import { ipcRenderer } from 'electron`  
-
-实际上通过 `resolve.alias` 重定向到 "[node_modules/vite-plugin-electron-renderer/modules/electron-renderer.js](modules/electron-renderer.js)"
-
-**在染进程中使用 Node.js API**  `import { readFile } from 'fs'`
-
-所有的 Node.js API 将会通过 [vite-plugin-optimizer](https://www.npmjs.com/package/vite-plugin-optimizer) 构建到 `node_modules/.vite-plugin-electron-renderer` 目录
-
