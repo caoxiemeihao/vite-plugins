@@ -52,6 +52,12 @@ module.exports = function () {
         } else {
           config.resolve.alias['electron'] = electronjs;
         }
+
+        // ----------------------------------------
+
+        if (!config.optimizeDeps) config.optimizeDeps = {};
+        if (!config.optimizeDeps.exclude) config.optimizeDeps.exclude = [];
+        config.optimizeDeps.exclude.push('electron');
       },
     },
     plugin,
