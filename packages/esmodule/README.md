@@ -11,7 +11,7 @@ English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/tree/main/
 
 ## Why
 
-🤔 When ES module such as [execa](https://www.npmjs.com/package/execa), [node-fetch](https://www.npmjs.com/package/node-fetch), [file-type](https://www.npmjs.com/package/file-type) used in the Node.js project, we should compile them into CommonJs modules to ensure that they can work
+🤔 When ES module such as [execa](https://www.npmjs.com/package/execa), [node-fetch](https://www.npmjs.com/package/node-fetch), [file-type](https://www.npmjs.com/package/file-type) used in the Node.js project, we should compile them into CommonJs modules to ensure that they can work normally
 
 👉 You can think that this plugin is to solve some NPM Packges released by [sindresorhus](https://www.npmjs.com/~sindresorhus) 😅
 
@@ -30,17 +30,30 @@ export default {
   plugins: [
     esmodule([
       'execa',
-      'file-type',
-      // or
-      // file-type have exports condition in package.json
-      // { 'file-type': 'file-type/index.js' },
-    ], {
-      webpack: true, // -> default use webpack
-      // or
-      // vite: true, // -> there may be some problems
-    }),
+
+      // `file-type` have exports condition in package.json
+      // this means that you have explicit specified the entry file
+      // the purpose of this design is to smooth out the difference between Vite and Webpack
+
+      // when setting `target: 'node'` in Webpack, it always takes `exports.node` as the entry
+      // in other words, using 'filt-type' string can also work normally
+      // but Vite always gives priority to `exports.browser` as the entry
+      { 'file-type': 'file-type/index.js' },
+      // it can work normally when using Webpack
+      // 'filt-type',
+    ]),
   ],
 }
+```
+
+By default, the plugin use Webpack as build tools. You can specify Vite by `options.vite`  
+
+```js
+esmodule([...some-es-module], {
+  vite: true,
+  // or
+  vite: (config) => config,
+})
 ```
 
 - execa.js
