@@ -7,7 +7,10 @@ const optimizer = require('vite-plugin-optimizer');
  */
 module.exports = function () {
   const name = 'vite-plugin-electron-renderer';
-  const plugin = optimizer(builtinModulesExport(builtinModules), { dir: `.${name}` });
+  const plugin = optimizer(
+    builtinModulesExport(builtinModules.filter(e => !e.startsWith('_'))),
+    { dir: `.${name}` },
+  );
   plugin.name = name;
 
   return [
@@ -65,20 +68,31 @@ module.exports = function () {
 };
 
 /**
- * @type {(modules: string[]) => Record<string, string>} 
+ * @typedef {Record<string, import('vite-plugin-optimizer').ResultDescription>} ExportCollected
+ * @type {(modules: string[]) => ExportCollected} 
  */
 function builtinModulesExport(modules) {
   return modules.map((moduleId) => {
     const nodeModule = require(moduleId)
     const requireModule = `const M = require("${moduleId}");`
     const exportDefault = `export default M;`
-    const exportMembers = Object.keys(nodeModule).map(attr => `export const ${attr} = M.${attr}`).join(';\n') + ';'
+    const exportMembers = Object
+      .keys(nodeModule)
+      .map(attr => `export const ${attr} = M.${attr}`).join(';\n') + ';'
     const nodeModuleCode = `
 ${requireModule}
 ${exportDefault}
 ${exportMembers}
 `
 
-    return { [moduleId]: nodeModuleCode }
+    /**
+     * @type {ExportCollected}
+     */
+    const collect = {
+      // 
+      [moduleId]: { find: new RegExp(`^(node:)?${moduleId}$`), code: nodeModuleCode },
+    };
+
+    return collect;
   }).reduce((memo, item) => Object.assign(memo, item), {})
 }
