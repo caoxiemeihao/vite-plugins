@@ -33,13 +33,12 @@ export default {
 
       // `file-type` have exports condition in package.json
       // this means that you have explicit specified the entry file
-      // the purpose of this design is to smooth out the difference between Vite and Webpack
-
+      // 🌱 the purpose of this design is to smooth out the difference between Vite and Webpack
+      { 'file-type': 'file-type/index.js' },
       // when setting `target: 'node'` in Webpack, it always takes `exports.node` as the entry
       // in other words, using 'filt-type' string can also work normally
       // but Vite always gives priority to `exports.browser` as the entry
-      { 'file-type': 'file-type/index.js' },
-      // it can work normally when using Webpack
+      // 🙉 it can work normally when using Webpack
       // 'filt-type',
     ]),
   ],
