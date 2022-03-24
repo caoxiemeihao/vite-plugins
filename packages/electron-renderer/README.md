@@ -65,11 +65,12 @@ All Node.js API will be built into the `node_modules/.vite-plugin-electron-rende
 
 1. Fist, the plugin will configuration something.
 
-- If you do not configure the following options, the plugin will modify their default values
+> If you do not configure the following options, the plugin will modify their default values
 
   * `base = './'`
   * `build.assetsDir = ''` -> *TODO: Automatic splicing "build.assetsDir"*
   * `build.rollupOptions.output.format = 'cjs'`
+  * `resolve.conditions = ['node']`
 
 2. The plugin transform Electron and Node.js built-in modules to ESModule format in "vite serve" phase.
 

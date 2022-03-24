@@ -63,11 +63,12 @@ import { readFile } from 'fs'
 
 1. 首先，插件会修改一些配置
 
-- 在你没主动配置过下列配置时，插件会修改它们的默认值
+> 在你没主动配置过下列配置时，插件会修改它们的默认值
 
   * `base = './'`
   * `build.assetsDir = ''`
   * `build.rollupOptions.output.format = 'cjs'`
+  * `resolve.conditions = ['node']`
 
 - 将 Electron，Node.Js 内置模块和 `options.resolve` 插入到 "optimizeDeps.exclude" 中
 
