@@ -34,16 +34,24 @@ export default defineConfig({
 optimizer({
   // 支持嵌套模块命名
   // 支持返回 Promise
-  '@scope/name': async () => await require('fs').promises.readFile('path', 'utf-8'),
+  '@scope/name': () => require('fs/promises').readFile('path', 'utf-8'),
 })
 ```
 
-#### Electron
+#### Electron 与 Node.js
 
 ```ts
 optimizer({
   // 预构建 ipcRenderer 在 Electron 渲染进程中使用
   electron: `const { ipcRenderer } = require('electron'); export { ipcRenderer };`,
+
+  // 这表示 'fs' 与 'node:fs' 同时支持
+  // e.g. `import fs from 'fs'` or `import fs from 'node:fs'`
+  fs: () => ({
+    // 这实际上是 `alias.find`
+    find: /^(node:)?fs$/,
+    code: `const fs = require('fs'); export { fs as default }`;
+  }),
 })
 ```
 
@@ -51,7 +59,7 @@ optimizer({
 
 例如 [execa](https://www.npmjs.com/package/execa), [node-fetch](https://www.npmjs.com/package/node-fetch)
 
-这里使用 "vite" 作为构建工具  
+这里使用 Vite 作为构建工具  
 你也可以选用其他的工具，比如 [rollup](https://rollupjs.org), [webpack](https://webpack.js.org), [esbuild](https://esbuild.github.io), [swc](https://swc.rs)  等等
 
 ```ts
@@ -111,13 +119,19 @@ export default defineConfig({
 export interface Entries {
   [moduleId: string]:
     | string
-    | ((args: OptimizerArgs) => string | void | Promise<string | void>)
+    | ResultDescription
+    | ((args: OptimizerArgs) => string | ResultDescription | Promise<string | ResultDescription | void> | void)
     | void;
 }
 
 export interface OptimizerArgs {
   /** 生成缓存文件夹 */
   dir: string;
+}
+
+export interface ResultDescription {
+  find?: find?: string | RegExp;
+  code: string;
 }
 ```
 

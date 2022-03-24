@@ -34,16 +34,24 @@ export default defineConfig({
 optimizer({
   // Support nested module id
   // Support return Promise
-  '@scope/name': async () => await require('fs').promises.readFile('path', 'utf-8'),
+  '@scope/name': () => require('fs/promises').readFile('path', 'utf-8'),
 })
 ```
 
-#### Electron
+#### Electron and Node.js
 
 ```ts
 optimizer({
   // Optimize Electron for use ipcRenderer in Renderer-process
   electron: `const { ipcRenderer } = require('electron'); export { ipcRenderer };`,
+
+  // this means that both 'fs' and 'node:fs' are supported
+  // e.g. `import fs from 'fs'` or `import fs from 'node:fs'`
+  fs: () => ({
+    // this is actually `alias.find`
+    find: /^(node:)?fs$/,
+    code: `const fs = require('fs'); export { fs as default }`;
+  }),
 })
 ```
 
@@ -111,13 +119,19 @@ export default defineConfig({
 export interface Entries {
   [moduleId: string]:
     | string
-    | ((args: OptimizerArgs) => string | void | Promise<string | void>)
+    | ResultDescription
+    | ((args: OptimizerArgs) => string | ResultDescription | Promise<string | ResultDescription | void> | void)
     | void;
 }
 
 export interface OptimizerArgs {
   /** Generated file cache directory */
   dir: string;
+}
+
+export interface ResultDescription {
+  find?: string | RegExp;
+  code: string;
 }
 ```
 
