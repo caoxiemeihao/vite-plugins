@@ -9,11 +9,11 @@
 
 **[English](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external#readme) | 简体中文**
 
-- 类似 webpack 的 externals，支持浏览器、Node.js、Electron 等多环境
+- 类似 Webpack 的 externals，支持浏览器、Node.js、Electron 等多环境
 
-- 本质上是通过 `resolve.alias` 实现的模块重定向加载
+- 没有使用语法分析，只是通过 resolveId 钩子拦截实现的模块重定向加载，十分高效
 
-- 默认使用的 window 作为宿主对象，你也可以通过函数返回字符串的形式任意定制代码段 -- 十分灵活！🎉
+- 支持通过函数返回字符串的形式任意定制代码段 -- 十分灵活！🎉
 
 ## 安装
 

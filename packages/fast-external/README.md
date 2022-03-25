@@ -11,9 +11,9 @@ Without lexical transform, support custom external code
 
 - Like Webpack externals, support browser, Node.js and Electron
 
-- It's actually implemented by modify `resolve.alias`
+- With out ast analyze, load virtual files by resolveId-hooks -- Real efficient
 
-- By default `window` is used as the environment object, you can also customize the code snippets by return string from function -- Real flexible 🎉  
+- Support customize the code snippets by return string from function -- Real flexible 🎉  
 
 ## Install
 
@@ -37,7 +37,7 @@ export default defineConfig({
       '@scope/name': () => `const Lib = window.ScopeName.Member; export default Lib;`,
 
       // Read a template file and return Promise<string>
-      externalId: async () => await require('fs').promises.readFile('path', 'utf-8'),
+      externalId: () => require('fs/promises').readFile('path', 'utf-8'),
 
       // Use in Electron
       electron: () => `const { ipcRenderer } = require('electron'); export { ipcRenderer }`,
