@@ -34,10 +34,15 @@ export default defineConfig({
       vue: 'Vue',
 
       // 支持包命名空间，通过函数可以自定义返回任何代码段 - 但你要知道 vite 开发期只支持 ESM
-      '@scope/name': () => `const Lib = window.ScopeName.Member; export default Lib;`,
+      '@namespace/lib-name': () => `
+        const lib = window.LibName;
+        export default lib;
+        export const Message = lib.Message
+        export const Notification = lib.Notification;
+      `,
 
       // 还支持返回 Promise<string> 很容易配合文件、网络等 IO
-      externalId: async () => await require('fs').promises.readFile('path', 'utf-8'),
+      externalId: () => require('fs/promises').readFile('path', 'utf-8'),
 
       // 在 Electron 渲染进程中使用
       electron: () => `const { ipcRenderer } = require('electron'); export { ipcRenderer }`,

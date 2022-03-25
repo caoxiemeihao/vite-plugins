@@ -33,10 +33,16 @@ export default defineConfig({
       // By default will generated code -> const Vue = window['Vue']; export { Vue as default }
       vue: 'Vue',
 
-      // Custom external code by function
-      '@scope/name': () => `const Lib = window.ScopeName.Member; export default Lib;`,
+      // Support nesting module name
+      // Support custom external code by function
+      '@namespace/lib-name': () => `
+        const lib = window.LibName;
+        export default lib;
+        export const Message = lib.Message
+        export const Notification = lib.Notification;
+      `,
 
-      // Read a template file and return Promise<string>
+      // Load a template file and return Promise<string>
       externalId: () => require('fs/promises').readFile('path', 'utf-8'),
 
       // Use in Electron
