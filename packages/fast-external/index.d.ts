@@ -4,5 +4,5 @@ export default external;
 declare const external: VitePluginFastExternal;
 
 export interface VitePluginFastExternal {
-  (entries: Record<string, string | ((id: string) => string | Promise<string>)>): Plugin;
+  (entries: Record<string, string | ((id: string) => string | Promise<string>)>): Plugin[];
 }
