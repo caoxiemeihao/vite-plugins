@@ -36,7 +36,7 @@ export default defineConfig({
 resolve({
   // 支持嵌套模块命名
   // 支持返回 Promise
-  '@scope/name': async () => await require('fs').promises.readFile('path', 'utf-8'),
+  '@scope/name': async () => await require('fs/promises').readFile('path', 'utf-8'),
 })
 ```
 
