@@ -4,9 +4,13 @@
   "main": "main.js",
   "license": "MIT",
   "scripts": {
-    "build": "vite build"
+    "dev": "vite"
   },
   "devDependencies": {
+    "@vitejs/plugin-vue": "^2.2.4",
     "vite": "^2.x"
+  },
+  "dependencies": {
+    "vue": "^3.2.31"
   }
 }

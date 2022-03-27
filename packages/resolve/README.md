@@ -36,7 +36,7 @@ export default defineConfig({
 resolve({
   // Support nested module id
   // Support return Promise
-  '@scope/name': () => require('fs').promises.readFile('path', 'utf-8'),
+  '@scope/name': () => require('fs/promises').readFile('path', 'utf-8'),
 })
 ```
 
@@ -70,4 +70,4 @@ You can see the return value type definition here [rollup/types.d.ts#L272](https
 There are two main differences
 
 1. Bypass the builtin `vite:resolve` plugin
-2. Reasonably avoid [Pre-Bundling](https://vitejs.dev/guide/dep-pre-bundling.html) treatment
+2. Reasonably avoid [Pre-Bundling](https://vitejs.dev/guide/dep-pre-bundling.html)
