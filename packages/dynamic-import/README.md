@@ -121,3 +121,7 @@ So we need to list all the possibilities
 +       return import('./views/bar.js');
 + }
 ```
+
+## TODO
+
+- [ ] support `alias.customResolver`
