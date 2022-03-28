@@ -102,7 +102,7 @@
     </tr>
     <tr>
       <td>
-        <a href="packages/electron-renderer">vitejs-plugin-electron</a>
+        <a href="packages/electron">vitejs-plugin-electron</a>
       </td>
       <td>
         Integrate Vite and Electron
@@ -134,7 +134,7 @@
     </tr>
     <tr>
       <td>
-        <a href="packages/fast-external">vite-plugin-lang-jsx</a>
+        <a href="packages/lang-jsx">vite-plugin-lang-jsx</a>
       </td>
       <td>Automatically add <code>lang="jsx"</code> attribute for when using vite-plugin-vue2</td>
       <td>
