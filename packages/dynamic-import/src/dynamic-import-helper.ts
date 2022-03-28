@@ -24,10 +24,9 @@ ${cases.join('\n')}
         reject.bind(null, new Error("Unknown variable dynamic import: " + path))
       );
     })
-   }
- }
- 
- `
+  }
+}
+`
 
   return { name, body }
 }
