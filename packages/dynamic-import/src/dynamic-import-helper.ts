@@ -4,12 +4,12 @@ export interface DynamicImportRuntime {
 }
 
 export function generateDynamicImportRuntime(
+  // localFilename: Array<possible importee>
   entries: Record<string, string[]>,
   dynamicImportIndex: number | string,
 ): DynamicImportRuntime {
-  const _entries = Object.entries(entries)
   const name = `__variableDynamicImportRuntime${dynamicImportIndex}__`
-  const cases = _entries.map(([localFile, importeeList]) => {
+  const cases = Object.entries(entries).map(([localFile, importeeList]) => {
     const c = importeeList.map(importee => `    case '${importee}':`)
     return `${c.join('\n')}
       return import('${localFile}');
