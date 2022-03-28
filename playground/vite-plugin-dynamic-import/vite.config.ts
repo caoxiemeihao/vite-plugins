@@ -14,4 +14,7 @@ export default defineConfig({
       '/root/src': join(__dirname, 'src'),
     },
   },
+  build: {
+    minify: false,
+  },
 })
