@@ -1,1 +1,1 @@
-export const msg = 'bar.msj'
+export const msg = 'bar.mjs'
