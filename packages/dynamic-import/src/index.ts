@@ -69,7 +69,7 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
             files,
             startsWithAliasFiles,
           )
-          const importRuntime = generateDynamicImportRuntime(allImportee, dynamicImportIndex)
+          const importRuntime = generateDynamicImportRuntime(allImportee, dynamicImportIndex++)
 
           dynamicImportRecord.push({
             node: {
@@ -89,7 +89,7 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
           const dyImptFnName = `${importRuntime.name}(${importRawArgument})`
           code = code.slice(0, node.start) + dyImptFnName + code.slice(node.end)
         }
-        const dyImptFnBody = dynamicImportRecord.map(e => e.importRuntime.body).join('\n')
+        const dyImptFnBody = dynamicImportRecord.map(e => e.importRuntime.body).join('')
 
         // TODO: sourcemap
 
@@ -127,7 +127,7 @@ function globFiles(
 
   glob = fixGlob(glob) || glob
 
-  // fill necessary ext
+  // if not extension is not specified, fill necessary extensions
   // e.g. `../views/*` -> `../views/*{.js,.ts,.vue ...}`
   if (!extensions.includes(path.extname(glob))) {
     globWithIndex = glob + '/index' + `{${extensions.join(',')}}`
