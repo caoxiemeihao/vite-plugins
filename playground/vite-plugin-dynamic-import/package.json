@@ -7,10 +7,7 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "dependencies": {
-    "vue": "^3.2.31",
-    "vue-router": "^4.0.14"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "^17.0.21",
     "@vitejs/plugin-vue": "^2.2.4",
