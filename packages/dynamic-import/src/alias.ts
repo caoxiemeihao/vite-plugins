@@ -42,7 +42,7 @@ export class AliasContext {
 
       if (_find) {
         if (path.isAbsolute(replacement)) {
-          const relative = path.relative(/* 🚧 */path.dirname(id), replacement)
+          const relative = path.posix.relative(/* 🚧 */path.dirname(id), replacement)
           const relativeUrl = relative === ''
             ? `./${url.replace(_find, '').replace(/^\//, '')}`
             : path.join(relative, url.replace(_find, ''))
