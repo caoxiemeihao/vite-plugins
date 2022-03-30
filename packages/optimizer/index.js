@@ -13,7 +13,7 @@ module.exports = function optimizer(entries = {}, options = {}) {
     async config(config) {
       if (config.root) root = path.resolve(config.root);
       if (!path.isAbsolute(dir)) dir = path.join(node_modules(root), dir);
-      if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true });
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 
       // if the module is already in `optimizeDeps.include`, it should be filtered out
       const includeDeps = (config.optimizeDeps || {}).include || [];
@@ -83,7 +83,7 @@ async function generateModule(dir, entries, ext) {
 
     if (moduleContent) {
       // supported nest moduleId '@scope/name'
-      ensureDir(filepath);
+      module.includes('/') && ensureDir(path.join(filepath, '..'));
       fs.writeFileSync(filename, moduleContent);
     }
 
