@@ -5,6 +5,7 @@ import optimizer from '../../packages/optimizer';
 export default defineConfig({
   plugins: [
     optimizer({
+      '@react/dom': 'export default "@react/dom"',
       ...builtinModules
         .filter(m => !m.startsWith('_'))
         .map(m => ({
