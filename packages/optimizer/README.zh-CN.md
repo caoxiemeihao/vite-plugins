@@ -82,7 +82,7 @@ export interface OptimizerArgs {
 }
 
 export interface ResultDescription {
-  find?: find?: string | RegExp;
+  alias?: { find: string | RegExp; replacement: string };
   code: string;
 }
 ```
@@ -131,6 +131,31 @@ const vue = window.Vue; export { vue as default }
     ],
   },
 }
+/**
+ * 🚧
+ * 如果你是用的是 function 并且没有返回值, 那么就不会注册 alias
+ * 这种情况下, 你必须显式的返回 alias
+ * 
+ * e.g.
+ * 
+ * optimizer({
+ *   vue(args) {
+ *     // 你可能会自己构建 "vue" 并且输出到指定的文件夹
+ *     // e.g.
+ *     build({
+ *       entry: require.resolve('vue'),
+ *       outputDir: args.dir + '/vue',
+ *     })
+ * 
+ *     return {
+ *       alias: {
+ *         find: 'vue',
+ *         replacement: args.dir + '/vue',
+ *       }
+ *     }
+ *   },
+ * })
+ */
 ```
 
 3. 默认会将 `vue` 添加到 `optimizeDeps.exclude` 中  

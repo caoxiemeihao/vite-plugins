@@ -82,8 +82,8 @@ export interface OptimizerArgs {
 }
 
 export interface ResultDescription {
-  find?: string | RegExp;
-  code: string;
+  alias?: { find: string | RegExp; replacement: string };
+  code?: string;
 }
 ```
 
@@ -118,7 +118,7 @@ optimizer({
 const vue = window.Vue; export { vue as default }
 ```
 
-2. Create a `vue` alias item and add it to `resolve.alias`
+2. Register a `vue` alias item and add it to `resolve.alias`
 
 ```js
 {
@@ -131,6 +131,31 @@ const vue = window.Vue; export { vue as default }
     ],
   },
 }
+/**
+ * 🚧
+ * If you are using a function and have no return value, alias will not be registered.
+ * In this case, you must explicitly specify alias.
+ * 
+ * e.g.
+ * 
+ * optimizer({
+ *   vue(args) {
+ *     // You can customize the build "vue" and output it to the specified folder.
+ *     // e.g.
+ *     build({
+ *       entry: require.resolve('vue'),
+ *       outputDir: args.dir + '/vue',
+ *     })
+ * 
+ *     return {
+ *       alias: {
+ *         find: 'vue',
+ *         replacement: args.dir + '/vue',
+ *       }
+ *     }
+ *   },
+ * })
+ */
 ```
 
 3. Add `vue` to the `optimizeDeps.exclude` by default.  
