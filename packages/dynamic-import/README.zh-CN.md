@@ -24,6 +24,9 @@ export default {
 }
 ```
 
+**更复杂的使用场景 👉 [playground/vite-plugin-dynamic-import](https://github.com/caoxiemeihao/vite-plugins/tree/main/playground/vite-plugin-dynamic-import)**
+
+
 ## API
 
 ### DynamicImport([options])
