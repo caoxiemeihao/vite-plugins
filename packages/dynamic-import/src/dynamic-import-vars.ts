@@ -1,3 +1,4 @@
+import path from 'path'
 import type { AliasContext, AliasReplaced } from './alias'
 import type { AcornNode } from './types'
 
@@ -149,6 +150,7 @@ function dynamicImportToGlob(node, sourceString) {
     );
   }
 
+  // 🚧 This will be handled using `fixGlob`
   // if (path.extname(glob) === '') {
   //   throw new VariableDynamicImportError(
   //     `invalid import "${sourceString}". A file extension must be included in the static part of the import. ${example}`
@@ -156,4 +158,34 @@ function dynamicImportToGlob(node, sourceString) {
   // }
 
   return glob;
+}
+
+/**
+ * ```
+ * 🚧 In some cases, glob may not be available  
+ * e.g. fill necessary slash `../views*` -> `../views/*`
+ * ```
+ */
+export function fixGlob(glob: string, deep = true): string | void {
+  const extname = path.extname(glob)
+  if (extname) {
+    // It could be `../views*.js`, which needs to be repaired to `../views/*.js`
+    glob = glob.replace(extname, '')
+  }
+  const [, importPath] = glob.match(/(.*\w\/?)\*/)
+  if (!importPath.endsWith('/')) {
+    // `../views*` -> `../views/*`
+    let fixedGlob = glob.replace(importPath, importPath + '/')
+
+    fixedGlob = deep
+      // match as far as possible
+      // e.g. `../views/*` -> `../views/**/*`
+      ? fixedGlob.replace(/^(.*)\/\*$/, '$1/**/*')
+      : fixedGlob
+
+    // `../views/*` -> `../views/*.js`, if it has a '.js' extension
+    fixedGlob += extname
+
+    return fixedGlob
+  }
 }

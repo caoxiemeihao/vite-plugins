@@ -5,14 +5,13 @@ import fastGlob from 'fast-glob'
 import {
   hasDynamicImport,
   cleanUrl,
-  fixGlob,
   JS_EXTENSIONS,
   KNOWN_SFC_EXTENSIONS,
 } from './utils'
 // import { sortPlugin } from './sort-plugin'
 import type { AcornNode, DynamicImportOptions } from './types'
 import { AliasContext } from './alias'
-import { DynamicImportVars } from './dynamic-import-vars'
+import { DynamicImportVars, fixGlob } from './dynamic-import-vars'
 import { DynamicImportRuntime, generateDynamicImportRuntime } from './dynamic-import-helper'
 
 const PLUGIN_NAME = 'vite-plugin-dynamic-import'
