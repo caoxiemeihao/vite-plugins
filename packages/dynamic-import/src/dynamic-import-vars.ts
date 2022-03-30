@@ -1,3 +1,4 @@
+import path from 'path'
 import type { AliasContext, AliasReplaced } from './alias'
 import type { AcornNode } from './types'
 
@@ -168,15 +169,27 @@ function dynamicImportToGlob(node, sourceString) {
  * ```
  */
 export function fixGlob(glob: string, deep = true): string | void {
-  const [, importPath] = glob.match(/(.*\w\/?)\*(.\w+)?/)
+  const extname = path.extname(glob)
+  if (extname) {
+    // It could be `../views*.js`, which needs to be repaired to `../views/*.js`
+    glob = glob.replace(extname, '')
+  }
+  const [, importPath] = glob.match(/(.*\w\/?)\*/)
   if (!importPath.endsWith('/')) {
+    // fill necessary slash
     // `../views*` -> `../views/*`
-    const fixedGlob = glob.replace(importPath, importPath + '/')
+    let fixedGlob = glob.replace(importPath, importPath + '/')
 
-    return deep
+    fixedGlob = deep
       // match as far as possible
-      // e.g. `../views/*` -> `../views/**/*`
+      // `../views/*` -> `../views/**/*`
       ? fixedGlob.replace(/^(.*)\/\*$/, '$1/**/*')
       : fixedGlob
+
+    // if it has a '.js' extension
+    // `../views/*` -> `../views/*.js`
+    fixedGlob += extname
+
+    return fixedGlob
   }
 }
