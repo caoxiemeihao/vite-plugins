@@ -42,13 +42,17 @@ export class AliasContext {
 
       if (_find) {
         if (path.isAbsolute(replacement)) {
-          const relative = path.posix.relative(/* 🚧 */path.dirname(id), replacement)
-          const relativeUrl = relative === ''
-            ? `./${url.replace(_find, '').replace(/^\//, '')}`
-            : path.join(relative, url.replace(_find, ''))
-
+          // Compatible with vite restrictions
           // https://github.com/vitejs/vite/blob/1e9615d8614458947a81e0d4753fe61f3a277cb3/packages/vite/src/node/plugins/importAnalysis.ts#L672
-          url = sColon + relativeUrl + eColon
+          let relativePath = path.posix.relative(/* 🚧 */path.dirname(id), replacement)
+          if (relativePath === '') {
+            relativePath = '.'
+          }
+          const relativeImportee = relativePath + '/' + url
+            .replace(_find, '')
+            // Remove the beginning /
+            .replace(/^\//, '')
+          url = sColon + relativeImportee + eColon
         } else {
           url = sColon + url.replace(_find, replacement) + eColon
         }
