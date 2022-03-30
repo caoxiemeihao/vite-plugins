@@ -170,10 +170,9 @@ function dynamicImportToGlob(node, sourceString) {
  */
 export function fixGlob(glob: string, deep = true): string | void {
   const extname = path.extname(glob)
-  if (extname) {
-    // It could be `../views*.js`, which needs to be repaired to `../views/*.js`
-    glob = glob.replace(extname, '')
-  }
+  // It could be `../views*.js`, which needs to be repaired to `../views/*.js`
+  glob = glob.replace(extname, '')
+
   const [, importPath] = glob.match(/(.*\w\/?)\*/)
   if (!importPath.endsWith('/')) {
     // fill necessary slash
