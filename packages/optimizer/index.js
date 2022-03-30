@@ -109,10 +109,11 @@ function registerAlias(config, records) {
   }
 
   for (const record of records) {
-    config.resolve.alias.push(
-      record.alias ||
-      { find: record.module, replacement: record.filepath }
-    );
+    config.resolve.alias.push({
+      find: record.module,
+      replacement: record.filepath,
+      ...record.alias,
+    });
   }
 }
 

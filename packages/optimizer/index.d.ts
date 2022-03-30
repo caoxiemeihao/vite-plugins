@@ -20,7 +20,13 @@ export interface ResultDescription {
    * }
    * ```
    */
-  alias?: Pick<Alias, 'find' | 'replacement'>;
+  alias?: {
+    find: string | RegExp;
+    /**
+     * If not specified, the path of the generated file is used.
+     */
+    replacement?: string;
+  };
   code?: string;
 }
 
