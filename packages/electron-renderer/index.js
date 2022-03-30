@@ -91,7 +91,10 @@ ${exportMembers}
      */
     const collect = {
       // 
-      [moduleId]: { find: new RegExp(`^(node:)?${moduleId}$`), code: nodeModuleCode },
+      [moduleId]: {
+        alias: { find: new RegExp(`^(node:)?${moduleId}$`) },
+        code: nodeModuleCode,
+      },
     };
 
     return collect;
