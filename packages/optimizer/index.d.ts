@@ -9,24 +9,27 @@ export interface OptimizerArgs {
 }
 
 export interface ResultDescription {
-  // currently only find is supported
-  // this option is designed to fully support `alias.find`
-  // this is useful if users want to customize find
-  // e.g. 👉 `/^(node:)?fs$/` from user customization
-  // {
-  //   find: /^(node:)?fs$/,
-  //   replacement: '/project/node_modules/.vite-plugin-optimizer/fs.js',
-  // }
-  find?: Pick<Alias, 'find'>;
-  code: string;
+  /**
+   * this option is designed to fully support `alias`  
+   * this is useful if users want to customize alias  
+   * ```js
+   * {
+   *   // e.g. 👉 `/^(node:)?fs$/` from user customization  
+   *   find: /^(node:)?fs$/,
+   *   replacement: '/project/node_modules/.vite-plugin-optimizer/fs.js',
+   * }
+   * ```
+   */
+  alias?: Pick<Alias, 'find' | 'replacement'>;
+  code?: string;
 }
 
 export interface Entries {
   [moduleId: string]:
-    | string
-    | ResultDescription
-    | ((args: OptimizerArgs) => string | ResultDescription | Promise<string | ResultDescription | void> | void)
-    | void;
+  | string
+  | ResultDescription
+  | ((args: OptimizerArgs) => string | ResultDescription | Promise<string | ResultDescription | void> | void)
+  | void;
 }
 
 export interface OptimizerOptions {
@@ -47,7 +50,7 @@ export interface VitePluginOptimizer {
 // --------- utils ---------
 
 export type GenerateRecord = {
-  find?: ResultDescription['find'];
+  alias?: ResultDescription['alias'];
   module: string;
   // absolute path of file
   filepath: string;

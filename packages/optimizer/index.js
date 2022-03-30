@@ -63,29 +63,33 @@ async function generateModule(dir, entries, ext) {
     /**
      * @type {import('.').GenerateRecord}
      */
-    const record = { module, filepath };
+    let record = { module, filepath };
 
     if (typeof variableType === 'function') {
       const tmp = await variableType({ dir });
       if (!tmp) continue;
       if (typeof tmp === 'object') {
-        moduleContent = tmp.code;
-        record.find = tmp.find;
+        tmp.code && (moduleContent = tmp.code);
+        tmp.alias && (record.alias = tmp.alias);
       } else {
         moduleContent = tmp; // string
       }
     } else if (typeof variableType === 'object') {
-      moduleContent = variableType.code;
-      record.find = variableType.find;
+      variableType.code && (moduleContent = variableType.code);
+      variableType.alias && (record.alias = variableType.alias);
     } else {
       moduleContent = variableType; // string
     }
 
-    // supported nest moduleId '@scope/name'
-    ensureDir(filepath);
-    fs.writeFileSync(filename, moduleContent);
+    if (moduleContent) {
+      // supported nest moduleId '@scope/name'
+      ensureDir(filepath);
+      fs.writeFileSync(filename, moduleContent);
+    }
 
-    generateRecords.push(record);
+    if (moduleContent || record.alias) {
+      generateRecords.push(record);
+    }
   }
   return generateRecords;
 }
@@ -105,10 +109,10 @@ function registerAlias(config, records) {
   }
 
   for (const record of records) {
-    config.resolve.alias.push({
-      find: /* if users want to customize find */record.find || record.module,
-      replacement: record.filepath,
-    });
+    config.resolve.alias.push(
+      record.alias ||
+      { find: record.module, replacement: record.filepath }
+    );
   }
 }
 
