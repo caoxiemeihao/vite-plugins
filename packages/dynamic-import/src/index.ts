@@ -97,13 +97,13 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
             const { normally } = globResult as GlobNormally
             dynamicImportRecords.push({ ...dyRecord, normally })
           } else {
-            const { files, startsWithAliasFiles } = globResult as GlobHasFiles
+            const { glob, files, alias } = globResult as GlobHasFiles
             if (!files || !files.length) return
 
             const allImportee = listAllImportee(
+              glob,
               globExtensions,
-              files,
-              startsWithAliasFiles,
+              alias ? alias.files : files,
             )
             const importRuntime = generateDynamicImportRuntime(allImportee, dynamicImportIndex++)
             dynamicImportRecords.push({ ...dyRecord, importRuntime })
@@ -166,9 +166,8 @@ ${dyImptRutimeBody}
 
 type GlobHasFiles = {
   glob: string
-  alias?: AliasReplaced
+  alias?: AliasReplaced & { files: string[] }
   files: string[]
-  startsWithAliasFiles?: string[]
 }
 type GlobNormally = {
   normally: {
@@ -217,37 +216,45 @@ function globFiles(
     { cwd: /* 🚧 */path.dirname(pureId) },
   )
 
-  let startsWithAliasFiles: string[]
-
+  let aliasWithFiles: GlobHasFiles['alias']
   if (alias) {
     const static1 = alias.importee.slice(0, alias.importee.indexOf('*'))
     const static2 = alias.replacedImportee.slice(0, alias.replacedImportee.indexOf('*'))
-    startsWithAliasFiles = files.map(file => file.replace(static2, static1))
+    aliasWithFiles = {
+      ...alias,
+      files: files.map(file => file.replace(static2, static1)),
+    }
   }
 
   return {
     glob,
-    alias,
+    alias: aliasWithFiles,
     files,
-    startsWithAliasFiles,
   }
 }
 
 function listAllImportee(
+  glob: string,
   extensions: string[],
   importeeList: string[],
-  importeeWithAliasList?: string[],
 ) {
-  return (importeeWithAliasList || importeeList).reduce((memo, importee, idx) => {
+  const hasExtension = extensions.some(ext => glob.endsWith(ext))
+  return importeeList.reduce((memo, importee) => {
+    if (hasExtension) {
+      return Object.assign(memo, { [importee]: [importee] })
+    }
+
     const ext = extensions.find(ext => importee.endsWith(ext))
     const list = [
+      // foo/index.js
       importee,
+      // foo/index
       importee.replace(ext, ''),
     ]
     if (importee.endsWith('index' + ext)) {
+      // foo
       list.push(importee.replace('/index' + ext, ''))
     }
-
-    return Object.assign(memo, { [importeeList[idx]]: list })
-  }, {} as Record<string, string[]>)
+    return Object.assign(memo, { [importee]: list })
+  }, {} as Record</* localFilename */string, /* Array<possible importee> */string[]>)
 }
