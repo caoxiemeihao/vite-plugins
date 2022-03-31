@@ -151,15 +151,16 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
           code = code.slice(0, node.start) + placeholder + code.slice(node.end)
         }
 
-        // TODO: sourcemap
+        if (dyImptRutimeBody) {
+          code += '\n// --------- ${PLUGIN_NAME} ---------\n' + dyImptRutimeBody
+        }
 
-        return code + `
-// --------- ${PLUGIN_NAME} ---------
-${dyImptRutimeBody}
-`
+        return {
+          code,
+          // TODO: sourcemap
+          map: { mappings: '' },
+        }
       }
-
-      return null
     },
   }
 }
