@@ -206,7 +206,7 @@ function globFiles(
   glob = fixGlob(glob) || glob
 
   // if not extension is not specified, fill necessary extensions
-  // e.g. `../views/*` -> `../views/*{.js,.ts,.vue ...}`
+  // e.g. `./views/*` -> `./views/*{.js,.ts,.vue ...}`
   if (!extensions.includes(path.extname(glob))) {
     globWithIndex = glob + '/index' + `{${extensions.join(',')}}`
     glob = glob + `{${extensions.join(',')}}`
