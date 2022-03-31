@@ -126,7 +126,7 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
             placeholder = `import("${normally.glob}")`
           } else {
             placeholder = `${importRuntime.name}(${importeeRaw})`
-            dyImptRutimeBody += importRuntime.body
+            dyImptRutimeBody = importRuntime.body + dyImptRutimeBody
           }
 
           code = code.slice(0, node.start) + placeholder + code.slice(node.end)
