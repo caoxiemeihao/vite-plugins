@@ -18,9 +18,12 @@ module.exports = function esmodule(modules, options = {}) {
         mod = Object.keys(mod)[0];
       }
       return Object.assign(memo, {
-        [mod]: args => idx === modules.length - 1
-          ? buildESModules(args, modules, options) // One time build
-          : null,
+        [mod]: async args => {
+          if (idx === modules.length - 1) {
+            await buildESModules(args, modules, options); // One time build
+          }
+          return { alias: { find: mod } }; // Keep alias registration
+        },
       })
     }, {}),
     { dir: `.${name}` },
