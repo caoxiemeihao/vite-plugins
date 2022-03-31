@@ -100,7 +100,7 @@
         </a>
       </td>
     </tr>
-    <tr>
+    <!-- <tr>
       <td>
         <a href="packages/electron">vitejs-plugin-electron</a>
       </td>
@@ -117,7 +117,7 @@
           <img src="https://img.shields.io/npm/dw/vitejs-plugin-electron.svg">
         </a>
       </td>
-    </tr>
+    </tr> -->
     <tr>
       <td>
         <a href="packages/fast-external">vite-plugin-fast-external</a>
