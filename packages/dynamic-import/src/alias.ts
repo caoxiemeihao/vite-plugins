@@ -1,9 +1,10 @@
 import path from 'path'
 import type { Alias, ResolvedConfig } from 'vite'
+import { importeeRawRegex } from './utils'
 
 export interface AliasReplaced {
   alias: Alias
-  importeeIsRaw: boolean
+  punctuation: null | [string, string]
   importee: string
   replacedImportee: string
 }
@@ -24,10 +25,14 @@ export class AliasContext {
 
   private replace(importee: string, id: string, raw: boolean): AliasReplaced | void {
     const alias = this.config.resolve.alias
+    let [startQuotation, url, endQuotation] = ['', importee, '']
 
-    const sColon = raw ? importee.slice(0, 1) : ''
-    let url = raw ? importee.slice(1, -1) : importee
-    const eColon = raw ? importee.slice(-1) : ''
+    if (raw) {
+      const matched = importee.match(importeeRawRegex)
+      if (matched) {
+        [, startQuotation, url, endQuotation] = matched
+      }
+    }
 
     for (const aliasItem of alias) {
       const { find, replacement, customResolver } = aliasItem
@@ -52,16 +57,16 @@ export class AliasContext {
             .replace(_find, '')
             // Remove the beginning /
             .replace(/^\//, '')
-          url = sColon + relativeImportee + eColon
+          url = relativeImportee
         } else {
-          url = sColon + url.replace(_find, replacement) + eColon
+          url = url.replace(_find, replacement)
         }
 
         return {
           alias: aliasItem,
-          importeeIsRaw: raw,
+          punctuation: raw ? [startQuotation, endQuotation] : null,
           importee,
-          replacedImportee: url,
+          replacedImportee: raw ? (startQuotation + url + endQuotation) : url,
         }
       }
     }

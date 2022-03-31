@@ -15,6 +15,11 @@ export const KNOWN_SFC_EXTENSIONS = [
 export const singleCommentsRegex = /([^\:])\/\/.*/g
 export const multilineCommentsRegex = /\/\*(.|[\r\n])*?\*\//gm
 export const dynamicImportRegex = /\bimport[\s\r\n]*?\(/
+// this is probably less accurate
+export const normallyImporteeRegex = /^\.{1,2}\/[.-/\w]+(\.\w+)$/
+// [, startQuotation, importee, endQuotation]
+export const importeeRawRegex = /^([`'"]{1})(.*)([`'"]{1})$/
+export const viteIgnoreRegex = /\/\*\s*@vite-ignore\s*\*\//
 export const queryRE = /\?.*$/s
 export const hashRE = /#.*$/s
 

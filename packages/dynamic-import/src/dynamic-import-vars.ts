@@ -3,7 +3,10 @@ import type { AliasContext, AliasReplaced } from './alias'
 import type { AcornNode } from './types'
 
 export interface ImporteeGlob {
-  glob: string | null
+  glob: {
+    glob: string
+    valid: boolean
+  }
   /**
    * with alias glob
    */
@@ -116,11 +119,12 @@ function expressionToGlob(node) {
 
 function dynamicImportToGlob(node, sourceString) {
   let glob = expressionToGlob(node);
+  glob = DynamicImportVars.aliasReplace(glob);
   if (!glob.includes('*') || glob.startsWith('data:')) {
-    return null;
+    // After `expressiontoglob` processing, it may become a normal path
+    return { glob, valid: false };
   }
   glob = glob.replace(/\*\*/g, '*');
-  glob = DynamicImportVars.aliasReplace(glob);
 
   if (glob.startsWith('*')) {
     throw new VariableDynamicImportError(
@@ -157,7 +161,7 @@ function dynamicImportToGlob(node, sourceString) {
   //   );
   // }
 
-  return glob;
+  return { glob, valid: true };
 }
 
 /**

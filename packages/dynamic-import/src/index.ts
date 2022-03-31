@@ -7,10 +7,13 @@ import {
   cleanUrl,
   JS_EXTENSIONS,
   KNOWN_SFC_EXTENSIONS,
+  normallyImporteeRegex,
+  viteIgnoreRegex,
+  importeeRawRegex,
 } from './utils'
 // import { sortPlugin } from './sort-plugin'
 import type { AcornNode, DynamicImportOptions } from './types'
-import { AliasContext } from './alias'
+import { AliasContext, AliasReplaced } from './alias'
 import { DynamicImportVars, fixGlob } from './dynamic-import-vars'
 import { DynamicImportRuntime, generateDynamicImportRuntime } from './dynamic-import-helper'
 
@@ -23,6 +26,7 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
 
   return {
     name: PLUGIN_NAME,
+    enforce: 'post',
     config(_config) {
       // sortPlugin(PLUGIN_NAME, _config)
     },
@@ -33,68 +37,106 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
     },
     async transform(code, id, opts) {
       const pureId = cleanUrl(id)
-      const globExtensions = config.resolve?.extensions || JS_EXTENSIONS.concat(KNOWN_SFC_EXTENSIONS)
-      const { ext } = path.parse(cleanUrl(id))
+      const extensions = JS_EXTENSIONS.concat(KNOWN_SFC_EXTENSIONS)
+      const globExtensions = config.resolve?.extensions || extensions
+      const { ext } = path.parse(pureId)
 
       if (/node_modules/.test(pureId)) return
-      if (!JS_EXTENSIONS.includes(ext)) return
+      if (!extensions.includes(ext)) return
       if (!hasDynamicImport(code)) return
       if (await options.filter?.(code, id, opts) === false) return
 
       const ast = this.parse(code)
       let dynamicImportIndex = 0
-      const dynamicImportRecord: {
+      const dynamicImportRecords: {
         node: AcornNode
-        importRawArgument: string
-        importRuntime: DynamicImportRuntime
+        importeeRaw: string
+        importRuntime?: DynamicImportRuntime
+        normally?: GlobNormally['normally']
       }[] = []
 
       simple(ast, {
         ImportExpression(node: AcornNode) {
-          const importRawArgument = code.slice(node.source.start, node.source.end)
-          const { files, startsWithAliasFiles } = globFiles(
+          const importeeRaw = code.slice(node.source.start, node.source.end)
+
+          // check @vite-ignore which suppresses dynamic import warning
+          if (viteIgnoreRegex.test(importeeRaw)) return
+
+          const matched = importeeRaw.match(importeeRawRegex)
+          // currently, only importee in string format is supported
+          if (!matched) return
+
+          const [, startQuotation, importee, endQuotation] = matched
+          // this is a normal path
+          if (normallyImporteeRegex.test(importee)) return
+
+          const replaced = aliasCtx.replaceImportee(importee, id)
+          // this is a normal path
+          if (replaced && normallyImporteeRegex.test(replaced.replacedImportee)) return
+
+          const globResult = globFiles(
             dynamicImport,
             node,
             code,
             pureId,
             globExtensions,
           )
-          if (!files || !files.length) {
-            return null
-          }
+          if (!globResult) return
 
-          const allImportee = listAllImportee(
-            globExtensions,
-            files,
-            startsWithAliasFiles,
-          )
-          const importRuntime = generateDynamicImportRuntime(allImportee, dynamicImportIndex++)
-
-          dynamicImportRecord.push({
+          const dyRecord = {
             node: {
               type: node.type,
               start: node.start,
               end: node.end,
             },
-            importRawArgument,
-            importRuntime,
-          })
+            importeeRaw,
+          }
+
+          if (Object.keys(globResult).includes('normally')) {
+            // this is a normal path
+            const { normally } = globResult as GlobNormally
+            dynamicImportRecords.push({ ...dyRecord, normally })
+          } else {
+            const { files, startsWithAliasFiles } = globResult as GlobHasFiles
+            if (!files || !files.length) return
+
+            const allImportee = listAllImportee(
+              globExtensions,
+              files,
+              startsWithAliasFiles,
+            )
+            const importRuntime = generateDynamicImportRuntime(allImportee, dynamicImportIndex++)
+            dynamicImportRecords.push({ ...dyRecord, importRuntime })
+          }
         },
       })
 
-      if (dynamicImportRecord.length) {
-        for (let len = dynamicImportRecord.length, i = len - 1; i >= 0; i--) {
-          const { node, importRawArgument, importRuntime } = dynamicImportRecord[i]
-          const dyImptFnName = `${importRuntime.name}(${importRawArgument})`
-          code = code.slice(0, node.start) + dyImptFnName + code.slice(node.end)
+      let dyImptRutimeBody = ''
+      if (dynamicImportRecords.length) {
+        for (let len = dynamicImportRecords.length, i = len - 1; i >= 0; i--) {
+          const {
+            node,
+            importeeRaw,
+            importRuntime,
+            normally,
+          } = dynamicImportRecords[i]
+
+          let placeholder: string
+          if (normally) {
+            placeholder = `import("${normally.glob}")`
+          } else {
+            placeholder = `${importRuntime.name}(${importeeRaw})`
+            dyImptRutimeBody += importRuntime.body
+          }
+
+          code = code.slice(0, node.start) + placeholder + code.slice(node.end)
         }
-        const dyImptFnBody = dynamicImportRecord.map(e => e.importRuntime.body).join('')
 
         // TODO: sourcemap
 
         return code + `
 // --------- ${PLUGIN_NAME} ---------
-${dyImptFnBody}
+${dyImptRutimeBody}
 `
       }
 
@@ -103,25 +145,43 @@ ${dyImptFnBody}
   }
 }
 
+type GlobHasFiles = {
+  glob: string
+  alias?: AliasReplaced
+  files: string[]
+  startsWithAliasFiles?: string[]
+}
+type GlobNormally = {
+  normally: {
+    glob: string
+    alias?: AliasReplaced
+  }
+}
+type GlobFilesResult = GlobHasFiles | GlobNormally | null
+
 function globFiles(
   dynamicImport: DynamicImportVars,
   ImportExpressionNode: AcornNode,
   sourceString: string,
   pureId: string,
   extensions: string[],
-) {
+): GlobFilesResult {
   const node = ImportExpressionNode
   const code = sourceString
 
-  let { glob, alias } = dynamicImport.dynamicImportToGlob(
+  const { alias, glob: globObj } = dynamicImport.dynamicImportToGlob(
     node.source,
     code.substring(node.start, node.end),
     pureId,
   )
-  if (!glob) {
+  if (!globObj.valid) {
+    if (normallyImporteeRegex.test(globObj.glob)) {
+      return { normally: { glob: globObj.glob, alias } }
+    }
     // this was not a variable dynamic import
     return null
   }
+  let { glob } = globObj
   let globWithIndex: string
 
   glob = fixGlob(glob) || glob
