@@ -26,8 +26,9 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
 
   return {
     name: PLUGIN_NAME,
-    enforce: 'post',
     config(_config) {
+      // 'vite-plugin-dynamic-import' can only transform JavaScript
+      // so it should be put behind some known plugins
       // sortPlugin(PLUGIN_NAME, _config)
     },
     configResolved(_config) {
