@@ -125,6 +125,25 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
           if (normally) {
             placeholder = `import("${normally.glob}")`
           } else {
+            /**
+             * this is equivalent to a non rigorous model
+             * 
+             // extension should be removed, because if the "index" file is in the directory, an error will occur
+             //
+             // e.g. 
+             // ├─┬ views
+             // │ ├─┬ foo
+             // │ │ └── index.js
+             // │ └── bar.js
+             //
+             // when we use `./views/*.js`, we want it to match `./views/foo/index.js`, `./views/bar.js`
+             * 
+             // const starts = importeeRaw.slice(0, -1)
+             // const ends = importeeRaw.slice(-1)
+             // const withOutExtImporteeRaw = starts.replace(path.extname(starts), '') + ends
+             // placeholder = `${importRuntime.name}(${withOutExtImporteeRaw})`
+             */
+
             placeholder = `${importRuntime.name}(${importeeRaw})`
             dyImptRutimeBody = importRuntime.body + dyImptRutimeBody
           }
