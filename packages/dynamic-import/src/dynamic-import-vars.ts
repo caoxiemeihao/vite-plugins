@@ -154,7 +154,7 @@ function dynamicImportToGlob(node, sourceString) {
     );
   }
 
-  // 🚧 This will be handled using `fixGlob`
+  // 🚧 This will be handled using `fixGlob()`
   // if (path.extname(glob) === '') {
   //   throw new VariableDynamicImportError(
   //     `invalid import "${sourceString}". A file extension must be included in the static part of the import. ${example}`
@@ -168,29 +168,29 @@ function dynamicImportToGlob(node, sourceString) {
  * ```
  * 🚧 In some cases, glob may not be available  
  * e.g. fill necessary slash  
- * `../views*` -> `../views/*`
- * `../views*.js` -> `../views/*.js`
+ * `./views*` -> `./views/*`
+ * `./views*.js` -> `./views/*.js`
  * ```
  */
 export function fixGlob(glob: string, deep = true): string | void {
   const extname = path.extname(glob)
-  // It could be `../views*.js`, which needs to be repaired to `../views/*.js`
+  // It could be `./views*.js`, which needs to be repaired to `./views/*.js`
   glob = glob.replace(extname, '')
 
   const [, importPath] = glob.match(/(.*\w\/?)\*/)
   if (!importPath.endsWith('/')) {
     // fill necessary slash
-    // `../views*` -> `../views/*`
+    // `./views*` -> `./views/*`
     let fixedGlob = glob.replace(importPath, importPath + '/')
 
     fixedGlob = deep
       // match as far as possible
-      // `../views/*` -> `../views/**/*`
+      // `./views/*` -> `./views/**/*`
       ? fixedGlob.replace(/^(.*)\/\*$/, '$1/**/*')
       : fixedGlob
 
     // if it has a '.js' extension
-    // `../views/*` -> `../views/*.js`
+    // `./views/*` -> `./views/*.js`
     fixedGlob += extname
 
     return fixedGlob
