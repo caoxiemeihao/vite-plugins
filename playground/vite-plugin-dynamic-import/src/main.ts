@@ -46,8 +46,8 @@ const views4 = {
   'may-nesting-dir': () => setView4('/nested/nesting-dir'),
 }
 const views5 = {
-  'may-ext-baz': () => setView5('/baz'),
-  'may-ext-nesting-dir': () => setView5('/nested/nesting-dir'),
+  'may-ext-baz': () => setView5('/baz/index'),
+  'may-ext-nesting-dir': () => setView5('/nested/nesting-dir/index'),
 }
 const views6 = {
   'may-normally-alias': () => setView6(),
