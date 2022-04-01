@@ -20,7 +20,6 @@ export function sortPlugin(vitePlugin: Plugin, pluginNames: string[] = []): Plug
   const knownNames = Object.values(KNOWN_PLUGINS).flat().concat(pluginNames)
 
   return {
-    // TODO: Filter out the plugin itself
     name,
     async configResolved(config) {
       await vitePlugin.configResolved?.call(this, config)
@@ -34,6 +33,13 @@ export function sortPlugin(vitePlugin: Plugin, pluginNames: string[] = []): Plug
         // Move it to after known plugins
         // @ts-ignore
         config.plugins.splice(orderIndex + 1, 0, vitePlugin)
+        // Filter out the plugin itself
+        // @ts-ignore
+        config.plugins.splice(config.plugins.findIndex(p => p.name === name), 1)
+      } else {
+        //  Filter out the plugin itself
+        // @ts-ignore
+        config.plugins.splice(config.plugins.findIndex(p => p.name === name), 1, vitePlugin)
       }
     },
   }
