@@ -11,7 +11,7 @@ import {
   viteIgnoreRegex,
   importeeRawRegex,
 } from './utils'
-// import { sortPlugin } from './sort-plugin'
+import { sortPlugin } from './sort-plugin'
 import type { AcornNode, DynamicImportOptions } from './types'
 import { AliasContext, AliasReplaced } from './alias'
 import { DynamicImportVars, fixGlob } from './dynamic-import-vars'
@@ -24,13 +24,8 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
   let aliasCtx: AliasContext
   let dynamicImport: DynamicImportVars
 
-  return {
+  const dyImpt: Plugin = {
     name: PLUGIN_NAME,
-    config(_config) {
-      // 'vite-plugin-dynamic-import' can only transform JavaScript
-      // so it should be put behind some known plugins
-      // sortPlugin(PLUGIN_NAME, _config)
-    },
     configResolved(_config) {
       config = _config
       aliasCtx = new AliasContext(_config)
@@ -164,6 +159,8 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
       }
     },
   }
+
+  return sortPlugin(dyImpt)
 }
 
 type GlobHasFiles = {
