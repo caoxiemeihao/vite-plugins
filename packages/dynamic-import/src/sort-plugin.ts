@@ -26,13 +26,13 @@ export function sortPlugin(vitePlugin: Plugin, pluginNames: string[] = []): Plug
 
       const resolvedNames = config.plugins.map(p => p.name)
       // Find the last known plugin
-      const orderIndex = resolvedNames.length - 1 - [...resolvedNames]
-        .reverse()
-        .findIndex(rn => knownNames.includes(rn))
-      if (orderIndex > -1) {
+      const lastIndex = [...resolvedNames].reverse().findIndex(rn => knownNames.includes(rn))
+      if (lastIndex > -1) {
+        const index = resolvedNames.length - 1 - lastIndex
+
         // Move it to after known plugins
         // @ts-ignore
-        config.plugins.splice(orderIndex + 1, 0, vitePlugin)
+        config.plugins.splice(index + 1, 0, vitePlugin)
         // Filter out the plugin itself
         // @ts-ignore
         config.plugins.splice(config.plugins.findIndex(p => p.name === name), 1)
