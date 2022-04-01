@@ -18,6 +18,10 @@ async function setView5(id) {
   const { msg } = await __variableDynamicImportRuntime4__(`./views${id}.tsx`);
   document.querySelector(".view").innerHTML = msg;
 }
+async function setView6() {
+  const { msg } = await import("@/views/foo.js");
+  document.querySelector(".view").innerHTML = msg;
+}
 const views1 = {
   "foo-alias1": () => setView1("foo")
 };
@@ -37,8 +41,11 @@ const views4 = {
   "may-nesting-dir": () => setView4("/nested/nesting-dir")
 };
 const views5 = {
-  "may-ext-baz": () => setView4("/baz"),
-  "may-ext-nesting-dir": () => setView4("/nested/nesting-dir")
+  "may-ext-baz": () => setView5("/baz/index"),
+  "may-ext-nesting-dir": () => setView5("/nested/nesting-dir/index")
+};
+const views6 = {
+  "may-normally-alias": () => setView6()
 };
 Object.entries(views1).forEach(([className, cb]) => {
   document.querySelector(`.${className}`).addEventListener("click", cb);
@@ -55,14 +62,16 @@ Object.entries(views4).forEach(([className, cb]) => {
 Object.entries(views5).forEach(([className, cb]) => {
   document.querySelector(`.${className}`).addEventListener("click", cb);
 });
+Object.entries(views6).forEach(([className, cb]) => {
+  document.querySelector(`.${className}`).addEventListener("click", cb);
+});
 
-        // --------- vite-plugin-dynamic-import ---------
-        
+// --------- ${PLUGIN_NAME} ---------
+
 function __variableDynamicImportRuntime0__(path) {
   switch (path) {
     case '@/views/foo.js':
-    case '@/views/foo':
-      return import('./views/foo.js');
+      return import('@/views/foo.js');
 
     default: return new Promise(function(resolve, reject) {
       (typeof queueMicrotask === 'function' ? queueMicrotask : setTimeout)(
@@ -75,8 +84,7 @@ function __variableDynamicImportRuntime0__(path) {
 function __variableDynamicImportRuntime1__(path) {
   switch (path) {
     case 'src/views/bar.mjs':
-    case 'src/views/bar':
-      return import('./views/bar.mjs');
+      return import('src/views/bar.mjs');
 
     default: return new Promise(function(resolve, reject) {
       (typeof queueMicrotask === 'function' ? queueMicrotask : setTimeout)(
@@ -90,21 +98,21 @@ function __variableDynamicImportRuntime2__(path) {
   switch (path) {
     case '/root/src/views/bar.mjs':
     case '/root/src/views/bar':
-      return import('./views/bar.mjs');
+      return import('/root/src/views/bar.mjs');
 
     case '/root/src/views/foo.js':
     case '/root/src/views/foo':
-      return import('./views/foo.js');
+      return import('/root/src/views/foo.js');
 
     case '/root/src/views/baz/index.tsx':
     case '/root/src/views/baz/index':
     case '/root/src/views/baz':
-      return import('./views/baz/index.tsx');
+      return import('/root/src/views/baz/index.tsx');
 
     case '/root/src/views/home/index.ts':
     case '/root/src/views/home/index':
     case '/root/src/views/home':
-      return import('./views/home/index.ts');
+      return import('/root/src/views/home/index.ts');
 
     default: return new Promise(function(resolve, reject) {
       (typeof queueMicrotask === 'function' ? queueMicrotask : setTimeout)(
@@ -154,13 +162,9 @@ function __variableDynamicImportRuntime3__(path) {
 function __variableDynamicImportRuntime4__(path) {
   switch (path) {
     case './views/baz/index.tsx':
-    case './views/baz/index':
-    case './views/baz':
       return import('./views/baz/index.tsx');
 
     case './views/nested/nesting-dir/index.tsx':
-    case './views/nested/nesting-dir/index':
-    case './views/nested/nesting-dir':
       return import('./views/nested/nesting-dir/index.tsx');
 
     default: return new Promise(function(resolve, reject) {
