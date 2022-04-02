@@ -7,46 +7,29 @@ export interface ImporteeGlob {
     glob: string
     valid: boolean
   }
-  /**
-   * with alias glob
-   */
   alias?: AliasReplaced
 }
 
 export class DynamicImportVars {
-  static aliasContext: AliasContext
-  static _id: string
-  static _alias: ImporteeGlob['alias']
-
-  static aliasReplace(globImportee: string): string {
-    const replaced = this.aliasContext.replaceImportee(globImportee, this._id)
-    this._alias = replaced || undefined
-    return replaced ? replaced.replacedImportee : globImportee
-  }
-
   constructor(
-    aliasContext: AliasContext
-  ) {
-    DynamicImportVars.aliasContext = aliasContext
-  }
+    private aliasContext: AliasContext
+  ) { }
 
   public dynamicImportToGlob(
     node: AcornNode,
     sourceString: string,
     id: string,
   ): ImporteeGlob {
-    DynamicImportVars._id = id
+    const result: Partial<ImporteeGlob> = {}
 
-    const glob = dynamicImportToGlob(node, sourceString)
-    const result: ImporteeGlob = {
-      glob,
-      alias: DynamicImportVars._alias,
+    const aliasReplacer = (globImportee: string) => {
+      const replaced = this.aliasContext.replaceImportee(globImportee, id)
+      result.alias = replaced as typeof result.alias
+      return replaced ? replaced.replacedImportee : globImportee
     }
+    result.glob = dynamicImportToGlob(node, sourceString, aliasReplacer)
 
-    DynamicImportVars._id = undefined
-    DynamicImportVars._alias = undefined
-
-    return result
+    return result as ImporteeGlob
   }
 }
 
@@ -117,9 +100,9 @@ function expressionToGlob(node) {
   }
 }
 
-function dynamicImportToGlob(node, sourceString) {
+function dynamicImportToGlob(node, sourceString, aliasReplacer) {
   let glob = expressionToGlob(node);
-  glob = DynamicImportVars.aliasReplace(glob);
+  glob = aliasReplacer(glob);
   if (!glob.includes('*') || glob.startsWith('data:')) {
     // After `expressiontoglob` processing, it may become a normal path
     return { glob, valid: false };
