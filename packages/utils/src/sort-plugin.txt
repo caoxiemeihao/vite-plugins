@@ -1,0 +1,151 @@
+import type {
+  UserConfig,
+  Plugin,
+  PluginOption,
+} from 'vite'
+
+/**
+ * 'vite-plugin-dynamic-import' can only transform JavaScript.  
+ * So it should be put behind some known plugins.
+ */
+/*
+ 🚨 Does not works
+export function sortPlugin(toSortPlugin: string, config: UserConfig): UserConfig {
+  const KNOWN_PLUGINS = {
+    '@vitejs/plugin-vue': 'vite:vue',
+    'vite-plugin-vue2': 'vite-plugin-vue2',
+    '@vitejs/plugin-vue-jsx': 'vite:vue-jsx',
+    '@sveltejs/vite-plugin-svelte': 'vite-plugin-svelte',
+    '@vitejs/plugin-react': [
+      'vite:react-babel',
+      'vite:react-refresh',
+      'vite:react-jsx',
+    ],
+  }
+
+  const plugins = [...config.plugins] as Plugin[]
+  const knownNames = Object.values(KNOWN_PLUGINS).flat()
+  const pluginNames = plugins.map(plugin => plugin.name)
+
+  // Find the last known plugin
+  let orderIndex = [...pluginNames].reverse().findIndex(name => knownNames.includes(name))
+
+  if (orderIndex !== -1) {
+    // In the correct position in the array
+    orderIndex = pluginNames.length - 1 - orderIndex
+
+    const pluginIndex = pluginNames.findIndex(name => name === toSortPlugin)
+    if (pluginIndex < orderIndex) {
+      // It is located before a known plugin
+      // Move it to after known plugins
+      plugins.splice(orderIndex, 0, plugins.splice(pluginIndex, 1)[0])
+    }
+    config.plugins = plugins
+    return config
+  }
+}
+*/
+
+export function sortPlugin(vitePlugin: Plugin, pluginNames: string[] = []): Plugin {
+  const name = `${vitePlugin.name}:sorter`
+  const KNOWN_PLUGINS = {
+    '@vitejs/plugin-vue': 'vite:vue',
+    'vite-plugin-vue2': 'vite-plugin-vue2',
+    '@vitejs/plugin-vue-jsx': 'vite:vue-jsx',
+    '@sveltejs/vite-plugin-svelte': 'vite-plugin-svelte',
+    '@vitejs/plugin-react': [
+      'vite:react-babel',
+      'vite:react-refresh',
+      'vite:react-jsx',
+    ],
+  }
+  const knownNames = Object.values(KNOWN_PLUGINS).flat().concat(pluginNames)
+
+  return {
+    name,
+    // 🚨 Does not works
+    config(config) {
+      let indexI: number
+      let indexJ: number
+      // find from tail
+      for (let maxIdx = config.plugins.length - 1, i = maxIdx; i >= 0; i--) {
+        const pluginOpts = config.plugins[i]
+        let j = -1
+        if (Array.isArray(pluginOpts)) {
+          // find from tail
+          for (let _maxIdx = pluginOpts.length - 1, _j = _maxIdx; _j >= 0; _j--) {
+            const plugin = pluginOpts[_j]
+            if (plugin && knownNames.includes(plugin.name)) {
+              j = _maxIdx - _j
+              break
+            }
+          }
+          if (j > -1) {
+            indexI = maxIdx - i
+            indexJ = j
+            break
+          }
+        } else if (pluginOpts) {
+          if (knownNames.includes(pluginOpts.name)) {
+            indexI = maxIdx - i
+            break
+          }
+        }
+      }
+
+      if (typeof indexI === 'undefined') {
+        config.plugins = config.plugins.map(pluginOpt => {
+          if (!pluginOpt || Array.isArray(pluginOpt)) {
+            return pluginOpt
+          }
+          if (pluginOpt.name === name) {
+            return vitePlugin
+          }
+        })
+      } else {
+        // filter out the plugin itself
+        config.plugins = config.plugins.filter((e: any) => (e && e.name === name) ? false : true)
+        config.plugins = config.plugins.reduce<PluginOption[]>((memo, item, i) => {
+          if (i === indexI) {
+            if (typeof indexJ !== 'undefined') {
+              const tmp = (item as PluginOption[]).reduce((_memo, _item, j) => {
+                if (j === indexJ) {
+                  return _memo.concat([_item, vitePlugin])
+                }
+                return _memo.concat(_item)
+              }, [])
+              return memo.concat(tmp)
+            }
+            return memo.concat([item as PluginOption, vitePlugin])
+          }
+
+          return memo.concat(item)
+        }, [])
+      }
+
+      return config
+    },
+    // 🎉 This worked!
+    async configResolved(config) {
+      await vitePlugin.configResolved?.call(this, config)
+
+      const resolvedNames = config.plugins.map(p => p.name)
+      // Find the last known plugin
+      const lastIndex = [...resolvedNames].reverse().findIndex(rn => knownNames.includes(rn))
+      if (lastIndex > -1) {
+        const index = resolvedNames.length - 1 - lastIndex
+
+        // Move it to after known plugins
+        // @ts-ignore
+        config.plugins.splice(index + 1, 0, vitePlugin)
+        // Filter out the plugin itself
+        // @ts-ignore
+        config.plugins.splice(config.plugins.findIndex(p => p.name === name), 1)
+      } else {
+        //  Filter out the plugin itself
+        // @ts-ignore
+        config.plugins.splice(config.plugins.findIndex(p => p.name === name), 1, vitePlugin)
+      }
+    },
+  }
+}
