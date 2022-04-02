@@ -7,7 +7,8 @@
   "author": "草鞋没号 <308487730@qq.com>",
   "license": "MIT",
   "scripts": {
-    "build": "rm -rf dist && tsc"
+    "build": "rm -rf dist && tsc",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "acorn-walk": "^8.2.0",
