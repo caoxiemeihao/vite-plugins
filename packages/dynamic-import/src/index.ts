@@ -2,6 +2,7 @@ import path from 'path'
 import type { Plugin, ResolvedConfig } from 'vite'
 import { simple } from 'acorn-walk'
 import fastGlob from 'fast-glob'
+import { sortPlugin, OfficialPlugins } from 'vite-plugin-utils'
 import {
   hasDynamicImport,
   cleanUrl,
@@ -11,7 +12,6 @@ import {
   viteIgnoreRegex,
   importeeRawRegex,
 } from './utils'
-import { sortPlugin } from './sort-plugin'
 import type { AcornNode, DynamicImportOptions } from './types'
 import { AliasContext, AliasReplaced } from './alias'
 import { DynamicImportVars, fixGlob } from './dynamic-import-vars'
@@ -160,7 +160,11 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
     },
   }
 
-  return sortPlugin(dyImpt)
+  return sortPlugin({
+    plugin: dyImpt,
+    names: Object.values(OfficialPlugins).flat(),
+    enforce: 'post',
+  })
 }
 
 type GlobHasFiles = {
