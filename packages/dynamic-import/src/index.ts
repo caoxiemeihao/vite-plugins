@@ -21,15 +21,15 @@ const PLUGIN_NAME = 'vite-plugin-dynamic-import'
 
 export default function dynamicImport(options: DynamicImportOptions = {}): Plugin {
   let config: ResolvedConfig
-  let aliasCtx: AliasContext
+  let aliasContext: AliasContext
   let dynamicImport: DynamicImportVars
 
   const dyImpt: Plugin = {
     name: PLUGIN_NAME,
     configResolved(_config) {
       config = _config
-      aliasCtx = new AliasContext(_config)
-      dynamicImport = new DynamicImportVars(aliasCtx)
+      aliasContext = new AliasContext(_config)
+      dynamicImport = new DynamicImportVars(aliasContext)
     },
     async transform(code, id, opts) {
       const pureId = cleanUrl(id)
@@ -66,7 +66,7 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
           // this is a normal path
           if (normallyImporteeRegex.test(importee)) return
 
-          const replaced = aliasCtx.replaceImportee(importee, id)
+          const replaced = aliasContext.replaceImportee(importee, id)
           // this is a normal path
           if (replaced && normallyImporteeRegex.test(replaced.replacedImportee)) return
 
