@@ -5,7 +5,8 @@ Enhance Vite builtin dynamic import
 **English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/dynamic-import/README.zh-CN.md)**
 
 - Support alias
-- Based on the `glob` looser restrictions
+- Try to fix the wizard import path
+- Compatible with `@rollup/plugin-dynamic-import-vars` restrictions
 
 ## Install
 
