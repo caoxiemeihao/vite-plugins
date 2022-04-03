@@ -5,5 +5,20 @@
   "main": "dist/index.js",
   "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/electron",
   "author": "草鞋没号 <308487730@qq.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^17.x.x",
+    "typescript": "^4.x.x",
+    "vite": "^2.x"
+  },
+  "keywords": [
+    "vite",
+    "plugin",
+    "electron"
+  ]
 }
