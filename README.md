@@ -9,7 +9,7 @@
   <tbody>
       <tr>
       <td>
-        <a href="packages/electron">vite-plugin-electron</a>
+        <a href="https://github.com/caoxiemeihao/vite-plugin-electron.git">vite-plugin-electron</a>
       </td>
       <td>
         Integrate Vite and Electron
