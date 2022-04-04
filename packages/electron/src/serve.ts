@@ -1,6 +1,7 @@
 import type { ChildProcessWithoutNullStreams } from 'child_process'
 import { spawn } from 'child_process'
 import { AddressInfo } from 'net'
+import path from 'path'
 import type { ViteDevServer, UserConfig } from 'vite'
 import { build as viteBuild } from 'vite'
 import { buildConfig } from './build'
@@ -27,9 +28,13 @@ export async function bootstrap(config: Configuration, server: ViteDevServer) {
         }],
       } as UserConfig,
     )
-    await viteBuild(mergeConfigRecursively(preloadConfig, config.preload.vite || {}))
+    await viteBuild({
+      configFile: false,
+      ...mergeConfigRecursively(preloadConfig, config.preload.vite || {}),
+    })
   }
 
+  // ----------------------------------------------------------------
 
   let electronProcess: ChildProcessWithoutNullStreams = null
   const address = server.httpServer.address() as AddressInfo
@@ -38,8 +43,9 @@ export async function bootstrap(config: Configuration, server: ViteDevServer) {
     VITE_DEV_SERVER_PORT: address.port,
   })
 
-  const mainConfig = mergeConfigRecursively(
-    buildConfig(config, viteConfig, 'main'),
+  let mainConfig = buildConfig(config, viteConfig, 'main')
+  mainConfig = mergeConfigRecursively(
+    mainConfig,
     {
       mode: 'development',
       build: {
@@ -49,10 +55,16 @@ export async function bootstrap(config: Configuration, server: ViteDevServer) {
         name: 'electron-main-watcher',
         writeBundle() {
           electronProcess && electronProcess.kill()
-          electronProcess = spawn(electronPath, ['.'], { stdio: 'inherit', env })
+
+          let electronEntry = path.join(viteConfig.build.outDir, path.parse(config.main.entry).name)
+          // TODO: Check if electronEntry is a directory
+          electronProcess = spawn(electronPath, [electronEntry], { stdio: 'inherit', env })
         },
       }],
     } as UserConfig,
   )
-  await viteBuild(mergeConfigRecursively(mainConfig, config.main.vite || {}))
+  await viteBuild({
+    configFile: false,
+    ...mergeConfigRecursively(mainConfig, config.main.vite || {}),
+  })
 }

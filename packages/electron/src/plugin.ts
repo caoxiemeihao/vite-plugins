@@ -1,4 +1,5 @@
 import type { Plugin } from 'vite'
+import electronRenderer from 'vite-plugin-electron-renderer'
 import { Configuration } from './types'
 import { bootstrap } from './serve'
 import { build } from './build'
@@ -12,8 +13,9 @@ export function electron(config: Configuration): Plugin[] {
       name: `${NAME}:serve`,
       apply: 'serve',
       configureServer(server) {
+        const printUrls = server.printUrls
         server.printUrls = function () {
-          server.printUrls()
+          printUrls()
           bootstrap(config, server)
         }
       },
@@ -25,5 +27,6 @@ export function electron(config: Configuration): Plugin[] {
         await build(config, viteConfig)
       },
     },
+    ...(config.main.nodeIntegration ? [electronRenderer] : []),
   ]
 }
