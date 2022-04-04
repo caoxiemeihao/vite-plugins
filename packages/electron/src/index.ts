@@ -1,7 +1,8 @@
-import { Plugin } from 'vite'
+import type { Configuration } from './types'
 
-export default function electron(): Plugin {
-  return {
-    name: 'vite-plugin-electron'
-  }
+export { electron as default } from './plugin'
+export { Configuration }
+
+export function defineConfig(config: Configuration) {
+  return config
 }
