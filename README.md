@@ -7,15 +7,28 @@
     <th>Npm</th>
   </thead>
   <tbody>
+      <tr>
+      <td>
+        <a href="packages/electron">vite-plugin-electron</a>
+      </td>
+      <td>
+        Integrate Vite and Electron
+      </td>
+      <td>
+        <a href="https://npmjs.org/package/vite-plugin-electron">
+          <img src="https://img.shields.io/npm/v/vite-plugin-electron.svg">
+        </a>
+        <a href="https://npmjs.org/package/vite-plugin-electron">
+          <img src="https://img.shields.io/npm/dw/vite-plugin-electron.svg">
+        </a>
+      </td>
+    </tr>
     <tr>
       <td>
         <a href="packages/resolve">vite-plugin-resolve</a>
       </td>
       <td>
         Custom resolve code for vite
-        <a href="https://github.com/vitejs/awesome-vite">
-          <img src="https://awesome.re/badge.svg">
-        </a>
       </td>
       <td>
         <a href="https://npmjs.org/package/vite-plugin-resolve">
@@ -100,24 +113,6 @@
         </a>
       </td>
     </tr>
-    <!-- <tr>
-      <td>
-        <a href="packages/electron">vitejs-plugin-electron</a>
-      </td>
-      <td>
-        Integrate Vite and Electron
-        <br/>
-        <font color="#fa6470">[2022-03-04] In refactoring plan</font>
-      </td>
-      <td>
-        <a href="https://npmjs.org/package/vitejs-plugin-electron">
-          <img src="https://img.shields.io/npm/v/vitejs-plugin-electron.svg">
-        </a>
-        <a href="https://npmjs.org/package/vitejs-plugin-electron">
-          <img src="https://img.shields.io/npm/dw/vitejs-plugin-electron.svg">
-        </a>
-      </td>
-    </tr> -->
     <tr>
       <td>
         <a href="packages/fast-external">vite-plugin-fast-external</a>
