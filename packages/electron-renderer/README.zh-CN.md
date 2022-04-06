@@ -1,5 +1,13 @@
 # vite-plugin-electron-renderer
 
+> 🚧 这个包已经不维护了。你可以使用 [vite-plugin-electron](https://www.npmjs.com/package/vite-plugin-electron)
+
+```js
+import electron from 'vite-plugin-electron/renderer'
+```
+
+---
+
 [![NPM version](https://img.shields.io/npm/v/vite-plugin-electron-renderer.svg?style=flat)](https://npmjs.org/package/vite-plugin-electron-renderer)
 [![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-electron-renderer.svg?style=flat)](https://npmjs.org/package/vite-plugin-electron-renderer)
 
