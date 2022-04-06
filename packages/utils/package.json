@@ -3,7 +3,11 @@
   "description": "Collection of Vite plugin utils",
   "version": "0.1.0",
   "main": "dist/index.js",
-  "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/utils",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caoxiemeihao/vite-plugins.git",
+    "directory": "packages/utils"
+  },
   "author": "草鞋没号 <308487730@qq.com>",
   "license": "MIT",
   "scripts": {

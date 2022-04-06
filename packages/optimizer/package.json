@@ -3,7 +3,11 @@
   "version": "1.3.2",
   "description": "Manually Pre-Bundling of Vite",
   "main": "index.js",
-  "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/optimizer",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caoxiemeihao/vite-plugins.git",
+    "directory": "packages/optimizer"
+  },
   "author": "草鞋没号 <308487730@qq.com>",
   "license": "MIT",
   "scripts": {},

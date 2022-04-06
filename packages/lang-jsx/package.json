@@ -3,7 +3,11 @@
   "version": "1.3.3",
   "description": "Automatically add `lang=\"jsx\"` attribute for when using vite-plugin-vue2",
   "main": "index.js",
-  "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/lang-jsx",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caoxiemeihao/vite-plugins.git",
+    "directory": "packages/lang-jsx"
+  },
   "author": "草鞋没号 <308487730@qq.com>",
   "license": "MIT",
   "scripts": {},

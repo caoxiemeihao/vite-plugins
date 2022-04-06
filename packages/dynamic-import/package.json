@@ -3,7 +3,11 @@
   "version": "0.6.2",
   "description": "Enhance Vite builtin dynamic import",
   "main": "dist/index.js",
-  "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/dynamic-import",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caoxiemeihao/vite-plugins.git",
+    "directory": "packages/dynamic-import"
+  },
   "author": "草鞋没号 <308487730@qq.com>",
   "license": "MIT",
   "scripts": {

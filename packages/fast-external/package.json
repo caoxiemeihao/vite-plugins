@@ -3,7 +3,11 @@
   "version": "2.1.1",
   "description": "Without lexical transform, support custom external code.",
   "main": "index.js",
-  "repository": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caoxiemeihao/vite-plugins.git",
+    "directory": "packages/fast-external"
+  },
   "readme": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external#readme",
   "author": "草鞋没号 <308487730@qq.com>",
   "license": "MIT",

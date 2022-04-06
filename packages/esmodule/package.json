@@ -8,7 +8,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/caoxiemeihao/vite-plugins.git#main"
+    "url": "git+https://github.com/caoxiemeihao/vite-plugins.git",
+    "directory": "packages/esmodule"
   },
   "keywords": [
     "vite",
