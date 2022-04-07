@@ -1,12 +1,15 @@
 import path from 'path'
 import type { Plugin, ResolvedConfig } from 'vite'
 import fastGlob from 'fast-glob'
-import { sortPlugin, OfficialPlugins } from 'vite-plugin-utils'
 import {
-  hasDynamicImport,
+  sortPlugin,
+  OfficialPlugins,
   cleanUrl,
   JS_EXTENSIONS,
   KNOWN_SFC_EXTENSIONS,
+} from 'vite-plugin-utils'
+import {
+  hasDynamicImport,
   normallyImporteeRegex,
   viteIgnoreRegex,
   importeeRawRegex,
