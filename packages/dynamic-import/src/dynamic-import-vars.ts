@@ -15,19 +15,19 @@ export class DynamicImportVars {
     private aliasContext: AliasContext
   ) { }
 
-  public dynamicImportToGlob(
+  public async dynamicImportToGlob(
     node: AcornNode,
     sourceString: string,
     id: string,
-  ): ImporteeGlob {
+  ): Promise<ImporteeGlob> {
     const result: Partial<ImporteeGlob> = {}
 
-    const aliasReplacer = (globImportee: string) => {
-      const replaced = this.aliasContext.replaceImportee(globImportee, id)
+    const aliasReplacer = async (globImportee: string) => {
+      const replaced = await this.aliasContext.replaceImportee(globImportee, id)
       result.alias = replaced as typeof result.alias
       return replaced ? replaced.replacedImportee : globImportee
     }
-    result.glob = dynamicImportToGlob(node, sourceString, aliasReplacer)
+    result.glob = await dynamicImportToGlob(node, sourceString, aliasReplacer)
 
     return result as ImporteeGlob
   }
@@ -100,9 +100,9 @@ function expressionToGlob(node) {
   }
 }
 
-function dynamicImportToGlob(node, sourceString, aliasReplacer) {
+async function dynamicImportToGlob(node, sourceString, aliasReplacer) {
   let glob = expressionToGlob(node);
-  glob = aliasReplacer(glob);
+  glob = await aliasReplacer(glob);
   if (!glob.includes('*') || glob.startsWith('data:')) {
     // After `expressiontoglob` processing, it may become a normal path
     return { glob, valid: false };

@@ -52,7 +52,7 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
       }[] = []
 
       simple(ast, {
-        ImportExpression(node: AcornNode) {
+        async ImportExpression(node: AcornNode) {
           const importeeRaw = code.slice(node.source.start, node.source.end)
 
           // check @vite-ignore which suppresses dynamic import warning
@@ -66,11 +66,11 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
           // this is a normal path
           if (normallyImporteeRegex.test(importee)) return
 
-          const replaced = aliasContext.replaceImportee(importee, id)
+          const replaced = await aliasContext.replaceImportee(importee, id)
           // this is a normal path
           if (replaced && normallyImporteeRegex.test(replaced.replacedImportee)) return
 
-          const globResult = globFiles(
+          const globResult = await globFiles(
             dynamicImport,
             node,
             code,
@@ -180,17 +180,17 @@ type GlobNormally = {
 }
 type GlobFilesResult = GlobHasFiles | GlobNormally | null
 
-function globFiles(
+async function globFiles(
   dynamicImport: DynamicImportVars,
   ImportExpressionNode: AcornNode,
   sourceString: string,
   pureId: string,
   extensions: string[],
-): GlobFilesResult {
+): Promise<GlobFilesResult> {
   const node = ImportExpressionNode
   const code = sourceString
 
-  const { alias, glob: globObj } = dynamicImport.dynamicImportToGlob(
+  const { alias, glob: globObj } = await dynamicImport.dynamicImportToGlob(
     node.source,
     code.substring(node.start, node.end),
     pureId,
