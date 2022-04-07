@@ -1,3 +1,4 @@
+import type { AcornNode } from 'rollup'
 
 export const JS_EXTENSIONS = [
   '.mjs',
@@ -32,3 +33,23 @@ export function hasDynamicImport(code: string) {
 
 export const cleanUrl = (url: string): string =>
   url.replace(hashRE, '').replace(queryRE, '')
+
+export async function simpleWalk(
+  ast: AcornNode,
+  visitors: {
+    [type: string]: (node: AcornNode) => void | Promise<void>,
+  }) {
+  if (!ast) return;
+
+  if (Array.isArray(ast)) {
+    for (const element of ast as AcornNode[]) {
+      await simpleWalk(element, visitors)
+    }
+  } else {
+    for (const key of Object.keys(ast)) {
+      await (typeof ast[key] === 'object' && simpleWalk(ast[key], visitors))
+    }
+  }
+
+  await visitors[ast.type]?.(ast)
+}

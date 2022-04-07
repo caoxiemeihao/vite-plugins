@@ -1,6 +1,5 @@
 import path from 'path'
 import type { Plugin, ResolvedConfig } from 'vite'
-import { simple } from 'acorn-walk'
 import fastGlob from 'fast-glob'
 import { sortPlugin, OfficialPlugins } from 'vite-plugin-utils'
 import {
@@ -11,10 +10,11 @@ import {
   normallyImporteeRegex,
   viteIgnoreRegex,
   importeeRawRegex,
+  simpleWalk,
 } from './utils'
 import type { AcornNode, DynamicImportOptions } from './types'
 import { AliasContext, AliasReplaced } from './alias'
-import { DynamicImportVars, fixGlob } from './dynamic-import-vars'
+import { DynamicImportVars, tryFixGlobExtension, tryFixGlobSlash } from './dynamic-import-vars'
 import { DynamicImportRuntime, generateDynamicImportRuntime } from './dynamic-import-helper'
 
 const PLUGIN_NAME = 'vite-plugin-dynamic-import'
@@ -44,14 +44,9 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
 
       const ast = this.parse(code)
       let dynamicImportIndex = 0
-      const dynamicImportRecords: {
-        node: AcornNode
-        importeeRaw: string
-        importRuntime?: DynamicImportRuntime
-        normally?: GlobNormally['normally']
-      }[] = []
+      const dynamicImportRecords: DynamicImportRecord[] = []
 
-      simple(ast, {
+      await simpleWalk(ast, {
         async ImportExpression(node: AcornNode) {
           const importeeRaw = code.slice(node.source.start, node.source.end)
 
@@ -88,13 +83,13 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
             importeeRaw,
           }
 
-          if (Object.keys(globResult).includes('normally')) {
+          if (globResult['normally']) {
             // this is a normal path
             const { normally } = globResult as GlobNormally
             dynamicImportRecords.push({ ...dyRecord, normally })
           } else {
             const { glob, files, alias } = globResult as GlobHasFiles
-            if (!files || !files.length) return
+            if (!files.length) return
 
             const allImportee = listAllImportee(
               glob,
@@ -167,6 +162,13 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
   })
 }
 
+interface DynamicImportRecord {
+  node: AcornNode
+  importeeRaw: string
+  importRuntime?: DynamicImportRuntime
+  normally?: GlobNormally['normally']
+}
+
 type GlobHasFiles = {
   glob: string
   alias?: AliasReplaced & { files: string[] }
@@ -205,13 +207,11 @@ async function globFiles(
   let { glob } = globObj
   let globWithIndex: string
 
-  glob = fixGlob(glob) || glob
-
-  // if not extension is not specified, fill necessary extensions
-  // e.g. `./views/*` -> `./views/*{.js,.ts,.vue ...}`
-  if (!extensions.includes(path.extname(glob))) {
-    globWithIndex = glob + '/index' + `{${extensions.join(',')}}`
-    glob = glob + `{${extensions.join(',')}}`
+  glob = tryFixGlobSlash(glob) || glob
+  const tmp = tryFixGlobExtension(glob, extensions)
+  if (tmp) {
+    glob = tmp.glob
+    globWithIndex = tmp.globWithIndex
   }
 
   const files = fastGlob.sync(

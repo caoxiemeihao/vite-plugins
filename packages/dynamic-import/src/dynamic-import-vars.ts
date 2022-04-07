@@ -137,7 +137,7 @@ async function dynamicImportToGlob(node, sourceString, aliasReplacer) {
     );
   }
 
-  // 🚧 This will be handled using `fixGlob()`
+  // 🚧 This will be handled using `tryFixGlobExtension()`
   // if (path.extname(glob) === '') {
   //   throw new VariableDynamicImportError(
   //     `invalid import "${sourceString}". A file extension must be included in the static part of the import. ${example}`
@@ -155,7 +155,7 @@ async function dynamicImportToGlob(node, sourceString, aliasReplacer) {
  * `./views*.js` -> `./views/*.js`
  * ```
  */
-export function fixGlob(glob: string, deep = true): string | void {
+export function tryFixGlobSlash(glob: string, deep = true): string | void {
   const extname = path.extname(glob)
   // It could be `./views*.js`, which needs to be repaired to `./views/*.js`
   glob = glob.replace(extname, '')
@@ -177,5 +177,27 @@ export function fixGlob(glob: string, deep = true): string | void {
     fixedGlob += extname
 
     return fixedGlob
+  }
+}
+
+/**
+ * ```
+ * 🚧 If not extension is not specified, fill necessary extensions  
+ * e.g.
+ * `./views/*`
+ *   -> `./views/*.{js,ts,vue ...}`
+ *   -> `./views/*` + `/index.{js,ts,vue ...}`
+ * ```
+ */
+export function tryFixGlobExtension(glob: string, extensions: string[]): { globWithIndex?: string; glob: string } | void {
+  if (!extensions.includes(path.extname(glob))) {
+    const bareExts = extensions.map(ext => ext.slice(1))
+    return {
+      globWithIndex: glob.includes('**')
+        // `**` including `*/index`
+        ? undefined
+        : glob + '/index.' + `{${bareExts.join(',')}}`,
+      glob: glob + `.{${bareExts.join(',')}}`,
+    }
   }
 }
