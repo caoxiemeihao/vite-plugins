@@ -12,7 +12,7 @@
   "license": "MIT",
   "scripts": {},
   "devDependencies": {
-    "vite": "^2.x"
+    "vite": "^2.x.x"
   },
   "keywords": [
     "vite",

@@ -31,6 +31,6 @@
     "webpack": "^5.x.x"
   },
   "devDependencies": {
-    "vite": "^2.x"
+    "vite": "^2.x.x"
   }
 }
