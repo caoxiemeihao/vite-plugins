@@ -155,7 +155,7 @@ async function dynamicImportToGlob(node, sourceString, aliasReplacer) {
  * `./views*.js` -> `./views/*.js`
  * ```
  */
-export function tryFixGlobSlash(glob: string, deep = true): string | void {
+export function tryFixGlobSlash(glob: string, depth = true): string | void {
   const extname = path.extname(glob)
   // It could be `./views*.js`, which needs to be repaired to `./views/*.js`
   glob = glob.replace(extname, '')
@@ -166,11 +166,7 @@ export function tryFixGlobSlash(glob: string, deep = true): string | void {
     // `./views*` -> `./views/*`
     let fixedGlob = glob.replace(importPath, importPath + '/')
 
-    fixedGlob = deep
-      // match as far as possible
-      // `./views/*` -> `./views/**/*`
-      ? fixedGlob.replace(/^(.*)\/\*$/, '$1/**/*')
-      : fixedGlob
+    fixedGlob = depth ? toDepthGlob(fixedGlob) : fixedGlob
 
     // if it has a '.js' extension
     // `./views/*` -> `./views/*.js`
@@ -200,4 +196,14 @@ export function tryFixGlobExtension(glob: string, extensions: string[]): { globW
       glob: glob + `.{${bareExts.join(',')}}`,
     }
   }
+}
+
+// Match as far as possible
+// `./views/*` -> `./views/**/*`
+export function toDepthGlob(glob: string): string {
+  const extname = path.extname(glob)
+
+  return glob
+    .replace(extname, '')
+    .replace(/^(.*)(?<!\*\*)\/\*$/, '$1/**/*') + extname
 }

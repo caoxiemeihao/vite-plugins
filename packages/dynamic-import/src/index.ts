@@ -17,7 +17,12 @@ import {
 } from './utils'
 import type { AcornNode, DynamicImportOptions } from './types'
 import { AliasContext, AliasReplaced } from './alias'
-import { DynamicImportVars, tryFixGlobExtension, tryFixGlobSlash } from './dynamic-import-vars'
+import {
+  DynamicImportVars,
+  tryFixGlobExtension,
+  tryFixGlobSlash,
+  toDepthGlob,
+} from './dynamic-import-vars'
 import { DynamicImportRuntime, generateDynamicImportRuntime } from './dynamic-import-helper'
 
 const PLUGIN_NAME = 'vite-plugin-dynamic-import'
@@ -74,6 +79,7 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
             code,
             pureId,
             globExtensions,
+            options.depth !== false,
           )
           if (!globResult) return
 
@@ -191,6 +197,7 @@ async function globFiles(
   sourceString: string,
   pureId: string,
   extensions: string[],
+  depth: boolean,
 ): Promise<GlobFilesResult> {
   const node = ImportExpressionNode
   const code = sourceString
@@ -211,6 +218,7 @@ async function globFiles(
   let globWithIndex: string
 
   glob = tryFixGlobSlash(glob) || glob
+  depth && (glob = toDepthGlob(glob))
   const tmp = tryFixGlobExtension(glob, extensions)
   if (tmp) {
     glob = tmp.glob
