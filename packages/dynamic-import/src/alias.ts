@@ -1,5 +1,6 @@
 import path from 'path'
 import type { Alias, ResolvedConfig } from 'vite'
+import { normalizePath } from 'vite'
 import { importeeRawRegex } from './utils'
 
 export interface AliasReplaced {
@@ -54,6 +55,7 @@ export class AliasContext {
       }
 
       if (_find) {
+        // 🚨 The path processed with `normalizePath` is required
         if (path.isAbsolute(replacement)) {
           // Compatible with vite restrictions
           // https://github.com/vitejs/vite/blob/1e9615d8614458947a81e0d4753fe61f3a277cb3/packages/vite/src/node/plugins/importAnalysis.ts#L672
@@ -102,10 +104,21 @@ export class AliasContext {
     if (!alias) return
     const { find, replacement } = alias
 
-    if (path.isAbsolute(replacement)) {
+    if (replacement.startsWith('.')) {
+      // Considered a relative path
+      ipte = ipte.replace(find, replacement)
+    } else {
+      const normalId = normalizePath(id)
+      const normalReplacement = normalizePath(replacement)
+
       // Compatible with vite restrictions
       // https://github.com/vitejs/vite/blob/1e9615d8614458947a81e0d4753fe61f3a277cb3/packages/vite/src/node/plugins/importAnalysis.ts#L672
-      let relativePath = path.posix.relative(/* 🚧 */path.dirname(id), replacement)
+      let relativePath = path.relative(
+        // Usually, the `replacement` we use is the directory path
+        // So we also use the `path.dirname` path for calculation
+        path.dirname(/* 🚧-① */normalId),
+        normalReplacement,
+      )
       if (relativePath === '') {
         relativePath = '.'
       }
@@ -114,8 +127,6 @@ export class AliasContext {
         // Remove the beginning /
         .replace(/^\//, '')
       ipte = relativeImportee
-    } else {
-      ipte = ipte.replace(find, replacement)
     }
 
     return {

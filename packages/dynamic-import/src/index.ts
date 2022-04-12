@@ -227,7 +227,7 @@ async function globFiles(
 
   const files = fastGlob.sync(
     globWithIndex ? [glob, globWithIndex] : glob,
-    { cwd: /* 🚧 */path.dirname(pureId) },
+    { cwd: path.dirname(/* 🚧-① */pureId) },
   )
 
   let aliasWithFiles: GlobHasFiles['alias']
