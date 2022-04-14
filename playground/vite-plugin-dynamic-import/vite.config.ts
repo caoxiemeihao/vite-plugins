@@ -8,11 +8,11 @@ export default defineConfig({
     dynamicImport(),
   ],
   resolve: {
-    alias: {
-      '@': join(__dirname, 'src'),
-      'src/': join(__dirname, 'src/'),
-      '/root/src': join(__dirname, 'src'),
-    },
+    alias: [
+      { find: '@', replacement: join(__dirname, 'src') },
+      { find: /^src\//, replacement: join(__dirname, 'src/') },
+      { find: '/root/src', replacement: join(__dirname, 'src') },
+    ],
   },
   build: {
     minify: false,
