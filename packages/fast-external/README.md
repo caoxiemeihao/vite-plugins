@@ -5,7 +5,8 @@
 [![NPM version](https://img.shields.io/npm/v/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
 [![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
 
-Without lexical transform, support custom external code
+🚀 **High performance** without lexical transform  
+🌱 Support custom external code
 
 **English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/fast-external/README.zh-CN.md)**
 
@@ -26,38 +27,56 @@ npm i vite-plugin-fast-external -D
 ```js
 import external from 'vite-plugin-fast-external';
 
-export default defineConfig({
+export default {
   plugins: [
     external({
-      // Simple example
-      // By default will generated code -> const Vue = window['Vue']; export { Vue as default }
       vue: 'Vue',
-
-      // Support nesting module name
-      // Support custom external code by function
-      '@namespace/lib-name': () => `
-        const lib = window.LibName;
-        export default lib;
-        export const Message = lib.Message
-        export const Notification = lib.Notification;
-      `,
-
-      // Load a template file and return Promise<string>
-      externalId: () => require('fs/promises').readFile('path', 'utf-8'),
-
-      // Use in Electron
-      electron: () => `const { ipcRenderer } = require('electron'); export { ipcRenderer }`,
     })
   ]
+}
+```
+
+#### Customize
+
+Support custom external code by function
+
+```js
+external({
+  'element-ui': () => `
+    const E = window.ELEMENT;
+    export { E as default };
+    export const Loading = E.Loading;
+    export const Message = E.Message;
+    export const MessageBox = E.MessageBox;
+    export const Notification = E.Notification;
+  `,
+  // ...other element-ui members
+})
+```
+
+#### Load a file
+
+Support nested module id, support return Promise
+
+```ts
+resolve({
+  'path/filename': () => require('fs/promises').readFile('path', 'utf-8'),
 })
 ```
 
 ## API
 
-### external(entries)
-
-**entries**
+external(entries)
 
 ```ts
-Record<string, string | ((id: string) => string | Promise<string>)>;
+type entries = Record<string, string | ((id: string) => string | Promise<string>)>;
+```
+
+## How to work
+
+In fact, the plugin will intercept your module import and return the specified code snippet  
+Let's use `external({ vue: 'Vue' })` as an example, this will get the below code  
+
+```js
+const M = window['Vue']; export { M as default }
 ```

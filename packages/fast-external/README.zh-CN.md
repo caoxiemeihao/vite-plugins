@@ -5,7 +5,8 @@
 [![NPM version](https://img.shields.io/npm/v/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
 [![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
 
-不使用语法转换, 支持自定义 external 代码段
+🚀 **高性能** 不需要语法转换
+🌱 支持自定义 external 代码段
 
 **[English](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external#readme) | 简体中文**
 
@@ -29,34 +30,53 @@ import external from 'vite-plugin-fast-external';
 export default defineConfig({
   plugins: [
     external({
-      // 基本使用
-      // 默认会生成 const Vue = window['Vue']; export { Vue as default }
       vue: 'Vue',
-
-      // 支持包命名空间，通过函数可以自定义返回任何代码段 - 但你要知道 vite 开发期只支持 ESM
-      '@namespace/lib-name': () => `
-        const lib = window.LibName;
-        export default lib;
-        export const Message = lib.Message
-        export const Notification = lib.Notification;
-      `,
-
-      // 还支持返回 Promise<string> 很容易配合文件、网络等 IO
-      externalId: () => require('fs/promises').readFile('path', 'utf-8'),
-
-      // 在 Electron 渲染进程中使用
-      electron: () => `const { ipcRenderer } = require('electron'); export { ipcRenderer }`,
     })
   ]
 })
 ```
 
-## API
+#### 自定义
 
-### external(entries)
+支持通过 function 返回自定义 external 代码
 
-**entries**
+```js
+external({
+  'element-ui': () => `
+    const E = window.ELEMENT;
+    export { E as default };
+    export const Loading = E.Loading;
+    export const Message = E.Message;
+    export const MessageBox = E.MessageBox;
+    export const Notification = E.Notification;
+  `,
+  // ...其他 element-ui 导出成员
+})
+```
+
+#### 加载文件
+
+支持嵌套模块命名，支持返回 Promise
 
 ```ts
-Record<string, string | ((id: string) => string | Promise<string>)>;
+resolve({
+  'path/filename': () => require('fs/promises').readFile('path', 'utf-8'),
+})
+```
+
+## API
+
+external(entries)
+
+```ts
+type entries = Record<string, string | ((id: string) => string | Promise<string>)>;
+```
+
+## 工作原理
+
+实际中，该插件会拦截你的 import 导入，并返回指定的代码段
+Let's use `external({ vue: 'Vue' })` as an example, this will get the code snippet  
+
+```js
+const M = window['Vue']; export { M as default }
 ```
