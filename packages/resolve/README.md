@@ -15,36 +15,36 @@ npm i vite-plugin-resolve -D
 
 ## Usage
 
+Resolve custom module content, this like Vite external plugin
+
 ```ts
-import { defineConfig } from 'vite'
 import resolve from 'vite-plugin-resolve'
 
-export default defineConfig({
+export default {
   plugins: [
     resolve({
-      // Resolve custom module content
-      // This like Vite external plugin
       vue: `const vue = window.Vue; export { vue as default }`,
     }),
   ]
-})
+}
 ```
 
-#### Load a local file
+#### Load a file
+
+Support nested module id, support return Promise
 
 ```ts
 resolve({
-  // Support nested module id
-  // Support return Promise
-  '@scope/name': () => require('fs/promises').readFile('path', 'utf-8'),
+  'path/filename': () => require('fs/promises').readFile('path', 'utf-8'),
 })
 ```
 
 #### Electron
 
+Resolve Electron `ipcRenderer` in Renderer-process
+
 ```ts
 resolve({
-  // Resolve Electron ipcRenderer in Renderer-process
   electron: `const { ipcRenderer } = require('electron'); export { ipcRenderer };`,
 })
 ```

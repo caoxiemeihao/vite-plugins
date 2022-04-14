@@ -15,36 +15,36 @@ npm i vite-plugin-resolve -D
 
 ## 使用
 
+加载自定模块内容，这个场景就是 external
+
 ```ts
-import { defineConfig } from 'vite'
 import resolve from 'vite-plugin-resolve'
 
-export default defineConfig({
+export default {
   plugins: [
     resolve({
-      // 加载自定模块内容
-      // 这个场景就是 external
       vue: `const vue = window.Vue; export { vue as default }`,
     }),
   ]
-})
+}
 ```
 
-#### 读取本地文件
+#### 加载文件
+
+支持嵌套模块命名，支持返回 Promise
 
 ```ts
 resolve({
-  // 支持嵌套模块命名
-  // 支持返回 Promise
-  '@scope/name': async () => await require('fs/promises').readFile('path', 'utf-8'),
+  'path/filename': () => require('fs/promises').readFile('path', 'utf-8'),
 })
 ```
 
 #### Electron
 
+在 Electron 渲染进程中加载 `ipcRenderer`
+
 ```ts
 resolve({
-  // 在 Electron 渲染进程中加载 ipcRenderer
   electron: `const { ipcRenderer } = require('electron'); export { ipcRenderer };`,
 })
 ```
