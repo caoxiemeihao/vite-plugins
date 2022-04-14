@@ -31,8 +31,8 @@ export default {
   plugins: [
     external({
       vue: 'Vue',
-    })
-  ]
+    }),
+  ],
 }
 ```
 

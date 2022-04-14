@@ -5,7 +5,7 @@
 [![NPM version](https://img.shields.io/npm/v/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
 [![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
 
-🚀 **高性能** 不需要语法转换
+🚀 **高性能** 不需要语法转换  
 🌱 支持自定义 external 代码段
 
 **[English](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external#readme) | 简体中文**
@@ -31,8 +31,8 @@ export default defineConfig({
   plugins: [
     external({
       vue: 'Vue',
-    })
-  ]
+    }),
+  ],
 })
 ```
 
