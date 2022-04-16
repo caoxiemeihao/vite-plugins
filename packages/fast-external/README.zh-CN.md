@@ -1,12 +1,11 @@
 # vite-plugin-fast-external
 
-[![npm package](https://nodei.co/npm/vite-plugin-fast-external.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/vite-plugin-fast-external)
-<br/>
 [![NPM version](https://img.shields.io/npm/v/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
 [![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
 
 🚀 **高性能** 不需要语法转换  
 🌱 支持自定义 external 代码段
+📦 内置 Vue, React, Antd, Element 等等, 开箱即用
 
 **[English](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external#readme) | 简体中文**
 
@@ -36,21 +35,54 @@ export default defineConfig({
 })
 ```
 
-#### 自定义
+#### 内置模块
+
+已经内置的一些常用的模块
+
+```js
+import external from 'vite-plugin-fast-external';
+import {
+  antd_vue_v1,
+  antd_vue_v3,
+  antd_v4,
+  element_plus,
+  element_ui,
+  react_dom_v17,
+  react_dom_v18,
+  react_v17,
+  react_v18,
+  vue_v2,
+  vue_v3,
+} from 'vite-plugin-fast-external/presets';
+
+export default {
+  plugins: [
+    external({
+      'ant-design-vue': antd_vue_v3,
+      antd: antd_v4,
+      'element-plus': element_plus,
+      'element-ui': element_ui,
+      'react-dom': react_dom_v18,
+      react: react_v18,
+      vue: vue_v3,
+    }),
+  ],
+}
+```
+
+#### 自定义(高级部分)
 
 支持通过 function 返回自定义 external 代码
 
 ```js
 external({
-  'element-ui': () => `
-    const E = window.ELEMENT;
-    export { E as default };
-    export const Loading = E.Loading;
-    export const Message = E.Message;
-    export const MessageBox = E.MessageBox;
-    export const Notification = E.Notification;
+  module: () => `
+    const M = window.Module;
+    const D = M.default || M;
+    export { D as default };
+    export const member1 = M.member1;
+    // 其他成员...
   `,
-  // ...其他 element-ui 导出成员
 })
 ```
 

@@ -7,6 +7,7 @@
 
 🚀 **High performance** without lexical transform  
 🌱 Support custom external code
+📦 Built in Vue, React, Antd, Element and others, Out of the box
 
 **English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/fast-external/README.zh-CN.md)**
 
@@ -36,21 +37,54 @@ export default {
 }
 ```
 
-#### Customize
+#### Builtins
+
+You can easily use some builtin modules
+
+```js
+import external from 'vite-plugin-fast-external';
+import {
+  antd_vue_v1,
+  antd_vue_v3,
+  antd_v4,
+  element_plus,
+  element_ui,
+  react_dom_v17,
+  react_dom_v18,
+  react_v17,
+  react_v18,
+  vue_v2,
+  vue_v3,
+} from 'vite-plugin-fast-external/presets';
+
+export default {
+  plugins: [
+    external({
+      'ant-design-vue': antd_vue_v3,
+      antd: antd_v4,
+      'element-plus': element_plus,
+      'element-ui': element_ui,
+      'react-dom': react_dom_v18,
+      react: react_v18,
+      vue: vue_v3,
+    }),
+  ],
+}
+```
+
+#### Customize (Advance)
 
 Support custom external code by function
 
 ```js
 external({
-  'element-ui': () => `
-    const E = window.ELEMENT;
-    export { E as default };
-    export const Loading = E.Loading;
-    export const Message = E.Message;
-    export const MessageBox = E.MessageBox;
-    export const Notification = E.Notification;
+  module: () => `
+    const M = window.Module;
+    const D = M.default || M;
+    export { D as default };
+    export const member1 = M.member1;
+    // other members...
   `,
-  // ...other element-ui members
 })
 ```
 
