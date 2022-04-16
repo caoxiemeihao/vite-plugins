@@ -29,59 +29,6 @@ export class AliasContext {
     return this.replace(rawImportee, id, true)
   }
 
-  /**
-   * @deprecated
-   */
-  private _replaceSync(importee: string, id: string, raw: boolean): AliasReplaced | void {
-    const alias = this.config.resolve.alias
-    let [startQuotation, url, endQuotation] = ['', importee, '']
-
-    if (raw) {
-      const matched = importee.match(importeeRawRegex)
-      if (matched) {
-        [, startQuotation, url, endQuotation] = matched
-      }
-    }
-
-    for (const aliasItem of alias) {
-      const { find, replacement, customResolver } = aliasItem
-      // TODO: Alias['customResolver']
-
-      let _find: typeof find
-      if (find instanceof RegExp && find.test(url)) {
-        _find = find
-      } else if (typeof find === 'string' && url.startsWith(find)) {
-        _find = find
-      }
-
-      if (_find) {
-        // 🚨 The path processed with `normalizePath` is required
-        if (path.isAbsolute(replacement)) {
-          // Compatible with vite restrictions
-          // https://github.com/vitejs/vite/blob/1e9615d8614458947a81e0d4753fe61f3a277cb3/packages/vite/src/node/plugins/importAnalysis.ts#L672
-          let relativePath = path.posix.relative(/* 🚧 */path.dirname(id), replacement)
-          if (relativePath === '') {
-            relativePath = '.'
-          }
-          const relativeImportee = relativePath + '/' + url
-            .replace(_find, '')
-            // Remove the beginning /
-            .replace(/^\//, '')
-          url = relativeImportee
-        } else {
-          url = url.replace(_find, replacement)
-        }
-
-        return {
-          alias: aliasItem,
-          punctuation: raw ? [startQuotation, endQuotation] : null,
-          importee,
-          replacedImportee: raw ? (startQuotation + url + endQuotation) : url,
-        }
-      }
-    }
-  }
-
   private async replace(importee: string, id: string, raw: boolean): Promise<AliasReplaced | void> {
     let [startQuotation, ipte, endQuotation] = ['', importee, '']
     if (raw) {
