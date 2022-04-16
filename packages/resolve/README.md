@@ -29,6 +29,8 @@ export default {
 }
 ```
 
+You you can see more about external 👉 [vite-plugin-fast-external](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external) 
+
 #### Load a file
 
 Support nested module id, support return Promise

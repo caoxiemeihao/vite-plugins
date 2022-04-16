@@ -29,6 +29,8 @@ export default {
 }
 ```
 
+你可以看看关于 external 👉 [vite-plugin-fast-external](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external) 
+
 #### 加载文件
 
 支持嵌套模块命名，支持返回 Promise
