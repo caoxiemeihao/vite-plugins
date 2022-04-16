@@ -137,7 +137,7 @@ async function dynamicImportToGlob(node, sourceString, aliasReplacer) {
     );
   }
 
-  // 🚧 This will be handled using `tryFixGlobExtension()`
+  // 🚧-② This will be handled using `tryFixGlobExtension()`
   // if (path.extname(glob) === '') {
   //   throw new VariableDynamicImportError(
   //     `invalid import "${sourceString}". A file extension must be included in the static part of the import. ${example}`
@@ -149,7 +149,7 @@ async function dynamicImportToGlob(node, sourceString, aliasReplacer) {
 
 /**
  * ```
- * 🚧 In some cases, glob may not be available  
+ * In some cases, glob may not be available  
  * e.g. fill necessary slash  
  * `./views*` -> `./views/*`
  * `./views*.js` -> `./views/*.js`
@@ -178,7 +178,7 @@ export function tryFixGlobSlash(glob: string, depth = true): string | void {
 
 /**
  * ```
- * 🚧 If not extension is not specified, fill necessary extensions  
+ * 🚧-② If not extension is not specified, fill necessary extensions  
  * e.g.
  * `./views/*`
  *   -> `./views/*.{js,ts,vue ...}`
