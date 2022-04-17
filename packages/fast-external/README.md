@@ -4,8 +4,8 @@
 [![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
 
 🚀 **High performance** without lexical transform  
-🌱 Support custom external code
-📦 Built in Vue, React, Antd, Element and others, Out of the box
+🌱 Support custom external code  
+📦 Built in Vue, React, Antd, Element and others, Out of the box  
 
 **English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/fast-external/README.zh-CN.md)**
 
