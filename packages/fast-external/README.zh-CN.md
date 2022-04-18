@@ -51,6 +51,7 @@ import {
   react_dom_v18,
   react_v17,
   react_v18,
+  vue_composition_api,
   vue_v2,
   vue_v3,
 } from 'vite-plugin-fast-external/presets';
@@ -62,9 +63,47 @@ export default {
       antd: antd_v4,
       'element-plus': element_plus,
       'element-ui': element_ui,
-      'react-dom': react_dom_v18,
+      'react-dom/client': react_dom_v18,
       react: react_v18,
+      '@vue/composition-api': vue_composition_api,
       vue: vue_v3,
+    }),
+  ],
+}
+```
+
+在你的代码中使用
+
+```js
+// Vue v3
+import { ref, reactive, watch } from 'vue'
+// Vue v2
+import { ref, reactive, watch } from '@vue/composition-api'
+// React v18
+import { useState, useEffect, useMemo } from 'react'
+// ReactDOM v18
+import { createRoot } from 'react-dom/client'
+// Antd v4
+import { Button, Table } from 'antd'
+```
+
+如果你想修改内置模块
+
+```js
+import { libMeta2external } from 'vite-plugin-fast-external/presets'
+import vue_v2 from 'vite-plugin-fast-external/presets/vue-v2'
+
+// interface Vue_v2 extends LibMeta {
+//   name: string
+//   members: string[]
+// }
+vue_v2.name = 'ExtendVue'
+vue_v2.members = vue_v2.members.push('ExtendAPI')
+
+export default {
+  plugins: [
+    external({
+      vue: libMeta2external(vue_v2),
     }),
   ],
 }
