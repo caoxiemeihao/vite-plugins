@@ -65,7 +65,7 @@ exports.libMeta2external = function libMeta2external(libMeta) {
   ];
   const exportMembers = libMeta.members
     .filter(e => !keywords.includes(e))
-    .map(e => `export const ${e} = _M_['${e}'];`)
+    .map(e => `export const ${e} = _M_.${e};`)
     .join('\n');
   const externalTpl = `
 const _M_ = window['${libMeta.name}'];
