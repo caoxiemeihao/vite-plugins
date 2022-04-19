@@ -160,18 +160,7 @@ export function tryFixGlobSlash(glob: string, depth = true): string | void {
   // It could be `./views*.js`, which needs to be repaired to `./views/*.js`
   glob = glob.replace(extname, '')
 
-  /* when use import(`@/${var}`) in the code, and this code's file path is the sub dir of the src, 
-  and make the src dir path name to be a alias name: @, like this:
-  ├─┬ src
-  │ ├─┬ router
-  │ │ └── dyncRoute.js
-
-  if the code 'import(`@/${var}`)' is used in dyncRoute.js, the variable glob will be the value `../*`*/
-  // this value will make the expression `glob.match(/(.*\w\/?)\*/)` in the old code to get null, 
-  // and expression `const [, importPath] = null` will occur an error with messaged 
-  //`object null is not iterable (cannot read property Symbol(Symbol.iterator))`, so I fixed the error as follow
-  
-  // const [, importPath] = glob.match(/(.*\w\/?)\*/)
+  // #20
   const [, importPath] = glob.match(/(.*\/?)\*/)
   if (!importPath.endsWith('/')) {
     // fill necessary slash
