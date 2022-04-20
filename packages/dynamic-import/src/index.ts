@@ -100,12 +100,14 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
             const { glob, files, alias } = globResult as GlobHasFiles
             if (!files.length) return
 
-            const allImportee = listAllImportee(
+            const importeeMappings = listImporteeMappings(
               glob,
               globExtensions,
-              alias ? alias.files : files,
+              files,
+              alias,
             )
-            const importRuntime = generateDynamicImportRuntime(allImportee, dynamicImportIndex++)
+
+            const importRuntime = generateDynamicImportRuntime(importeeMappings, dynamicImportIndex++)
             dynamicImportRecords.push({ ...dyRecord, importRuntime })
           }
         },
@@ -225,10 +227,11 @@ async function globFiles(
     globWithIndex = tmp.globWithIndex
   }
 
-  const files = fastGlob.sync(
+  let files = fastGlob.sync(
     globWithIndex ? [glob, globWithIndex] : glob,
     { cwd: path.dirname(/* 🚧-① */pureId) },
   )
+  files = files.map(file => !file.startsWith('.') ? /* 🚧-③ */'./' + file : file)
 
   let aliasWithFiles: GlobHasFiles['alias']
   if (alias) {
@@ -236,7 +239,10 @@ async function globFiles(
     const static2 = alias.replacedImportee.slice(0, alias.replacedImportee.indexOf('*'))
     aliasWithFiles = {
       ...alias,
-      files: files.map(file => file.replace(static2, static1)),
+      files: files.map(file =>
+        // Recovery alias `./views/*` -> `@/views/*`
+        file.replace(static2, static1)
+      ),
     }
   }
 
@@ -247,15 +253,18 @@ async function globFiles(
   }
 }
 
-function listAllImportee(
+function listImporteeMappings(
   glob: string,
   extensions: string[],
   importeeList: string[],
+  alias?: GlobHasFiles['alias'],
 ) {
   const hasExtension = extensions.some(ext => glob.endsWith(ext))
-  return importeeList.reduce((memo, importee) => {
+  return importeeList.reduce((memo, importee, idx) => {
+    const realFilepath = importee
+    importee = alias ? alias.files[idx] : importee
     if (hasExtension) {
-      return Object.assign(memo, { [importee]: [importee] })
+      return Object.assign(memo, { [realFilepath]: [importee] })
     }
 
     const ext = extensions.find(ext => importee.endsWith(ext))
@@ -269,6 +278,6 @@ function listAllImportee(
       // foo
       list.push(importee.replace('/index' + ext, ''))
     }
-    return Object.assign(memo, { [importee]: list })
+    return Object.assign(memo, { [realFilepath]: list })
   }, {} as Record</* localFilename */string, /* Array<possible importee> */string[]>)
 }
