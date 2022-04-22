@@ -12,6 +12,8 @@ const vue_composition_api = require('./vue-composition-api');
 const vue_router_v4 = require('./vue-router-v4');
 const vue_v2 = require('./vue-v2');
 const vue_v3 = require('./vue-v3');
+const vuex_v3 = require('./vuex-v3');
+const vuex_v4 = require('./vuex-v4');
 
 /**
  * @type {typeof import('.')['lib2external']} 
@@ -136,3 +138,11 @@ exports.vue_v3 = this.lib2external(
   vue_v3.name,
   vue_v3.members,
 );
+exports.vuex_v3 = this.lib2external(
+  vuex_v3.name,
+  vuex_v3.members,
+)
+exports.vuex_v4 = this.lib2external(
+  vuex_v4.name,
+  vuex_v4.members,
+)
