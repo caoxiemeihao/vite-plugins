@@ -269,14 +269,14 @@ function listImporteeMappings(
 
     const ext = extensions.find(ext => importee.endsWith(ext))
     const list = [
-      // foo/index.js
-      importee,
       // foo/index
       importee.replace(ext, ''),
+      // foo/index.js
+      importee,
     ]
     if (importee.endsWith('index' + ext)) {
       // foo
-      list.push(importee.replace('/index' + ext, ''))
+      list.unshift(importee.replace('/index' + ext, ''))
     }
     return Object.assign(memo, { [realFilepath]: list })
   }, {} as Record</* localFilename */string, /* Array<possible importee> */string[]>)
