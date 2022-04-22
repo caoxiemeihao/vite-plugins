@@ -49,7 +49,7 @@ export default {
 }
 ```
 
-In your web App
+In your App
 
 ```js
 // Vue v3
@@ -60,6 +60,7 @@ import { ref, reactive, watch } from 'vue'
 If you want to modify the builtin module
 
 ```ts
+import external from 'vite-plugin-fast-external'
 import { lib2external } from 'vite-plugin-fast-external/presets'
 import vue_v2 from 'vite-plugin-fast-external/presets/vue-v2'
 
@@ -139,7 +140,7 @@ external({
 ```
 
 In fact, the plugin will intercept your module import and return the specified code snippet  
-Let's use `external({ vue: 'Vue' })` as an example, this will get the below code  
+Let's use `external({ vue: 'Vue' })` as an example, this will got the below code  
 
 ```js
 const M = window['Vue']; export { M as default }

@@ -60,6 +60,7 @@ import { ref, reactive, watch } from 'vue'
 如果你想修改内置模块
 
 ```ts
+import external from 'vite-plugin-fast-external'
 import { lib2external } from 'vite-plugin-fast-external/presets'
 import vue_v2 from 'vite-plugin-fast-external/presets/vue-v2'
 
