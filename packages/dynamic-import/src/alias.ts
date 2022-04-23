@@ -67,7 +67,7 @@ export class AliasContext {
         normalReplacement,
       )
       if (relativePath === '') {
-        relativePath = '.'
+        relativePath = /* 🚧-③ */'.'
       }
       const relativeImportee = relativePath + '/' + ipte
         .replace(find, '')

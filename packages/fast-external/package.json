@@ -1,7 +1,7 @@
 {
   "name": "vite-plugin-fast-external",
-  "version": "2.2.0",
-  "description": "Without lexical transform, support custom external code.",
+  "version": "2.4.0",
+  "description": "High performance, Built in Vue, React, Antd, Element and others",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
     "vue",
     "react",
     "antd",
-    "element"
+    "element",
+    "composition-api"
   ]
 }

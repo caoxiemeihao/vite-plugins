@@ -160,7 +160,8 @@ export function tryFixGlobSlash(glob: string, depth = true): string | void {
   // It could be `./views*.js`, which needs to be repaired to `./views/*.js`
   glob = glob.replace(extname, '')
 
-  const [, importPath] = glob.match(/(.*\w\/?)\*/)
+  // #20
+  const [, importPath] = glob.match(/(.*\/?)\*/)
   if (!importPath.endsWith('/')) {
     // fill necessary slash
     // `./views*` -> `./views/*`
