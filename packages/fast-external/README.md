@@ -5,8 +5,8 @@
 
 **English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/fast-external/README.zh-CN.md)**
 
-🚀 **High performance** without lexical transform  
-📦 Built in Vue, React, Antd, Element and others, Out of the box  
+🚀 **High performance**, without lexical transform  
+📦 **Out of the box**, built in Vue, React, Antd, Element and others  
 🌱 Support custom external code  
 ✅ Browser, Node.js, Electron  
 
