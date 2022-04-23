@@ -37,6 +37,8 @@ import {
   vue_router_v4,
   vue_v2,
   vue_v3,
+  vuex_v3,
+  vuex_v4,
 } from 'vite-plugin-fast-external/presets'
 
 export default {
