@@ -1,11 +1,15 @@
-# vite-plugin-resolve [![NPM version](https://img.shields.io/npm/v/vite-plugin-resolve.svg)](https://npmjs.org/package/vite-plugin-resolve) [![awesome-vite](https://awesome.re/badge.svg)](https://github.com/vitejs/awesome-vite)
+# vite-plugin-resolve
 
 自定义加载模块内容
 
+[![NPM version](https://img.shields.io/npm/v/vite-plugin-resolve.svg)](https://npmjs.org/package/vite-plugin-resolve)
+[![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-resolve.svg?style=flat)](https://npmjs.org/package/vite-plugin-resolve)
+[![awesome-vite](https://awesome.re/badge.svg)](https://github.com/vitejs/awesome-vite)
+
 **[English](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/resolve#readme) | 简体中文**
 
-- 兼容 Browser, Node.js and Electron
-- 你可以认为它是官方教程的一个实现 👉 [Virtual Modules Convention](https://vitejs.dev/guide/api-plugin.html#virtual-modules-convention)
+✅ Browser, Node.js, Electron
+🤔 你可以认为它是官方教程的一个实现 👉 [Virtual Modules Convention](https://vitejs.dev/guide/api-plugin.html#virtual-modules-convention)
 
 ## 安装
 
@@ -36,19 +40,33 @@ export default {
 支持嵌套模块命名，支持返回 Promise
 
 ```ts
+import fs from 'fs'
+
 resolve({
-  'path/filename': () => require('fs/promises').readFile('path', 'utf-8'),
+  'path/filename': () => fs.promise.readFile('path', 'utf-8'),
 })
 ```
 
 #### Electron
 
-在 Electron 渲染进程中加载 `ipcRenderer`
+加载 Electron 渲染进程
 
 ```ts
 resolve({
-  electron: `const { ipcRenderer } = require('electron'); export { ipcRenderer };`,
+  electron: `
+    const electron = require("electron");
+    export { electron as default }
+    const export shell = electron.shell;
+    const export ipcRenderer = electron.ipcRenderer;
+    // ...其他成员
+  `,
 })
+```
+
+在渲染进程中使用
+
+```ts
+import { shell, ipcRenderer } from 'electron'
 ```
 
 ## API

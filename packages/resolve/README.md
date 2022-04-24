@@ -1,11 +1,15 @@
-# vite-plugin-resolve [![NPM version](https://img.shields.io/npm/v/vite-plugin-resolve.svg)](https://npmjs.org/package/vite-plugin-resolve) [![awesome-vite](https://awesome.re/badge.svg)](https://github.com/vitejs/awesome-vite)
+# vite-plugin-resolve
 
 Custom resolve module content
 
+[![NPM version](https://img.shields.io/npm/v/vite-plugin-resolve.svg)](https://npmjs.org/package/vite-plugin-resolve)
+[![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-resolve.svg?style=flat)](https://npmjs.org/package/vite-plugin-resolve)
+[![awesome-vite](https://awesome.re/badge.svg)](https://github.com/vitejs/awesome-vite)
+
 **English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/resolve/README.zh-CN.md)**
 
-- Compatible Browser, Node.js and Electron
-- You can think of this as the implementation of the official tutorial 👉 [Virtual Modules Convention](https://vitejs.dev/guide/api-plugin.html#virtual-modules-convention)
+✅ Browser, Node.js, Electron
+🤔 You can think of this as the implementation of the official tutorial 👉 [Virtual Modules Convention](https://vitejs.dev/guide/api-plugin.html#virtual-modules-convention)
 
 ## Install
 
@@ -36,19 +40,33 @@ You you can see more about external 👉 [vite-plugin-fast-external](https://git
 Support nested module id, support return Promise
 
 ```ts
+import fs from 'fs'
+
 resolve({
-  'path/filename': () => require('fs/promises').readFile('path', 'utf-8'),
+  'path/filename': () => fs.promise.readFile('path', 'utf-8'),
 })
 ```
 
 #### Electron
 
-Resolve Electron `ipcRenderer` in Renderer-process
+Resolve Electron Renderer-process
 
 ```ts
 resolve({
-  electron: `const { ipcRenderer } = require('electron'); export { ipcRenderer };`,
+  electron: `
+    const electron = require("electron");
+    export { electron as default }
+    const export shell = electron.shell;
+    const export ipcRenderer = electron.ipcRenderer;
+    // ...others
+  `,
 })
+```
+
+In you App(Renderer-process)
+
+```ts
+import { shell, ipcRenderer } from 'electron'
 ```
 
 ## API
