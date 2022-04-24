@@ -8,7 +8,7 @@
 
 **[English](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/resolve#readme) | 简体中文**
 
-✅ Browser, Node.js, Electron
+✅ Browser, Node.js, Electron  
 🤔 你可以认为它是官方教程的一个实现 👉 [Virtual Modules Convention](https://vitejs.dev/guide/api-plugin.html#virtual-modules-convention)
 
 ## 安装
@@ -19,7 +19,7 @@ npm i vite-plugin-resolve -D
 
 ## 使用
 
-加载自定模块内容，这个场景就是 external
+你可以加载任何你想要的代码段
 
 ```ts
 import resolve from 'vite-plugin-resolve'
@@ -32,7 +32,7 @@ export default {
   ]
 }
 ```
-
+这个场景就是 external  
 你可以看看关于 external 👉 [vite-plugin-fast-external](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external) 
 
 #### 加载文件

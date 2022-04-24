@@ -8,7 +8,7 @@ Custom resolve module content
 
 **English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/resolve/README.zh-CN.md)**
 
-✅ Browser, Node.js, Electron
+✅ Browser, Node.js, Electron  
 🤔 You can think of this as the implementation of the official tutorial 👉 [Virtual Modules Convention](https://vitejs.dev/guide/api-plugin.html#virtual-modules-convention)
 
 ## Install
@@ -19,7 +19,7 @@ npm i vite-plugin-resolve -D
 
 ## Usage
 
-Resolve custom module content, this like Vite external plugin
+You can load any code snippet you want
 
 ```ts
 import resolve from 'vite-plugin-resolve'
@@ -32,10 +32,10 @@ export default {
   ]
 }
 ```
-
+This like Vite external plugin  
 You you can see more about external 👉 [vite-plugin-fast-external](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external) 
 
-#### Load a file
+**Load a file**
 
 Support nested module id, support return Promise
 
@@ -47,7 +47,7 @@ resolve({
 })
 ```
 
-#### Electron
+**Electron**
 
 Resolve Electron Renderer-process
 
@@ -71,7 +71,7 @@ import { shell, ipcRenderer } from 'electron'
 
 ## API
 
-#### resolve(entries)
+`resolve(entries)`
 
 **entries**
 
