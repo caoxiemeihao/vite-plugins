@@ -45,7 +45,7 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
       const globExtensions = config.resolve?.extensions || extensions
       const { ext } = path.parse(pureId)
 
-      if (/node_modules/.test(pureId)) return
+      if (/node_modules/.test(pureId) && !pureId.includes('.vite')) return
       if (!extensions.includes(ext)) return
       if (!hasDynamicImport(code)) return
       if (await options.filter?.(code, id, opts) === false) return
@@ -59,8 +59,19 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
           const importStatement = code.slice(node.start, node.end)
           const importeeRaw = code.slice(node.source.start, node.source.end)
 
-          // check @vite-ignore which suppresses dynamic import warning
+          // skip @vite-ignore
           if (viteIgnoreRE.test(importStatement)) return
+
+          // the user explicitly avoids this import
+          if (options.viteIgnore?.(importeeRaw, pureId)) {
+            dynamicImportRecords.push({
+              node,
+              importeeRaw: '/*@vite-ignore*/' + importeeRaw,
+              // TODO: this may not be `importRuntime`
+              importRuntime: { name: 'import', body: '' },
+            })
+            return
+          }
 
           const matched = importeeRaw.match(extractImporteeRE)
           // currently, only importee in string format is supported

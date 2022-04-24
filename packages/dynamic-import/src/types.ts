@@ -15,4 +15,9 @@ export interface DynamicImportOptions {
    * e.g `type.d.ts`, `interface.ts`
    */
   onFiles?: (files: string[], id: string) => typeof files | void | Promise<typeof files | void>
+  /**
+   * It will add `@vite-ignore`  
+   */
+  // import(/*@vite-ignore*/ 'import-path')
+  viteIgnore?: (rawImportee: string, id: string) => true | Promise<true | void> | void
 }
