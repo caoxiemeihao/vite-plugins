@@ -78,7 +78,7 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
             dynamicImport,
             node,
             code,
-            pureId,
+            id,
             globExtensions,
             options,
           )
@@ -198,13 +198,14 @@ async function globFiles(
   dynamicImport: DynamicImportVars,
   ImportExpressionNode: AcornNode,
   sourceString: string,
-  pureId: string,
+  id: string,
   extensions: string[],
   options: DynamicImportOptions,
 ): Promise<GlobFilesResult> {
-  const { depth = true, filterImport } = options
+  const { depth = true, onFiles } = options
   const node = ImportExpressionNode
   const code = sourceString
+  const pureId = cleanUrl(id)
 
   const { alias, glob: globObj } = await dynamicImport.dynamicImportToGlob(
     node.source,
@@ -235,6 +236,7 @@ async function globFiles(
     { cwd: parsed./* 🚧-① */dir },
   )
   files = files.map(file => !file.startsWith('.') ? /* 🚧-③ */'./' + file : file)
+  onFiles && (files = (await onFiles(files, pureId)) || files)
 
   let aliasWithFiles: GlobHasFiles['alias']
   if (alias) {
