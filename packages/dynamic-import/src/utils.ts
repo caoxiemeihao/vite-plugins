@@ -4,18 +4,18 @@ import {
   multilineCommentsRE,
 } from 'vite-plugin-utils'
 
-export const dynamicImportRegex = /\bimport[\s\r\n]*?\(/
+export const dynamicImportRE = /\bimport[\s\r\n]*?\(/
 // this is probably less accurate
-export const normallyImporteeRegex = /^\.{1,2}\/[.-/\w]+(\.\w+)$/
-// [, startQuotation, importee, endQuotation]
-export const importeeRawRegex = /^([`'"]{1})(.*)([`'"]{1})$/
-export const viteIgnoreRegex = /\/\*\s*@vite-ignore\s*\*\//
+export const normallyImporteeRE = /^\.{1,2}\/[.-/\w]+(\.\w+)$/
+// [, startQuotation, importee]
+export const extractImporteeRE = /^([`'"]{1})(.*)$/
+export const viteIgnoreRE = /\/\*\s*@vite-ignore\s*\*\//
 
 export function hasDynamicImport(code: string) {
   code = code
     .replace(singlelineCommentsRE, '')
     .replace(multilineCommentsRE, '')
-  return dynamicImportRegex.test(code)
+  return dynamicImportRE.test(code)
 }
 
 export async function simpleWalk(

@@ -10,9 +10,9 @@ import {
 } from 'vite-plugin-utils'
 import {
   hasDynamicImport,
-  normallyImporteeRegex,
-  viteIgnoreRegex,
-  importeeRawRegex,
+  normallyImporteeRE,
+  viteIgnoreRE,
+  extractImporteeRE,
   simpleWalk,
 } from './utils'
 import type { AcornNode, DynamicImportOptions } from './types'
@@ -56,22 +56,23 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
 
       await simpleWalk(ast, {
         async ImportExpression(node: AcornNode) {
+          const importStatement = code.slice(node.start, node.end)
           const importeeRaw = code.slice(node.source.start, node.source.end)
 
           // check @vite-ignore which suppresses dynamic import warning
-          if (viteIgnoreRegex.test(importeeRaw)) return
+          if (viteIgnoreRE.test(importStatement)) return
 
-          const matched = importeeRaw.match(importeeRawRegex)
+          const matched = importeeRaw.match(extractImporteeRE)
           // currently, only importee in string format is supported
           if (!matched) return
 
-          const [, startQuotation, importee, endQuotation] = matched
+          const [, startQuotation, importee] = matched
           // this is a normal path
-          if (normallyImporteeRegex.test(importee)) return
+          if (normallyImporteeRE.test(importee)) return
 
           const replaced = await aliasContext.replaceImportee(importee, id)
           // this is a normal path
-          if (replaced && normallyImporteeRegex.test(replaced.replacedImportee)) return
+          if (replaced && normallyImporteeRE.test(replaced.replacedImportee)) return
 
           const globResult = await globFiles(
             dynamicImport,
@@ -79,7 +80,7 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
             code,
             pureId,
             globExtensions,
-            options.depth !== false,
+            options,
           )
           if (!globResult) return
 
@@ -199,8 +200,9 @@ async function globFiles(
   sourceString: string,
   pureId: string,
   extensions: string[],
-  depth: boolean,
+  options: DynamicImportOptions,
 ): Promise<GlobFilesResult> {
+  const { depth = true, filterImport } = options
   const node = ImportExpressionNode
   const code = sourceString
 
@@ -210,7 +212,7 @@ async function globFiles(
     pureId,
   )
   if (!globObj.valid) {
-    if (normallyImporteeRegex.test(globObj.glob)) {
+    if (normallyImporteeRE.test(globObj.glob)) {
       return { normally: { glob: globObj.glob, alias } }
     }
     // this was not a variable dynamic import
@@ -227,9 +229,10 @@ async function globFiles(
     globWithIndex = tmp.globWithIndex
   }
 
+  const parsed = path.parse(pureId)
   let files = fastGlob.sync(
     globWithIndex ? [glob, globWithIndex] : glob,
-    { cwd: path.dirname(/* 🚧-① */pureId) },
+    { cwd: parsed./* 🚧-① */dir },
   )
   files = files.map(file => !file.startsWith('.') ? /* 🚧-③ */'./' + file : file)
 
