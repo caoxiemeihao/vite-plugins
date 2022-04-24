@@ -32,6 +32,13 @@ export default {
   ]
 }
 ```
+
+In you App
+
+```ts
+import Vue from 'vue'
+```
+
 This like Vite external plugin  
 You you can see more about external 👉 [vite-plugin-fast-external](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external) 
 

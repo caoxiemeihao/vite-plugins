@@ -32,6 +32,13 @@ export default {
   ]
 }
 ```
+
+你的逻辑代码
+
+```ts
+import Vue from 'vue'
+```
+
 这个场景就是 external  
 你可以看看关于 external 👉 [vite-plugin-fast-external](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external) 
 
