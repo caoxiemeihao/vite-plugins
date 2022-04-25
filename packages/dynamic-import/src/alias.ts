@@ -1,11 +1,10 @@
 import path from 'path'
 import type { Alias, ResolvedConfig } from 'vite'
 import { normalizePath } from 'vite'
-import { importeeRawRegex } from './utils'
+import { extractImporteeRE } from './utils'
 
 export interface AliasReplaced {
   alias: Alias
-  punctuation: null | [string, string]
   importee: string
   replacedImportee: string
 }
@@ -30,11 +29,11 @@ export class AliasContext {
   }
 
   private async replace(importee: string, id: string, raw: boolean): Promise<AliasReplaced | void> {
-    let [startQuotation, ipte, endQuotation] = ['', importee, '']
+    let [startQuotation, ipte] = ['', importee, '']
     if (raw) {
-      const matched = importee.match(importeeRawRegex)
+      const matched = importee.match(extractImporteeRE)
       if (matched) {
-        [, startQuotation, ipte, endQuotation] = matched
+        [, startQuotation, ipte] = matched
       }
     }
 
@@ -78,9 +77,8 @@ export class AliasContext {
 
     return {
       alias,
-      punctuation: raw ? [startQuotation, endQuotation] : null,
       importee,
-      replacedImportee: raw ? (startQuotation + ipte + endQuotation) : ipte,
+      replacedImportee: raw ? (startQuotation + ipte) : ipte,
     }
   }
 }
