@@ -1,11 +1,16 @@
-# vite-plugin-dynamic-import [![NPM version](https://img.shields.io/npm/v/vite-plugin-dynamic-import.svg)](https://npmjs.org/package/vite-plugin-dynamic-import) [![awesome-vite](https://awesome.re/badge.svg)](https://github.com/vitejs/awesome-vite)
+# vite-plugin-dynamic-import
 
 增强 Vite 内置的 dynamic import
+
+[![NPM version](https://img.shields.io/npm/v/vite-plugin-dynamic-import.svg)](https://npmjs.org/package/vite-plugin-dynamic-import)
+[![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-dynamic-import.svg?style=flat)](https://npmjs.org/package/vite-plugin-dynamic-import)
+[![awesome-vite](https://awesome.re/badge.svg)](https://github.com/vitejs/awesome-vite)
 
 **English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/dynamic-import/README.zh-CN.md)**
 
 - 支持在 `import()` 中使用别名
-- 基于 `glob` 使得限制更加宽松
+- 尝试修复诡异的 import 路径
+- 兼容 `@rollup/plugin-dynamic-import-vars` 限制
 
 ## 安装
 
@@ -24,7 +29,7 @@ export default {
 }
 ```
 
-**更复杂的使用场景 👉 [playground/vite-plugin-dynamic-import](https://github.com/caoxiemeihao/vite-plugins/tree/main/playground/vite-plugin-dynamic-import)**
+**案例 👉 [vite-plugin-dynamic-import/src/main.ts](https://github.com/caoxiemeihao/vite-plugins/blob/main/playground/vite-plugin-dynamic-import/src/main.ts)**
 
 
 ## API
@@ -35,30 +40,37 @@ export default {
 
 ```ts
 export interface DynamicImportOptions {
-  filter?: (...args: Parameters<Plugin['transform']>) => false | void | Promise<false | void>
+  filter?: (id: string) => false | void
   /**
    * 这个选项将会把 `./*` 变成 `./** /*`
    * @default true
    */
   depth?: boolean
+  /**
+   * 如果你想排除一些文件  
+   * 举俩🌰 `type.d.ts`, `interface.ts`
+   */
+  onFiles?: (files: string[], id: string) => typeof files | void
+  /**
+   * 将会在 import 中添加 `@vite-ignore`  
+   * `import(/*@vite-ignore* / 'import-path')`
+   */
+  viteIgnore?: (rawImportee: string, id: string) => true | void
 }
-
 ```
 
-`filter` 入参详情看这里 [vite/src/node/plugin.ts#L131](https://github.com/vitejs/vite/blob/9a7b133d45979de0604b9507d87a2ffa2187a387/packages/vite/src/node/plugin.ts#L131)
 ## 作此为甚？
 
 **假如有如下项目结构**
 
 ```tree
 ├── src
-├   ├── views
-├   ├   ├── foo
-├   ├   ├   ├── index.js
-├   ├   ├── bar.js
-├   ├── router.js
-├── vite.config.js
-
+|   └── views
+|   |   ├ foo
+|   |   |   └── index.js
+|   |   └── bar.js
+|   └── router.js
+└── vite.config.js
 ```
 
 ```js
