@@ -48,7 +48,7 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
       if (/node_modules/.test(pureId) && !pureId.includes('.vite')) return
       if (!extensions.includes(ext)) return
       if (!hasDynamicImport(code)) return
-      if (await options.filter?.(code, id, opts) === false) return
+      if (options.filter?.(pureId) === false) return
 
       const ast = this.parse(code)
       let dynamicImportIndex = 0
@@ -62,7 +62,7 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
           // skip @vite-ignore
           if (viteIgnoreRE.test(importStatement)) return
 
-          // the user explicitly avoids this import
+          // the user explicitly ignore this import
           if (options.viteIgnore?.(importeeRaw, pureId)) {
             dynamicImportRecords.push({
               node,
@@ -247,7 +247,7 @@ async function globFiles(
     { cwd: parsed./* 🚧-① */dir },
   )
   files = files.map(file => !file.startsWith('.') ? /* 🚧-③ */'./' + file : file)
-  onFiles && (files = (await onFiles(files, pureId)) || files)
+  onFiles && (files = onFiles(files, pureId) || files)
 
   let aliasWithFiles: GlobHasFiles['alias']
   if (alias) {

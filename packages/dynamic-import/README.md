@@ -1,12 +1,16 @@
-# vite-plugin-dynamic-import [![NPM version](https://img.shields.io/npm/v/vite-plugin-dynamic-import.svg)](https://npmjs.org/package/vite-plugin-dynamic-import) [![awesome-vite](https://awesome.re/badge.svg)](https://github.com/vitejs/awesome-vite)
+# vite-plugin-dynamic-import
 
 Enhance Vite builtin dynamic import
+
+[![NPM version](https://img.shields.io/npm/v/vite-plugin-dynamic-import.svg)](https://npmjs.org/package/vite-plugin-dynamic-import)
+[![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-dynamic-import.svg?style=flat)](https://npmjs.org/package/vite-plugin-dynamic-import)
+[![awesome-vite](https://awesome.re/badge.svg)](https://github.com/vitejs/awesome-vite)
 
 **English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/dynamic-import/README.zh-CN.md)**
 
 - Support alias
 - Try to fix the wizard import path
-- Compatible with `@rollup/plugin-dynamic-import-vars` restrictions
+- Compatible `@rollup/plugin-dynamic-import-vars` restrictions
 
 ## Install
 
@@ -25,7 +29,7 @@ export default {
 }
 ```
 
-**See more cases 👉 [playground/vite-plugin-dynamic-import](https://github.com/caoxiemeihao/vite-plugins/tree/main/playground/vite-plugin-dynamic-import)**
+**Cases 👉 [vite-plugin-dynamic-import/src/main.ts](https://github.com/caoxiemeihao/vite-plugins/blob/main/playground/vite-plugin-dynamic-import/src/main.ts)**
 
 ## API
 
@@ -35,16 +39,24 @@ export default {
 
 ```ts
 export interface DynamicImportOptions {
-  filter?: (...args: Parameters<Plugin['transform']>) => false | void | Promise<false | void>
+  filter?: (id: string) => false | void
   /**
    * This option will change `./*` to `./** /*`
    * @default true
    */
   depth?: boolean
+  /**
+   * If you want to exclude some files  
+   * e.g `type.d.ts`, `interface.ts`
+   */
+  onFiles?: (files: string[], id: string) => typeof files | void
+  /**
+   * It will add `@vite-ignore`  
+   * `import(/*@vite-ignore* / 'import-path')`
+   */
+  viteIgnore?: (rawImportee: string, id: string) => true | void
 }
 ```
-
-See the `filter` args [vite/src/node/plugin.ts#L131](https://github.com/vitejs/vite/blob/9a7b133d45979de0604b9507d87a2ffa2187a387/packages/vite/src/node/plugin.ts#L131)
 
 ## How and why?
 
