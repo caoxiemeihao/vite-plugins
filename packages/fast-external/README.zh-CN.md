@@ -5,8 +5,8 @@
 
 **[English](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external#readme) | 简体中文**
 
-🚀 **高性能**, 不需要语法转换  
 📦 **开箱即用**, 内置 Vue, React, Antd, Element 等等  
+🚀 **高性能**, 不需要语法转换  
 🌱 支持自定义 external 代码段  
 ✅ Browser, Node.js, Electron  
 
