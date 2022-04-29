@@ -8,8 +8,8 @@
 
 **[English](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/resolve#readme) | 简体中文**
 
-✅ Browser, Node.js, Electron  
 🤔 你可以认为它是官方教程的一个实现 👉 [Virtual Modules Convention](https://vitejs.dev/guide/api-plugin.html#virtual-modules-convention)
+✅ Browser, Node.js, Electron  
 
 ## 安装
 

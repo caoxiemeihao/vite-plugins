@@ -8,8 +8,8 @@ Custom resolve module content
 
 **English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/resolve/README.zh-CN.md)**
 
-✅ Browser, Node.js, Electron  
 🤔 You can think of this as the implementation of the official tutorial 👉 [Virtual Modules Convention](https://vitejs.dev/guide/api-plugin.html#virtual-modules-convention)
+✅ Browser, Node.js, Electron  
 
 ## Install
 
