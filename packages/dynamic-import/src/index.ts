@@ -15,7 +15,7 @@ import {
   extractImporteeRE,
   simpleWalk,
 } from './utils'
-import type { AcornNode, DynamicImportOptions } from './types'
+import type { AcornNode } from './types'
 import { AliasContext, AliasReplaced } from './alias'
 import {
   DynamicImportVars,
@@ -24,6 +24,25 @@ import {
   toDepthGlob,
 } from './dynamic-import-vars'
 import { DynamicImportRuntime, generateDynamicImportRuntime } from './dynamic-import-helper'
+
+export interface DynamicImportOptions {
+  filter?: (id: string) => false | void
+  /**
+   * This option will change `./*` to `./** /*`
+   * @default true
+   */
+  depth?: boolean
+  /**
+   * If you want to exclude some files  
+   * e.g `type.d.ts`, `interface.ts`
+   */
+  onFiles?: (files: string[], id: string) => typeof files | void
+  /**
+   * It will add `@vite-ignore`  
+   * `import(/*@vite-ignore* / 'import-path')`
+   */
+  viteIgnore?: (rawImportee: string, id: string) => true | void
+}
 
 const PLUGIN_NAME = 'vite-plugin-dynamic-import'
 
@@ -166,7 +185,7 @@ export default function dynamicImport(options: DynamicImportOptions = {}): Plugi
         }
 
         if (dyImptRutimeBody) {
-          code += '\n// --------- ${PLUGIN_NAME} ---------\n' + dyImptRutimeBody
+          code += `\n// --------- ${PLUGIN_NAME} ---------\n` + dyImptRutimeBody
         }
 
         return {
