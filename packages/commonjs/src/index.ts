@@ -1,77 +1,48 @@
 import path from 'path'
-import { Plugin, ResolvedConfig } from 'vite'
-import cjs2esm from './cjs-esm'
+import { Plugin as VitePlugin, UserConfig } from 'vite'
+import { transform } from './cjs-esm'
+import {
+  DEFAULT_EXTENSIONS,
+  isCommonjs,
+  parsePathQuery,
+  detectFileExist,
+  resolveFilename,
+} from './utils'
 
-export interface CommonjsOptions {
-  /**
-   * By default
-   * - First priority use `config.resolve.extensions` if it exists  
-   * - Second priority use default extensions - `['.js', '.jsx', '.ts', '.tsx', '.vue']`
-   */
+export interface VitePluginCommonjsOptions {
   extensions?: string[]
-  ignore?: (...args: Parameters<Plugin['transform']>) => boolean
+  catch?: (error: Error, ext: { filename: string;[k: string]: any; }) => void
 }
 
-export default function commonjs(options: CommonjsOptions = {}): Plugin {
-  const COMMONJS_PLUGIN_NAME = 'vite-plugin-commonjs'
-  const DEFAULT_EXTENSIONS = ['.js', '.jsx', '.ts', '.tsx', '.vue']
-  const KNOWN_PLUGINS = {
-    '@vitejs/plugin-vue': 'vite:vue',
-    'vite-plugin-vue2': 'vite-plugin-vue2',
-    '@vitejs/plugin-vue-jsx': 'vite:vue-jsx',
-    '@sveltejs/vite-plugin-svelte': 'vite-plugin-svelte',
-    '@vitejs/plugin-react': [
-      'vite:react-babel',
-      'vite:react-refresh',
-      'vite:react-jsx',
-    ],
-  }
-  let config: ResolvedConfig
-
-  function cleanUrl(url: string) {
-    return url.replace(/\?.*$/s, '').replace(/#.*$/s, '')
-  }
-  function isCommonjs(code: string) {
-    // Avoid matching the content of the comment
-    return /\b(?:require|module|exports)\b/.test(code)
-  }
+export function vitePluginCommonjs(options: VitePluginCommonjsOptions = {}): VitePlugin {
+  /** @todo .ts .tsx process */
+  const extensions = options.extensions ?? DEFAULT_EXTENSIONS
+  const refConifg: { current: UserConfig } = { current: null }
 
   return {
-    name: COMMONJS_PLUGIN_NAME,
+    name: 'vite-plugin-commonjs',
     apply: 'serve',
-    config(_config) {
-      /**
-       * 'vite-plugin-commonjs' can only transform JavaScript.
-       * So it should be put behind some known plugins.
-       */
-      const plugins = _config.plugins as Plugin[]
-      const knownNames = Object.values(KNOWN_PLUGINS).flat()
-      const pluginNames = plugins.map(plugin => plugin.name)
-      const orderIndex = pluginNames.reverse().findIndex(name => knownNames.includes(name))
-      if (orderIndex !== -1) {
-        const commonjsIndex = pluginNames.findIndex(name => name === COMMONJS_PLUGIN_NAME)
-        const commonjsPlugin = plugins.splice(commonjsIndex, 1)[0]
-        if (commonjsIndex < orderIndex) {
-          // It is located before a known plugin
-          // Move it to after known plugins
-          plugins.splice(orderIndex, 0, commonjsPlugin)
+    config(config) {
+      refConifg.current = config
+    },
+    transform(code, id) {
+      if (/node_modules/.test(id)) return
+      if (!extensions.some(ext => id.endsWith(ext))) return
+      // if (parsePathQuery(id).query) return
+      if (!isCommonjs(code)) return
+
+      try {
+        const transformed = transform(code, {
+        })
+
+        return transformed.code
+      } catch (error) {
+        if (options.catch) {
+          options.catch(error, { filename: id })
+        } else {
+          throw error
         }
-        _config.plugins = plugins
-        return _config
       }
-    },
-    configResolved(_config) {
-      config = _config
-    },
-    transform(code, id, opts) {
-      const extensions = options.extensions || config.resolve?.extensions || DEFAULT_EXTENSIONS
-      const { ext } = path.parse(cleanUrl(id))
-
-      if (!extensions.includes(ext)) return null
-      if (options.ignore && options.ignore.call(this, code, id, opts)) return null
-      if (!isCommonjs(code)) return null
-
-      return cjs2esm.call(this, code, id)
     },
   }
 }
