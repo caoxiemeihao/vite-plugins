@@ -6,8 +6,13 @@ const element_ui = require('./element-ui');
 const pinia_v2 = require('./pinia-v2');
 const react_dom_v17 = require('./react-dom-v17');
 const react_dom_v18 = require('./react-dom-v18');
+const react_router_dom_v5 = require('./react-router-dom-v5');
+const react_router_dom_v6 = require('./react-router-dom-v6');
+const react_router_v5 = require('./react-router-v5');
+const react_router_v6 = require('./react-router-v6');
 const react_v17 = require('./react-v17');
 const react_v18 = require('./react-v18');
+const redux_v5 = require('./redux-v5');
 const vue_composition_api = require('./vue-composition-api');
 const vue_router_v4 = require('./vue-router-v4');
 const vue_v2 = require('./vue-v2');
@@ -114,6 +119,22 @@ exports.react_dom_v18 = this.lib2external(
   react_dom_v18.name,
   react_dom_v18.members,
 );
+exports.react_router_dom_v5 = this.lib2external(
+  react_router_dom_v5.name,
+  react_router_dom_v5.members,
+);
+exports.react_router_dom_v6 = this.lib2external(
+  react_router_dom_v6.name,
+  react_router_dom_v6.members,
+);
+exports.react_router_v5 = this.lib2external(
+  react_router_v5.name,
+  react_router_v5.members,
+);
+exports.react_router_v6 = this.lib2external(
+  react_router_v6.name,
+  react_router_v6.members,
+);
 exports.react_v17 = this.lib2external(
   react_v17.name,
   react_v17.members,
@@ -121,6 +142,10 @@ exports.react_v17 = this.lib2external(
 exports.react_v18 = this.lib2external(
   react_v18.name,
   react_v18.members,
+);
+exports.redux_v5 = this.lib2external(
+  redux_v5.name,
+  redux_v5.members,
 );
 exports.vue_composition_api = this.lib2external(
   vue_composition_api.name,
