@@ -1,10 +1,10 @@
-
 /**
  * @type {import('.').LibMeta}
  */
 module.exports = {
   name: 'ReactRouterDOM',
-  members: ['MemoryRouter',
+  members: [
+    'MemoryRouter',
     'Navigate',
     'NavigationType',
     'Outlet',
