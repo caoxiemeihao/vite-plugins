@@ -1,3 +1,4 @@
+import path from 'path'
 import { defineConfig } from 'vite';
 import external from '../../packages/fast-external';
 import { vue_v3, pinia_v2, lib2external } from '../../packages/fast-external/presets';
@@ -34,4 +35,12 @@ export default defineConfig({
       ]),
     }),
   ],
+  build: {
+    rollupOptions: {
+      input: {
+        index: path.join(__dirname, 'index.html'),
+        react: path.join(__dirname, 'react.html'),
+      }
+    }
+  }
 });
