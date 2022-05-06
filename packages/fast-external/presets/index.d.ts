@@ -25,3 +25,6 @@ export declare const vue_composition_api: () => string
 export declare const vue_router_v4: () => string
 export declare const vue_v2: () => string
 export declare const vue_v3: () => string
+export declare const vuex_v3: () => string
+export declare const vuex_v4: () => string
+
