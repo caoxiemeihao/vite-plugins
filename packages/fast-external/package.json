@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-fast-external",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "Out of the box, built in Vue, React, Antd, Element and others",
   "main": "index.js",
   "repository": {
