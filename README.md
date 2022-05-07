@@ -23,7 +23,7 @@
         </a>
       </td>
     </tr>
-    <tr>
+    <!-- <tr>
       <td>
         <a href="packages/commonjs">vite-plugin-commonjs</a>
       </td>
@@ -40,7 +40,7 @@
           <img src="https://img.shields.io/npm/dw/vite-plugin-commonjs.svg">
         </a>
       </td>
-    </tr>
+    </tr> -->
     <tr>
       <td>
         <a href="packages/dynamic-import">vite-plugin-dynamic-import</a>
