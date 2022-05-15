@@ -9,10 +9,12 @@
   <tbody>
     <tr>
       <td>
-        <a href="packages/resolve">vite-plugin-resolve</a>
+        <a href="https://github.com/vite-plugin/vite-plugin-resolve">vite-plugin-resolve</a>
       </td>
       <td>
         Custom resolve code for vite
+        <br/>
+        Migrated 👉 <a href="https://github.com/vite-plugin/vite-plugin-resolve">vite-plugin/vite-plugin-resolve</a>
       </td>
       <td>
         <a href="https://npmjs.org/package/vite-plugin-resolve">
@@ -23,14 +25,14 @@
         </a>
       </td>
     </tr>
-    <!-- <tr>
+    <tr>
       <td>
-        <a href="packages/commonjs">vite-plugin-commonjs</a>
+        <a href="https://github.com/vite-plugin/vite-plugin-commonjs">vite-plugin-commonjs</a>
       </td>
       <td>
         A pure JavaScript implementation of vite-plugin-commonjs
         <br/>
-        <font color="#fa6470">[2022-03-04] 🛠 🛠 🛠 🛠 Refactoring 🛠 🛠 🛠 🛠</font>
+        Migrated 👉 <a href="https://github.com/vite-plugin/vite-plugin-commonjs">vite-plugin/vite-plugin-commonjs</a>
       </td>
       <td>
         <a href="https://npmjs.org/package/vite-plugin-commonjs">
@@ -40,12 +42,16 @@
           <img src="https://img.shields.io/npm/dw/vite-plugin-commonjs.svg">
         </a>
       </td>
-    </tr> -->
+    </tr>
     <tr>
       <td>
-        <a href="packages/dynamic-import">vite-plugin-dynamic-import</a>
+        <a href="https://github.com/vite-plugin/vite-plugin-dynamic-import">vite-plugin-dynamic-import</a>
       </td>
-      <td>Enhance the builtin dynamic import plugin of Vite</td>
+      <td>
+        Enhance the builtin dynamic import plugin of Vite
+        <br/>
+        Migrated 👉 <a href="https://github.com/vite-plugin/vite-plugin-dynamic-import">vite-plugin/vite-plugin-dynamic-import</a>
+      </td>
       <td>
         <a href="https://npmjs.org/package/vite-plugin-dynamic-import">
           <img src="https://img.shields.io/npm/v/vite-plugin-dynamic-import.svg">
