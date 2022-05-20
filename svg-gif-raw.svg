@@ -1,0 +1,106 @@
+
+<!-- https://github.com/DenverCoder1/readme-typing-svg/ -->
+<svg xmlns='http://www.w3.org/2000/svg'
+    xmlns:xlink='http://www.w3.org/1999/xlink'
+    viewBox='0 0 700 50'
+    style='background-color: #00000000;'
+    width='700px' height='50px'>
+
+    
+    <path id='path0'>
+        <animate id='d0' attributeName='d' begin='0s;d7.end' dur='5000ms'
+            values='m0,25 h0 ; m0,25 h700 ; m0,25 h0' keyTimes='0;0.8;1' />
+    </path>
+    <text font-family='"-apple-systemBlinkMacSystemFontSegoe UIHelveticaArialsans-serifApple Color EmojiSegoe UI Emoji", monospace' fill='#000000' font-size='16'
+        dominant-baseline='auto'
+        x='0%' text-anchor='start'>
+        <textPath xlink:href='#path0'>
+            “虽然瞎子感情失败，但在此后秉烛夜聊中教会我很多东西。
+        </textPath>
+    </text>
+
+    <path id='path1'>
+        <animate id='d1' attributeName='d' begin='d0.end' dur='5000ms'
+            values='m0,25 h0 ; m0,25 h700 ; m0,25 h0' keyTimes='0;0.8;1' />
+    </path>
+    <text font-family='"-apple-systemBlinkMacSystemFontSegoe UIHelveticaArialsans-serifApple Color EmojiSegoe UI Emoji", monospace' fill='#000000' font-size='16'
+        dominant-baseline='auto'
+        x='0%' text-anchor='start'>
+        <textPath xlink:href='#path1'>
+            比如：学会自我欺骗，敢于面对自己最无耻的念头，
+        </textPath>
+    </text>
+
+    <path id='path2'>
+        <animate id='d2' attributeName='d' begin='d1.end' dur='5000ms'
+            values='m0,25 h0 ; m0,25 h700 ; m0,25 h0' keyTimes='0;0.8;1' />
+    </path>
+    <text font-family='"-apple-systemBlinkMacSystemFontSegoe UIHelveticaArialsans-serifApple Color EmojiSegoe UI Emoji", monospace' fill='#000000' font-size='16'
+        dominant-baseline='auto'
+        x='0%' text-anchor='start'>
+        <textPath xlink:href='#path2'>
+            敢于行动，过后说实话。凡事想做就做，想太多没用。
+        </textPath>
+    </text>
+
+    <path id='path3'>
+        <animate id='d3' attributeName='d' begin='d2.end' dur='5000ms'
+            values='m0,25 h0 ; m0,25 h700 ; m0,25 h0' keyTimes='0;0.8;1' />
+    </path>
+    <text font-family='"-apple-systemBlinkMacSystemFontSegoe UIHelveticaArialsans-serifApple Color EmojiSegoe UI Emoji", monospace' fill='#000000' font-size='16'
+        dominant-baseline='auto'
+        x='0%' text-anchor='start'>
+        <textPath xlink:href='#path3'>
+            打架一定要有气势，一旦动手，先环视四周，
+        </textPath>
+    </text>
+
+    <path id='path4'>
+        <animate id='d4' attributeName='d' begin='d3.end' dur='5000ms'
+            values='m0,25 h0 ; m0,25 h700 ; m0,25 h0' keyTimes='0;0.8;1' />
+    </path>
+    <text font-family='"-apple-systemBlinkMacSystemFontSegoe UIHelveticaArialsans-serifApple Color EmojiSegoe UI Emoji", monospace' fill='#000000' font-size='16'
+        dominant-baseline='auto'
+        x='0%' text-anchor='start'>
+        <textPath xlink:href='#path4'>
+            甭管看见什么，越不敢拿的就越要冲上拿起来，气势上绝对要先压过对方。
+        </textPath>
+    </text>
+
+    <path id='path5'>
+        <animate id='d5' attributeName='d' begin='d4.end' dur='5000ms'
+            values='m0,25 h0 ; m0,25 h700 ; m0,25 h0' keyTimes='0;0.8;1' />
+    </path>
+    <text font-family='"-apple-systemBlinkMacSystemFontSegoe UIHelveticaArialsans-serifApple Color EmojiSegoe UI Emoji", monospace' fill='#000000' font-size='16'
+        dominant-baseline='auto'
+        x='0%' text-anchor='start'>
+        <textPath xlink:href='#path5'>
+            另外很多以前想过的烦恼，真正去面对时并不难过。
+        </textPath>
+    </text>
+
+    <path id='path6'>
+        <animate id='d6' attributeName='d' begin='d5.end' dur='5000ms'
+            values='m0,25 h0 ; m0,25 h700 ; m0,25 h0' keyTimes='0;0.8;1' />
+    </path>
+    <text font-family='"-apple-systemBlinkMacSystemFontSegoe UIHelveticaArialsans-serifApple Color EmojiSegoe UI Emoji", monospace' fill='#000000' font-size='16'
+        dominant-baseline='auto'
+        x='0%' text-anchor='start'>
+        <textPath xlink:href='#path6'>
+            即使和猴子单挑CS，把把被他手枪爆头，也别对他大喊大叫，
+        </textPath>
+    </text>
+
+    <path id='path7'>
+        <animate id='d7' attributeName='d' begin='d6.end' dur='5000ms'
+            values='m0,25 h0 ; m0,25 h700 ; m0,25 h0' keyTimes='0;0.8;1' />
+    </path>
+    <text font-family='"-apple-systemBlinkMacSystemFontSegoe UIHelveticaArialsans-serifApple Color EmojiSegoe UI Emoji", monospace' fill='#000000' font-size='16'
+        dominant-baseline='auto'
+        x='0%' text-anchor='start'>
+        <textPath xlink:href='#path7'>
+            其实在精神上，已经强奸了猴子。” from 小说《逛荡·第三卷·瞎子》
+        </textPath>
+    </text>
+
+</svg>
