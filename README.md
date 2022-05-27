@@ -1,4 +1,6 @@
-## 黑发不知勤学早，白首方悔读书迟
+![黑发不知勤学早，白首方悔读书迟](https://github.com/caoxiemeihao/vite-plugins/blob/main/svg-gif.svg)
+
+---
 
 <table>
   <thead>
