@@ -65,9 +65,13 @@
     </tr>
     <tr>
       <td>
-        <a href="packages/optimizer">vite-plugin-optimizer</a>
+        <a href="https://github.com/vite-plugin/vite-plugin-optimizer">vite-plugin-optimizer</a>
       </td>
-      <td>Manually Pre-Bundling of Vite</td>
+      <td>
+        Manually Pre-Bundling of Vite
+        <br/>
+        Migrated 👉 <a href="https://github.com/vite-plugin/vite-plugin-optimizer">vite-plugin/vite-plugin-optimizer</a>
+      </td>
       <td>
         <a href="https://npmjs.org/package/vite-plugin-optimizer">
           <img src="https://img.shields.io/npm/v/vite-plugin-optimizer.svg">
@@ -79,9 +83,13 @@
     </tr>
     <tr>
       <td>
-        <a href="packages/esmodule">vite-plugin-esmodule</a>
+        <a href="https://github.com/vite-plugin/vite-plugin-esmodule">vite-plugin-esmodule</a>
       </td>
-      <td>Build ES module to CommonJs module for Node.js</td>
+      <td>
+        Build ES module to CommonJs module for Node.js
+        <br/>
+        Migrated 👉 <a href="https://github.com/vite-plugin/vite-plugin-esmodule">vite-plugin/vite-plugin-esmodule</a>
+      </td>
       <td>
         <a href="https://npmjs.org/package/vite-plugin-esmodule">
           <img src="https://img.shields.io/npm/v/vite-plugin-esmodule.svg">
