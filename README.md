@@ -115,9 +115,13 @@
     </tr>
     <tr>
       <td>
-        <a href="packages/lang-jsx">vite-plugin-lang-jsx</a>
+        <a href="https://github.com/vite-plugin/vite-plugin-lang-jsx">vite-plugin-lang-jsx</a>
       </td>
-      <td>Automatically add <code>lang="jsx"</code> attribute for when using vite-plugin-vue2</td>
+      <td>
+        Automatically add <code>lang="jsx"</code> attribute for when using vite-plugin-vue2
+        <br/>
+        Migrated 👉 <a href="https://github.com/vite-plugin/vite-plugin-lang-jsx">vite-plugin/vite-plugin-lang-jsx</a>
+      </td>
       <td>
         <a href="https://npmjs.org/package/vite-plugin-lang-jsx">
           <img src="https://img.shields.io/npm/v/vite-plugin-lang-jsx.svg">
