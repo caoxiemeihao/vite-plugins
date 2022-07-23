@@ -11,20 +11,23 @@
   "author": "草鞋没号 <308487730@qq.com>",
   "license": "MIT",
   "scripts": {
-    "build": "rm -rf dist && tsc"
+    "dev": "rm -rf dist && tsc --watch",
+    "build": "rm -rf dist && tsc",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "acorn-walk": "^8.2.0",
     "fast-glob": "^3.2.11"
   },
   "devDependencies": {
-    "@types/node": "^17.x.x",
-    "typescript": "^4.x.x",
-    "vite": "^2.x.x"
+    "vite": "^3.x.x"
   },
   "keywords": [
     "vite",
     "plugin",
     "utils"
+  ],
+  "files": [
+    "dist"
   ]
 }
