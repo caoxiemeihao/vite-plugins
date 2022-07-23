@@ -1,1 +1,0 @@
-export const msg = 'baz/index.tsx'
