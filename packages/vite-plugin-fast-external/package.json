@@ -6,9 +6,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/caoxiemeihao/vite-plugins.git",
-    "directory": "packages/fast-external"
+    "directory": "packages/vite-plugin-fast-external"
   },
-  "readme": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external#readme",
+  "readme": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/vite-plugin-fast-external#readme",
   "author": "草鞋没号 <308487730@qq.com>",
   "license": "MIT",
   "scripts": {},

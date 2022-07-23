@@ -1,9 +1,9 @@
 # vite-plugin-fast-external
 
-[![NPM version](https://img.shields.io/npm/v/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
-[![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
+[![NPM version](https://img.shields.io/npm/v/vite-plugin-fast-external.svg)](https://npmjs.org/package/vite-plugin-fast-external)
+[![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-fast-external.svg)](https://npmjs.org/package/vite-plugin-fast-external)
 
-**[English](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/fast-external#readme) | 简体中文**
+**[English](https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/vite-plugin-fast-external#readme) | 简体中文**
 
 📦 **开箱即用**, 内置 Vue, React, Antd, Element 等等  
 🚀 **高性能**, 不需要语法转换  

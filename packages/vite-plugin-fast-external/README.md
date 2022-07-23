@@ -1,9 +1,9 @@
 # vite-plugin-fast-external
 
-[![NPM version](https://img.shields.io/npm/v/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
-[![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-fast-external.svg?style=flat)](https://npmjs.org/package/vite-plugin-fast-external)
+[![NPM version](https://img.shields.io/npm/v/vite-plugin-fast-external.svg)](https://npmjs.org/package/vite-plugin-fast-external)
+[![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-fast-external.svg)](https://npmjs.org/package/vite-plugin-fast-external)
 
-**English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/fast-external/README.zh-CN.md)**
+**English | [简体中文](https://github.com/caoxiemeihao/vite-plugins/blob/main/packages/vite-plugin-fast-external/README.zh-CN.md)**
 
 📦 **Out of the box**, built in Vue, React, Antd, Element and others  
 🚀 **High performance**, without lexical transform  
