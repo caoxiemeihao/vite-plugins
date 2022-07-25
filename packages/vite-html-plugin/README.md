@@ -63,6 +63,8 @@ html([
 ])
 ```
 
+You can see 👉 [playground/vite-html-plugin](https://github.com/caoxiemeihao/vite-plugins/tree/main/playground/vite-html-plugin)
+
 ## API
 
 ```ts
