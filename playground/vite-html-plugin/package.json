@@ -1,0 +1,14 @@
+{
+  "name": "vite-html-plugin-test",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^3.x.x",
+    "vite-html-plugin": "workspace:*"
+  }
+}

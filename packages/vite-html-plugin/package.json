@@ -1,0 +1,36 @@
+{
+  "name": "vite-html-plugin",
+  "version": "0.1.0",
+  "description": "Html template for Vite",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caoxiemeihao/vite-plugins.git",
+    "directory": "packages/vite-html-plugin"
+  },
+  "readme": "https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/vite-html-plugin#readme",
+  "author": "草鞋没号 <308487730@qq.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "rm -rf dist && tsc --watch",
+    "build": "rm -rf dist && tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "lodash.template": "^4.5.0"
+  },
+  "devDependencies": {
+    "vite": "^3.x.x"
+  },
+  "keywords": [
+    "vite",
+    "plugin",
+    "html",
+    "ejs",
+    "template",
+    "webpack"
+  ],
+  "files": [
+    "dist"
+  ]
+}
