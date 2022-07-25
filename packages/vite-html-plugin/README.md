@@ -52,13 +52,15 @@ html([
       'bar.html': 'public/bar.ejs.html',
     },
     inject: '/src/bar.js',
-    data: {
-      // `ejs` template data
+    transformIndexHtml: () => ({
       templateData: {
-        name: 'Kevin',
-        age: '25',
+        // `ejs` template data
+        user: {
+          name: 'Kevin',
+          age: '25',
+        },
       },
-    },
+    }),
   },
 ])
 ```
@@ -78,7 +80,16 @@ export interface Options {
    * - { 'index.html': 'public/index.html' }
    */
   template?: string | { [entryAlias: string]: string }
-  data?: Record<string, any>
+  transformIndexHtml?: (html: string, ctx: IndexHtmlTransformContext) => string | void | {
+    html?: string
+    /** Data of lodash.template */
+    templateData?: Record<string, any>
+    /**
+     * Options of lodash.template
+     * @see https://lodash.com/docs/4.17.15#template
+     */
+    templateOptions?: TemplateOptions
+  }
 }
 ```
 
