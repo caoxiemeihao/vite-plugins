@@ -1,4 +1,9 @@
 
+## [2022-07-25] v0.1.3
+
+- bce2fca html-plugin(test): v0.1.3
+- 9cd22e6 html-plugin(docs): v0.1.3
+
 ## [2022-07-25] v0.1.2
 
 - f302040 html-plugin: test v0.1.2
