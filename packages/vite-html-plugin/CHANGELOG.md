@@ -1,4 +1,9 @@
 
+## [2022-07-25] v0.1.2
+
+- f302040 html-plugin: test v0.1.2
+- c11eab5 html-plugin(refactor): better logic 🌱
+
 ## [2022-07-25] v0.1.1
 
 - 228f2d1 html-plugin: docs v0.1.1
