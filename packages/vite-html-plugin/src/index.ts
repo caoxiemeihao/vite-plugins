@@ -33,13 +33,13 @@ export default function viteHtml(options: Options | Options[] = {}): Plugin[] {
   const opts = mappingTemplate(Array.isArray(options) ? options : [options])
   let root: string; const resolveRoot = (config: UserConfig) => {
     // https://github.com/vitejs/vite/blob/cc980b09444f67bdcd07481edf9e0c0de6b9b5bd/packages/vite/src/node/config.ts#L442-L445
-    root = config.root ? path.resolve(config.root) : process.cwd()
+    root = normalizePath(config.root ? path.resolve(config.root) : process.cwd())
   }
   const resolvePath = (template: string, prefer: 'short' | 'long') => {
     template = normalizePath(template)
     return prefer === 'long'
       // Rollup input must be absolute path
-      ? path.resolve(root, template)
+      ? path.posix.resolve(root, template)
       // For support absolute path on Vite serve
       : ('/' + template.replace(root, ''))
   }
@@ -115,7 +115,7 @@ export default function viteHtml(options: Options | Options[] = {}): Plugin[] {
           const [name, template] = Object.entries(opt.template)[0]
           const record = {
             source: resolvePath(template, 'long'),
-            entry: path.join(root, name),
+            entry: path.posix.join(root, name),
           }
           records.push(record)
 
