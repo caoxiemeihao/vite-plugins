@@ -1,4 +1,9 @@
 
+## [2022-07-25] v0.1.1
+
+- 228f2d1 html-plugin: docs v0.1.1
+- 49b89f2 html-plugin: use POSIX
+
 ## [2022-07-25] v0.1.0
 
 - c2e4f94 html-plugin: v0.1.0
