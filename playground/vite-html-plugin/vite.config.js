@@ -16,13 +16,15 @@ export default defineConfig({
           'bar.html': 'public/bar.ejs.html',
         },
         inject: '/src/bar.js',
-        data: {
-          // `ejs` template data
+        transformIndexHtml: () => ({
           templateData: {
-            name: 'Kevin',
-            age: '25',
+            // `ejs` template data
+            templateData: {
+              name: 'Kevin',
+              age: '25',
+            },
           },
-        },
+        }),
       },
     ]),
   ],

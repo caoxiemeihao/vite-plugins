@@ -3,9 +3,10 @@ import path from 'path'
 import {
   type Plugin,
   type UserConfig,
+  type IndexHtmlTransformContext,
   normalizePath,
 } from 'vite'
-import template from 'lodash.template'
+import lodashTemplate from 'lodash.template'
 import { cleanUrl } from './utils'
 
 // Limitations:
@@ -23,13 +24,39 @@ export interface Options {
    * - { 'index.html': 'public/index.html' }
    */
   template?: string | { [entryAlias: string]: string }
-  data?: Record<string, any>
+  transformIndexHtml?: (html: string, ctx: IndexHtmlTransformContext) => string | void | {
+    html?: string
+    /** Data of lodash.template */
+    templateData?: Record<string, any>
+    /**
+     * Options of lodash.template
+     * @see https://lodash.com/docs/4.17.15#template
+     */
+    templateOptions?: TemplateOptions
+  }
 
   /** Finally value of `req.url` or entry of Rollup */
   _path?: string
 }
 
-export default function viteHtml(options: Options | Options[] = {}): Plugin[] {
+export type TemplateOptions = {
+  /**
+   * @see _.sourceURL
+   */
+  sourceURL?: string | undefined;
+  /** The "escape" delimiter. */
+  escape?: RegExp | undefined;
+  /** The "evaluate" delimiter. */
+  evaluate?: RegExp | undefined;
+  /** An object to import into the template as local variables. */
+  imports?: Record<string, any> | undefined;
+  /** The "interpolate" delimiter. */
+  interpolate?: RegExp | undefined;
+  /** Used to reference the data object in the template text. */
+  variable?: string | undefined;
+}
+
+export default function viteHtmlPlugin(options: Options | Options[] = {}): Plugin[] {
   const opts = mappingTemplate(Array.isArray(options) ? options : [options])
   let root: string; const resolveRoot = (config: UserConfig) => {
     // https://github.com/vitejs/vite/blob/cc980b09444f67bdcd07481edf9e0c0de6b9b5bd/packages/vite/src/node/config.ts#L442-L445
@@ -65,9 +92,15 @@ export default function viteHtml(options: Options | Options[] = {}): Plugin[] {
           )
         }
 
-        // It's ejs template
-        if (html.includes('<%')) {
-          html = template(html)(opt.data)
+        if (opt.transformIndexHtml) {
+          const result = opt.transformIndexHtml(html, ctx)
+          if (typeof result === 'string') {
+            html = result
+          } else if (result && typeof result === 'object') {
+            const { html: _html, templateOptions, templateData } = result
+            // Maybe ejs template
+            html = lodashTemplate(_html ?? html, templateOptions)(templateData)
+          }
         }
 
         return html
