@@ -19,7 +19,7 @@ export default defineConfig({
         transformIndexHtml: () => ({
           templateData: {
             // `ejs` template data
-            templateData: {
+            user: {
               name: 'Kevin',
               age: '25',
             },
