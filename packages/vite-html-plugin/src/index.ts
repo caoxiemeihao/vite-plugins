@@ -17,11 +17,10 @@ export interface Options {
   /** Value of script src */
   inject?: string
   /**
-   * Path of [name].html
-   * 
    * e.g.
+   * 
    * - 'public/index.html'
-   * - { 'index.html': 'public/index.ejs' }
+   * - { 'index.html': 'public/index.html' }
    */
   template?: string | { [entryAlias: string]: string }
   data?: Record<string, any>
