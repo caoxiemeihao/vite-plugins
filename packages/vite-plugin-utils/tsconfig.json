@@ -5,12 +5,10 @@
     "esModuleInterop": true,
     "moduleResolution": "Node",
     "allowJs": true,
-    "jsx": "preserve",
     "baseUrl": ".",
     "outDir": "dist",
     "declaration": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true
-  },
-  "include": ["src/**/*.ts"]
+  }
 }

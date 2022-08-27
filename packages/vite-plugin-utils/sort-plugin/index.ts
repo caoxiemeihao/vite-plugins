@@ -12,7 +12,7 @@ export const OfficialPlugins = {
   ],
 }
 
-export interface SortPluginOptions {
+export interface SortOptions {
   plugin: Plugin
   names: string[]
   enforce: Plugin['enforce']
@@ -21,7 +21,7 @@ export interface SortPluginOptions {
 /**
  * Some plugins must run after others
  */
-export function sortPlugin(options: SortPluginOptions): Plugin {
+export function sort(options: SortOptions): Plugin {
   const { plugin, names, enforce } = options
   const name = `${plugin.name}:sorter`
 
