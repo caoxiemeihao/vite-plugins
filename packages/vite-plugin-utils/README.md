@@ -1,7 +1,9 @@
 # vite-plugin-utils
 
-Collection of Vite plugin utils
+A collection of opinionated Vite plugin utils
 
 ## API
 
-`sortPlugin()` force one plugin to run before or after others
+- `vite-plugin-utils/constant`
+- `vite-plugin-utils/function`
+- `vite-plugin-utils/sort-plugin`
