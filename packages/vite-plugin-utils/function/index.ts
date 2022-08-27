@@ -64,3 +64,47 @@ export function relativeify(relative: string) {
   }
   return relative
 }
+
+/**
+ * Ast tree walk
+ */
+export async function walk(
+  ast: Record<string, any>,
+  visitors: {
+    [type: string]: (node: Record<string, any>) => void | Promise<void>,
+  },
+) {
+  if (!ast) return
+
+  if (Array.isArray(ast)) {
+    for (const element of ast as Record<string, any>[]) {
+      await walk(element, visitors)
+    }
+  } else {
+    for (const key of Object.keys(ast)) {
+      await (typeof ast[key] === 'object' && walk(ast[key], visitors))
+    }
+  }
+
+  await visitors[ast.type]?.(ast)
+}
+walk.sync = function walkSync(
+  ast: Record<string, any>,
+  visitors: {
+    [type: string]: (node: Record<string, any>) => void | Promise<void>,
+  },
+) {
+  if (!ast) return
+
+  if (Array.isArray(ast)) {
+    for (const element of ast as Record<string, any>[]) {
+      walk.sync(element, visitors)
+    }
+  } else {
+    for (const key of Object.keys(ast)) {
+      typeof ast[key] === 'object' && walk.sync(ast[key], visitors)
+    }
+  }
+
+  visitors[ast.type]?.(ast)
+}
