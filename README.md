@@ -31,5 +31,16 @@
         </a>
       </td>
     </tr>
+    <tr>
+      <td>
+        <a href="packages/vite-plugin-utils">vite-plugin-utils</a>
+      </td>
+      <td>A collection of opinionated Vite plugin utils</td>
+      <td>
+        <a href="https://npmjs.org/package/vite-plugin-utils">
+          <img src="https://img.shields.io/npm/dw/vite-plugin-utils.svg">
+        </a>
+      </td>
+    </tr>
   </tbody>
 </table>
