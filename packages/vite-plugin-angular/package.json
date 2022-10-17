@@ -1,0 +1,12 @@
+{
+  "name": "vite-plugin-angular",
+  "version": "0.0.0",
+  "description": "vite-plugin-angular",
+  "main": "dist/index.js",
+  "repository": {
+    "url": "https://github.com/caoxiemeihao/vite-plugins.git",
+    "directory": "packages/vite-plugin-angular"
+  },
+  "author": "草鞋没号 <308487730@qq.com>",
+  "license": "MIT"
+}
