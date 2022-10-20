@@ -17,10 +17,14 @@ importers:
     specifiers:
       lodash.template: ^4.5.0
       vite: ^3.x.x
-    dependencies:
-      lodash.template: 4.5.0
+      vite-plugin-utils: ^0.3.5
     devDependencies:
+      lodash.template: 4.5.0
       vite: 3.0.2
+      vite-plugin-utils: 0.3.5
+
+  packages/vite-plugin-angular:
+    specifiers: {}
 
   packages/vite-plugin-fast-external:
     specifiers:
@@ -381,20 +385,20 @@ packages:
 
   /lodash._reinterpolate/3.0.0:
     resolution: {integrity: sha512-xYHt68QRoYGjeeM/XOE1uJtvXQAgvszfBhjV4yvsQH0u2i9I6cI6c6/eG4Hh3UAOVn0y/xAXwmTzEay49Q//HA==}
-    dev: false
+    dev: true
 
   /lodash.template/4.5.0:
     resolution: {integrity: sha512-84vYFxIkmidUiFxidA/KjjH9pAycqW+h980j7Fuz5qxRtO9pgB7MDFTdys1N7A5mcucRiDyEq4fusljItR1T/A==}
     dependencies:
       lodash._reinterpolate: 3.0.0
       lodash.templatesettings: 4.2.0
-    dev: false
+    dev: true
 
   /lodash.templatesettings/4.2.0:
     resolution: {integrity: sha512-stgLz+i3Aa9mZgnjr/O+v9ruKZsPsndy7qPZOchbqk2cnTU1ZaldKK+v7m54WoKIyxiuMZTKT2H81F8BeAc3ZQ==}
     dependencies:
       lodash._reinterpolate: 3.0.0
-    dev: false
+    dev: true
 
   /merge2/1.4.1:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
@@ -490,6 +494,10 @@ packages:
     resolution: {integrity: sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==}
     engines: {node: '>=4.2.0'}
     hasBin: true
+    dev: true
+
+  /vite-plugin-utils/0.3.5:
+    resolution: {integrity: sha512-bQI9MkJNmG7ZLhI4eDOcb3JSks/ytbpW/rW5hpeo1kPhNhVAi3UHbgtZIVlvp2leW8H3sC8AEUwN2nWek67qZA==}
     dev: true
 
   /vite/3.0.2:
