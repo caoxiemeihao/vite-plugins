@@ -1,13 +1,14 @@
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 import {
   type Plugin,
   type UserConfig,
   type IndexHtmlTransformContext,
   normalizePath,
 } from 'vite'
+// @ts-ignore
 import lodashTemplate from 'lodash.template'
-import { cleanUrl } from './utils'
+import { cleanUrl } from 'vite-plugin-utils/function'
 
 // Limitations:
 // `ejs` `nunjucks` `handlebars` and other tempaltes must be written in the `.html` file.
